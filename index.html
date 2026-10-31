@@ -7,22 +7,22 @@
   <!-- Site Favicon: Pixel-Art Flaming Earth Globe (Supports uploaded image_b3f92a.png + immediate self-contained pixel canvas fallback) -->
   <link id="site-favicon" rel="icon" type="image/png" href="image_b3f92a.png" />
   <link id="site-shortcut-icon" rel="shortcut icon" type="image/png" href="image_b3f92a.png" />
-  <link id="site-apple-icon" rel="apple-touch-icon" href="image_b3f92a.png" />
+  <link id="site-apple-icon" rel="apple-touch-icon" type="image/png" href="image_b3f92a.png" />
   <script>
     (function initFlamingEarthFavicon() {
-      // Self-contained 32x32 pixel-art matrix matching image_b3f92a.png (Flaming Pixel Earth Globe with Embers)
       const palette = {
         '.': null,
-        'R': '#c84b20', // Outer dark red-orange flame tip
-        'O': '#e57028', // Mid orange flame
-        'Y': '#f7b538', // Bright golden yellow flame
-        'L': '#fce762', // Inner pale yellow flame core
-        'D': '#16384c', // Dark globe outline
-        'B': '#4ab3d6', // Ocean blue
-        'S': '#3b8ead', // Shaded ocean blue
-        'H': '#8dd8ef', // Ocean highlight
-        'G': '#78a842', // Continent green
-        'E': '#5c8731'  // Shaded continent green
+        'R': '#c84b20',
+        'O': '#e57028',
+        'Y': '#f7b538',
+        'L': '#fce762',
+        'D': '#16384c',
+        'B': '#4ab3d6',
+        'b': '#4ab3d6',
+        'S': '#3b8ead',
+        'H': '#8dd8ef',
+        'G': '#78a842',
+        'E': '#5c8731'
       };
 
       const rows = [
@@ -81,7 +81,6 @@
         return canvas.toDataURL('image/png');
       }
 
-      // Verify if external image_b3f92a.png is present in the repo; if not (or while loading), apply exact pixel-art Data URL
       const fallbackDataUrl = generatePixelEarthDataURL();
       const applyFaviconHref = (href) => {
         ['site-favicon', 'site-shortcut-icon', 'site-apple-icon'].forEach(id => {
@@ -90,10 +89,8 @@
         });
       };
 
-      // Immediately set the pixel-art flaming Earth favicon so it always works out-of-the-box
       applyFaviconHref(fallbackDataUrl);
 
-      // If image_b3f92a.png is uploaded alongside index.html, swap to the raw PNG file once verified
       const probeImg = new Image();
       probeImg.onload = () => applyFaviconHref('image_b3f92a.png');
       probeImg.src = 'image_b3f92a.png';
@@ -382,17 +379,23 @@
 
     /* Selected Node Morphing to Center Focal State during Transition */
     .node-sliding-to-center {
+      width: 290px !important;
       border-color: #ff9900 !important;
       background-color: #0c0500 !important;
-      box-shadow: 0 0 38px rgba(255, 153, 0, 0.9), 0 0 12px #ffee55 !important;
-      transform: translate(-50%, -50%) scale(1.1) !important;
+      box-shadow: 0 0 42px rgba(255, 153, 0, 0.95), 0 0 14px #fcee0a !important;
       z-index: 60 !important;
+      pointer-events: none !important;
+      transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+                  border-color 0.3s ease,
+                  background-color 0.3s ease,
+                  box-shadow 0.3s ease !important;
     }
 
     /* Fade-out class for unselected nodes and connectors */
     .fade-out-element {
       opacity: 0 !important;
       pointer-events: none !important;
+      transition: opacity 0.45s cubic-bezier(0.4, 0, 0.2, 1) !important;
     }
 
     /* Solid Orthogonal 90-Degree SVG Connector Lines */
@@ -554,6 +557,49 @@
       transform: translateX(-3px);
     }
 
+    /* Day Cluster Nodes (Shown when zoomed out / LOD Day Grouping active) */
+    .node-day-cluster-inbound {
+      width: 204px;
+      background: linear-gradient(180deg, #160009 0%, #080004 100%);
+      border: 2px solid var(--inbound-neon);
+      outline: 1px dashed rgba(255, 51, 119, 0.55);
+      outline-offset: 3px;
+      color: var(--inbound-neon-bright);
+      box-shadow: 0 0 22px rgba(255, 0, 85, 0.45), inset 0 0 14px rgba(255, 0, 85, 0.2);
+      cursor: pointer;
+      z-index: 26;
+    }
+
+    .node-day-cluster-inbound:hover,
+    .node-day-cluster-inbound.timeline-highlighted {
+      transform: translate(-50%, -50%) scale(1.08);
+      border-color: #fcee0a;
+      background: #22000e;
+      box-shadow: 0 0 32px rgba(255, 0, 85, 0.95), 0 0 12px #fcee0a;
+      z-index: 48;
+    }
+
+    .node-day-cluster-outbound {
+      width: 204px;
+      background: linear-gradient(180deg, #00170f 0%, #000805 100%);
+      border: 2px solid var(--outbound-neon);
+      outline: 1px dashed rgba(0, 255, 170, 0.55);
+      outline-offset: 3px;
+      color: var(--outbound-neon-bright);
+      box-shadow: 0 0 22px rgba(0, 255, 170, 0.45), inset 0 0 14px rgba(0, 255, 170, 0.2);
+      cursor: pointer;
+      z-index: 26;
+    }
+
+    .node-day-cluster-outbound:hover,
+    .node-day-cluster-outbound.timeline-highlighted {
+      transform: translate(-50%, -50%) scale(1.08);
+      border-color: #fcee0a;
+      background: #002418;
+      box-shadow: 0 0 32px rgba(0, 255, 170, 0.95), 0 0 12px #fcee0a;
+      z-index: 48;
+    }
+
     /* Range Input Styling for Top-Left Audio Control */
     input[type="range"].cyber-slider {
       -webkit-appearance: none;
@@ -616,11 +662,11 @@
         type="range"
         min="0"
         max="100"
-        value="65"
+        value="40"
         class="cyber-slider w-20 sm:w-24 cursor-pointer"
         title="Adjust Audio Volume"
       />
-      <span id="audio-volume-value" class="font-mono-code text-[10px] text-zinc-300 w-7 text-right">65%</span>
+      <span id="audio-volume-value" class="font-mono-code text-[10px] text-zinc-300 w-7 text-right">40%</span>
     </div>
   </div>
 
@@ -705,6 +751,34 @@
               <span class="font-mono-code text-sm">&gt;&gt;</span>
             </button>
           </div>
+
+          <!-- Optional Etherscan API v2 Key Drawer (Stored locally in browser only) -->
+          <div class="mt-2.5 flex flex-col items-center">
+            <button
+              type="button"
+              id="toggle-api-drawer-btn"
+              class="font-mono-code text-[10px] text-zinc-400 hover:text-[#ff9900] uppercase tracking-wider flex items-center gap-1.5 transition cursor-pointer"
+            >
+              <span>[OPTIONAL: ETHERSCAN API V2 KEY // LOCAL BROWSER ONLY]</span>
+              <span id="api-drawer-chevron">▼</span>
+            </button>
+            <div id="api-key-drawer" class="hidden w-full max-w-md mt-1.5 bg-black/95 border border-zinc-800 p-2 flex items-center gap-2">
+              <input
+                id="etherscan-api-key-input"
+                type="password"
+                placeholder="Paste optional Etherscan API key (saved locally)..."
+                class="w-full bg-zinc-950 text-zinc-200 placeholder-zinc-600 font-mono-code text-[11px] px-2 py-1 border border-zinc-800 focus:border-[#ff9900] focus:outline-none select-text"
+              />
+              <a
+                href="https://etherscan.io/apis"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="shrink-0 px-2 py-1 bg-zinc-900 hover:bg-zinc-800 text-[#ff9900] border border-zinc-700 font-mono-code text-[9px] uppercase"
+              >
+                GET KEY ↗
+              </a>
+            </div>
+          </div>
         </form>
 
       </div>
@@ -744,6 +818,17 @@
             <span id="live-network-text">ETH MAINNET // LIVE</span>
           </div>
 
+          <!-- LOD Day-Grouping Mode Badge & Toggle -->
+          <button
+            id="lod-mode-toggle"
+            type="button"
+            class="flex items-center gap-1.5 bg-zinc-950 hover:bg-zinc-900 border border-[#fcee0a]/60 px-2 py-0.5 text-[#fcee0a] cursor-pointer transition"
+            title="Click to cycle: AUTO (Groups by Day when zoomed out) / FORCE DAY GROUP / FORCE INDIVIDUAL"
+          >
+            <span id="lod-mode-dot" class="w-1.5 h-1.5 bg-[#fcee0a] inline-block"></span>
+            <span id="lod-mode-label">VIEW: INDIVIDUAL (AUTO)</span>
+          </button>
+
           <div class="flex items-center gap-1.5 bg-zinc-950 border border-zinc-800 px-2 py-0.5">
             <span class="text-zinc-400">CURRENCY:</span>
             <select
@@ -779,10 +864,10 @@
           <!-- Large SVG Canvas in World Coordinates for 90-Degree Orthogonal Connectors -->
           <svg
             id="connections-svg"
-            width="8000"
-            height="3200"
-            viewBox="-4000 -1600 8000 3200"
-            class="absolute left-[-4000px] top-[-1600px] w-[8000px] h-[3200px] pointer-events-none z-10 overflow-visible"
+            width="16000"
+            height="4800"
+            viewBox="-8000 -2400 16000 4800"
+            class="absolute left-[-8000px] top-[-2400px] w-[16000px] h-[4800px] pointer-events-none z-10 overflow-visible"
           >
             <g id="svg-curves-group"></g>
           </svg>
@@ -928,8 +1013,6 @@
     /***************************************************************************
      * 0. LIVE BLOCKCHAIN CONFIGURATION (VERCEL ALCHEMY BRIDGE + PUBLIC MAINNET)
      ***************************************************************************/
-    // Optional: Paste your Vercel Serverless URL here once deployed (e.g., "https://your-project.vercel.app/api/api-lookup")
-    // Even if left blank (""), the app automatically queries live Ethereum Mainnet data via Blockscout v2 & PublicNode RPC.
     const VERCEL_BACKEND_URL = "";
 
     /***************************************************************************
@@ -937,11 +1020,43 @@
      ***************************************************************************/
     const bgAudio = document.getElementById('bg-audio');
     let isUserMuted = false;
-    let currentVolume = 65;
+    let currentVolume = 40;
 
-    // Set initial unfiltered volume directly on the HTML5 Audio element
     bgAudio.volume = currentVolume / 100;
     bgAudio.muted = false;
+
+    const toggleApiDrawerBtn = document.getElementById('toggle-api-drawer-btn');
+    const apiKeyDrawer = document.getElementById('api-key-drawer');
+    const apiDrawerChevron = document.getElementById('api-drawer-chevron');
+    const etherscanApiKeyInput = document.getElementById('etherscan-api-key-input');
+
+    try {
+      const savedKey = localStorage.getItem('pocketwatch_etherscan_api_key');
+      if (savedKey && etherscanApiKeyInput) {
+        etherscanApiKeyInput.value = savedKey;
+      }
+    } catch (e) {}
+
+    if (toggleApiDrawerBtn && apiKeyDrawer) {
+      toggleApiDrawerBtn.addEventListener('click', () => {
+        const isHidden = apiKeyDrawer.classList.contains('hidden');
+        if (isHidden) {
+          apiKeyDrawer.classList.remove('hidden');
+          apiDrawerChevron.textContent = '▲';
+        } else {
+          apiKeyDrawer.classList.add('hidden');
+          apiDrawerChevron.textContent = '▼';
+        }
+      });
+    }
+
+    if (etherscanApiKeyInput) {
+      etherscanApiKeyInput.addEventListener('input', (e) => {
+        try {
+          localStorage.setItem('pocketwatch_etherscan_api_key', e.target.value.trim());
+        } catch (err) {}
+      });
+    }
 
     function attemptPlayUnfilteredAudio() {
       if (isUserMuted) return;
@@ -949,18 +1064,14 @@
       bgAudio.volume = currentVolume / 100;
       const playPromise = bgAudio.play();
       if (playPromise !== undefined) {
-        playPromise.catch(() => {
-          // Browser blocked initial unmuted autoplay; will seamlessly start on first user click/key gesture
-        });
+        playPromise.catch(() => {});
       }
     }
 
-    // Attempt autoplay immediately when script loads and when DOM/window finishes loading
     attemptPlayUnfilteredAudio();
     window.addEventListener('DOMContentLoaded', attemptPlayUnfilteredAudio);
     window.addEventListener('load', attemptPlayUnfilteredAudio);
 
-    // Ensure audio unlocks and plays on the first user interaction if autoplay was deferred by the browser
     function unlockAudioOnFirstGesture() {
       if (!isUserMuted && bgAudio.paused) {
         bgAudio.muted = false;
@@ -973,7 +1084,6 @@
       window.addEventListener(evtName, unlockAudioOnFirstGesture, { passive: true });
     });
 
-    // Top-Left Audio Control HUD Wiring (Direct HTML5 Audio Volume & Mute, Zero Filters)
     const audioMuteBtn = document.getElementById('audio-mute-btn');
     const audioIcon = document.getElementById('audio-icon');
     const audioStatusLabel = document.getElementById('audio-status-label');
@@ -1046,7 +1156,7 @@
         size: 11 + Math.random() * 24,
         life: randomY ? Math.random() : 0,
         maxLife: 0.65 + Math.random() * 0.55,
-        hue: 12 + Math.random() * 34 // Deep cyber orange-red to golden yellow
+        hue: 12 + Math.random() * 34
       };
     }
 
@@ -1276,10 +1386,8 @@
           const x = col * step + rowOffset;
           const token = TOKEN_WALL_CATALOG[Math.floor(nextRand() * TOKEN_WALL_CATALOG.length)];
           const shortHash = `0x${Math.floor(nextRand() * 0xffff).toString(16).padStart(4, '0')}`;
-
-          // Randomized punch-out timing so every brick punches out individually over 3000ms
-          const delay = nextRand() * 2250; // 0ms to 2250ms start time
-          const duration = 620 + nextRand() * 130; // ~620ms to 750ms individual Z-axis recession
+          const delay = nextRand() * 2250;
+          const duration = 620 + nextRand() * 130;
           const spinDir = (nextRand() - 0.5) * 0.38;
 
           wallBricks.push({
@@ -1313,11 +1421,9 @@
 
       const half = s / 2;
 
-      // Brick body
       ctx.fillStyle = '#060609';
       ctx.fillRect(-half, -half, s, s);
 
-      // Brief impact rim flash when the brick is initially punched out
       if (punchProgress > 0 && punchProgress < 0.24) {
         const flashIntensity = 1 - (punchProgress / 0.24);
         ctx.strokeStyle = brick.token.color;
@@ -1329,22 +1435,18 @@
         ctx.strokeRect(-half + 0.75, -half + 0.75, s - 1.5, s - 1.5);
       }
 
-      // Corner accent dot
       ctx.fillStyle = brick.token.color;
       ctx.globalAlpha = alpha * 0.65;
       ctx.fillRect(-half + 2, -half + 2, 5, 5);
       ctx.globalAlpha = alpha;
 
-      // Token vector emblem
       drawTokenVectorEmblem(ctx, 0, -half + s * 0.42, 20, brick.token);
 
-      // Ticker label
       ctx.font = '700 10px "Orbitron", sans-serif';
       ctx.fillStyle = '#d4d4d8';
       ctx.textAlign = 'center';
       ctx.fillText(`$${brick.token.symbol}`, 0, half - 19);
 
-      // Short block hash
       ctx.font = '400 9px "Share Tech Mono", monospace';
       ctx.fillStyle = '#52525b';
       ctx.fillText(brick.shortHash, 0, half - 7);
@@ -1382,7 +1484,6 @@
         const vanishCenterX = canvasWidth / 2;
         const vanishCenterY = canvasHeight / 2;
 
-        // Draw static bricks first, then punched bricks on top so receding bricks don't clip behind neighbors
         function renderPunchFrame(now) {
           const elapsed = now - startTime;
 
@@ -1394,26 +1495,21 @@
           for (let i = 0; i < wallBricks.length; i++) {
             const b = wallBricks[i];
             if (elapsed <= b.delay) {
-              // Brick has not been punched yet: remains completely static in the wall
               drawSingleBrick(bgCtx, b, 1, 1, 0);
             } else if (elapsed < b.delay + b.duration) {
               activePunchingBricks.push(b);
             }
-            // If elapsed >= b.delay + b.duration, the brick is fully punched out leaving pitch black #000000
           }
 
-          // Render bricks currently receding along the Z-axis into the void
           for (let i = 0; i < activePunchingBricks.length; i++) {
             const b = activePunchingBricks[i];
-            const t = (elapsed - b.delay) / b.duration; // 0 -> 1
+            const t = (elapsed - b.delay) / b.duration;
             const eased = t * t * (3 - 2 * t);
 
-            // Simulate deep Z-axis punch-out perspective recession
             const zDepth = Math.pow(t, 1.55) * 2800;
             const fovScale = 420 / (420 + zDepth);
             const alpha = Math.max(0, 1 - Math.pow(t, 1.35));
 
-            // Pull slightly toward the central Z-axis vanishing point as the brick falls deep into the void
             const brickCenterX = b.x + b.brickSize / 2;
             const brickCenterY = b.y + b.brickSize / 2;
             const pullFactor = eased * 0.42;
@@ -1462,7 +1558,6 @@
     const homeCurrencySelect = document.getElementById('currency-select');
     const graphCurrencySelect = document.getElementById('graph-currency-select');
 
-    // Format a USD value into the user's selected fiat currency
     function formatUsdInSelectedCurrency(usdAmount) {
       const numUsd = Math.max(0, parseFloat(usdAmount) || 0);
       const cfg = CURRENCY_RATES[selectedCurrency] || CURRENCY_RATES.USD;
@@ -1474,7 +1569,6 @@
       return `${cfg.symbol}${formattedNum} ${cfg.code}`;
     }
 
-    // Legacy helper for ETH-denominated fallback values
     function formatEthInSelectedCurrency(ethAmount) {
       const numEth = parseFloat(ethAmount) || 0;
       return formatUsdInSelectedCurrency(numEth * liveEthUsdPrice);
@@ -1489,6 +1583,20 @@
       if (val >= 1) return val.toFixed(2);
       if (val >= 0.0001) return val.toFixed(4);
       return '<0.0001';
+    }
+
+    let toastTimeoutId = null;
+    function showToast(message) {
+      const toastEl = document.getElementById('toast-notification');
+      if (!toastEl) return;
+      toastEl.textContent = message;
+      toastEl.classList.remove('opacity-0');
+      toastEl.classList.add('opacity-100');
+      if (toastTimeoutId) clearTimeout(toastTimeoutId);
+      toastTimeoutId = setTimeout(() => {
+        toastEl.classList.remove('opacity-100');
+        toastEl.classList.add('opacity-0');
+      }, 2200);
     }
 
     homeCurrencySelect.addEventListener('change', (e) => {
@@ -1614,7 +1722,6 @@
       }
     }
 
-    // Resolve a 66-character Ethereum Transaction Hash (0x...) into its primary Wallet Address
     async function resolveTxHashToWalletAddress(txHash) {
       try {
         const res = await fetchWithTimeout(`https://eth.blockscout.com/api/v2/transactions/${encodeURIComponent(txHash)}`);
@@ -1634,7 +1741,6 @@
         }
       } catch (e) {}
 
-      // Fallback: Public Ethereum JSON-RPC eth_getTransactionByHash
       try {
         const rpcRes = await fetchWithTimeout('https://ethereum-rpc.publicnode.com', {
           method: 'POST',
@@ -1662,9 +1768,173 @@
       return null;
     }
 
-    const MAX_SIDE_NODES = 15; // Up to 15 Inbound & 15 Outbound real transactions
-    const WORLD_TIMELINE_HALF_SPAN_X = 1680;
+    const MAX_SIDE_NODES = 60;
+    let WORLD_TIMELINE_HALF_SPAN_X = 2400;
     const CLOSEST_SIX_WORLD_HALF_SPAN_X = 820;
+    const DAY_GROUP_ZOOM_THRESHOLD = 0.58;
+
+    let lodGroupingMode = 'auto';
+    let isCurrentlyDayGrouped = false;
+
+    function shouldUseDayGrouping() {
+      if (!currentFocalWalletData) return false;
+      const totalConnected = (currentFocalWalletData.inboundNodes?.length || 0) +
+                             (currentFocalWalletData.outboundNodes?.length || 0);
+      if (lodGroupingMode === 'day') return totalConnected > 0;
+      if (lodGroupingMode === 'individual') return false;
+      return totalConnected > 12 && camZoom < DAY_GROUP_ZOOM_THRESHOLD;
+    }
+
+    function updateLodBadgeUI() {
+      const btn = document.getElementById('lod-mode-toggle');
+      const dot = document.getElementById('lod-mode-dot');
+      const label = document.getElementById('lod-mode-label');
+      if (!btn || !dot || !label) return;
+
+      const suffix = lodGroupingMode === 'auto' ? ' (AUTO)' : ' (LOCKED)';
+      if (isCurrentlyDayGrouped) {
+        label.textContent = `VIEW: DAY GROUPED${suffix}`;
+        btn.className = 'flex items-center gap-1.5 bg-[#fcee0a]/20 hover:bg-[#fcee0a]/30 border border-[#fcee0a] px-2 py-0.5 text-[#fcee0a] cursor-pointer transition';
+        dot.className = 'w-1.5 h-1.5 bg-[#fcee0a] inline-block shadow-[0_0_6px_#fcee0a]';
+      } else {
+        label.textContent = `VIEW: INDIVIDUAL NODES${suffix}`;
+        btn.className = 'flex items-center gap-1.5 bg-zinc-950 hover:bg-zinc-900 border border-zinc-700 px-2 py-0.5 text-zinc-300 cursor-pointer transition';
+        dot.className = 'w-1.5 h-1.5 bg-[#ff9900] inline-block';
+      }
+    }
+
+    async function refreshLiveEthPriceFallback() {
+      try {
+        const res = await fetchWithTimeout('https://api.binance.com/api/v3/ticker/price?symbol=ETHUSDT', {}, 4000);
+        if (res.ok) {
+          const d = await res.json();
+          const p = parseFloat(d?.price);
+          if (p > 100) {
+            liveEthUsdPrice = p;
+            return;
+          }
+        }
+      } catch (e) {}
+      try {
+        const res = await fetchWithTimeout('https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd', {}, 4000);
+        if (res.ok) {
+          const d = await res.json();
+          const p = parseFloat(d?.ethereum?.usd);
+          if (p > 100) liveEthUsdPrice = p;
+        }
+      } catch (e) {}
+    }
+
+    async function fetchMultiPageBlockscoutV2Txs(address, maxPages = 3) {
+      const items = [];
+      let nextParams = '';
+      for (let page = 0; page < maxPages; page++) {
+        const url = `https://eth.blockscout.com/api/v2/addresses/${encodeURIComponent(address)}/transactions${nextParams ? `?${nextParams}` : ''}`;
+        try {
+          const res = await fetchWithTimeout(url, {}, 7500);
+          if (!res.ok) break;
+          const json = await res.json();
+          if (Array.isArray(json?.items)) {
+            items.push(...json.items);
+          }
+          if (json?.next_page_params && items.length < 180) {
+            const qp = new URLSearchParams();
+            Object.entries(json.next_page_params).forEach(([k, v]) => {
+              if (v !== null && v !== undefined) qp.set(k, String(v));
+            });
+            nextParams = qp.toString();
+          } else {
+            break;
+          }
+        } catch (err) {
+          break;
+        }
+      }
+      return items;
+    }
+
+    function buildDayClustersForSide(nodes, sideType, dynamicSpanX) {
+      if (!Array.isArray(nodes) || nodes.length === 0) return [];
+      const dayMap = new Map();
+
+      nodes.forEach((node) => {
+        const dayKey = (node.dateStr || '').slice(0, 10) || 'UNKNOWN-DAY';
+        if (!dayMap.has(dayKey)) {
+          dayMap.set(dayKey, {
+            dayKey,
+            type: sideType,
+            nodes: [],
+            uniqueWallets: new Set(),
+            totalAmountUsd: 0,
+            totalAmountEth: 0,
+            sumWorldX: 0,
+            sumTimestampMs: 0,
+            tokenTotals: new Map()
+          });
+        }
+        const bucket = dayMap.get(dayKey);
+        bucket.nodes.push(node);
+        bucket.uniqueWallets.add(node.address.toLowerCase());
+        const usdVal = node.amountUsd !== undefined ? node.amountUsd : (node.amountEth * liveEthUsdPrice);
+        bucket.totalAmountUsd += usdVal;
+        bucket.totalAmountEth += (node.amountEth || 0);
+        bucket.sumWorldX += node.worldX;
+        bucket.sumTimestampMs += node.timestampMs;
+
+        (node.tokens || []).forEach(t => {
+          if (!bucket.tokenTotals.has(t.ticker)) {
+            bucket.tokenTotals.set(t.ticker, t.amount);
+          }
+        });
+      });
+
+      const clustersRaw = Array.from(dayMap.values());
+      clustersRaw.sort((a, b) => (a.sumTimestampMs / a.nodes.length) - (b.sumTimestampMs / b.nodes.length));
+
+      const clusterYPattern = [-280, 180, -90, 290, 60, -195, 360, -360, 120, -140];
+
+      return clustersRaw.map((bucket, idx) => {
+        const sortedByUsd = [...bucket.nodes].sort((a, b) => (b.amountUsd || 0) - (a.amountUsd || 0));
+        const topNode = sortedByUsd[0] || bucket.nodes[0];
+
+        const rankFromCenter = sideType === 'inbound'
+          ? (clustersRaw.length - 1 - idx)
+          : idx;
+
+        const dirSign = sideType === 'inbound' ? -1 : 1;
+        const clusterWorldX = dirSign * Math.round(330 + rankFromCenter * 225);
+        const clusterWorldY = clusterYPattern[rankFromCenter % clusterYPattern.length];
+        const avgTimestampMs = Math.round(bucket.sumTimestampMs / bucket.nodes.length);
+
+        const combinedTokens = Array.from(bucket.tokenTotals.entries())
+          .slice(0, 4)
+          .map(([ticker, amount]) => ({ ticker, amount }));
+
+        return {
+          id: `${sideType}-day-cluster-${idx}`,
+          isDayCluster: true,
+          dayKey: bucket.dayKey,
+          type: sideType,
+          txCount: bucket.nodes.length,
+          walletCount: bucket.uniqueWallets.size,
+          address: topNode.address,
+          topNode,
+          memberNodes: bucket.nodes,
+          amountUsd: bucket.totalAmountUsd,
+          amountEth: bucket.totalAmountEth,
+          timestampMs: avgTimestampMs,
+          dateStr: `${bucket.dayKey} (${bucket.nodes.length} TXs)`,
+          tokens: combinedTokens.length > 0 ? combinedTokens : [{ ticker: 'ETH', amount: formatCompactTokenUnits(bucket.totalAmountEth) }],
+          worldX: clusterWorldX,
+          worldY: clusterWorldY,
+          focusWorldX: Math.round(bucket.sumWorldX / bucket.nodes.length),
+          focusWorldY: topNode.worldY,
+          timelineRatio: sideType === 'inbound'
+            ? Math.max(0.02, Math.min(0.48, 0.5 + (clusterWorldX / (dynamicSpanX * 2))))
+            : Math.max(0.52, Math.min(0.98, 0.5 + (clusterWorldX / (dynamicSpanX * 2))))
+        };
+      });
+    }
 
     async function getOrCreateWalletGraph(rawInput, linkContext = null) {
       let cleanInput = (rawInput || '').trim();
@@ -1674,7 +1944,6 @@
 
       setNetworkStatusBadge('QUERYING ETH MAINNET...', true);
 
-      // 1. If the user pasted a 66-character Transaction Hash, resolve it to the sender/focal wallet first
       if (/^0x[a-fA-F0-9]{64}$/.test(cleanInput)) {
         const txResolved = await resolveTxHashToWalletAddress(cleanInput);
         if (txResolved && txResolved.resolvedAddress) {
@@ -1700,12 +1969,8 @@
       const nowMs = Date.now();
       const maxAllowedTxMs = nowMs - 1000;
 
-      // 2. Fetch live Ethereum Mainnet data in parallel:
-      //    - Optional Vercel Alchemy Backend Bridge (if VERCEL_BACKEND_URL is configured)
-      //    - Blockscout v2 Address Summary (Native ETH balance + Live ETH USD exchange_rate)
-      //    - Blockscout v2 ERC-20 Token Holdings (All ERC-20 balances + live USD exchange_rates)
-      //    - Blockscout Normal ETH Transactions (txlist)
-      //    - Blockscout ERC-20 Token Transfers (tokentx)
+      const userEtherscanApiKey = (document.getElementById('etherscan-api-key-input')?.value || '').trim();
+
       const vercelPromise = (VERCEL_BACKEND_URL && VERCEL_BACKEND_URL.trim().length > 0)
         ? fetchWithTimeout(`${VERCEL_BACKEND_URL.trim()}?wallet=${encodeURIComponent(normalizedAddress)}&address=${encodeURIComponent(normalizedAddress)}`)
             .then(r => r.ok ? r.json() : null)
@@ -1720,38 +1985,48 @@
         .then(r => r.ok ? r.json() : null)
         .catch(() => null);
 
-      const normalTxPromise = fetchWithTimeout(`https://eth.blockscout.com/api?module=account&action=txlist&address=${encodeURIComponent(normalizedAddress)}&sort=desc&page=1&offset=50`)
+      const v2MultiPageTxPromise = fetchMultiPageBlockscoutV2Txs(normalizedAddress, 3);
+
+      const normalTxUrl = userEtherscanApiKey
+        ? `https://api.etherscan.io/v2/api?chainid=1&module=account&action=txlist&address=${encodeURIComponent(normalizedAddress)}&startblock=0&endblock=99999999&page=1&offset=200&sort=desc&apikey=${encodeURIComponent(userEtherscanApiKey)}`
+        : `https://eth.blockscout.com/api?module=account&action=txlist&address=${encodeURIComponent(normalizedAddress)}&sort=desc&page=1&offset=200`;
+
+      const tokenTxUrl = userEtherscanApiKey
+        ? `https://api.etherscan.io/v2/api?chainid=1&module=account&action=tokentx&address=${encodeURIComponent(normalizedAddress)}&startblock=0&endblock=99999999&page=1&offset=200&sort=desc&apikey=${encodeURIComponent(userEtherscanApiKey)}`
+        : `https://eth.blockscout.com/api?module=account&action=tokentx&address=${encodeURIComponent(normalizedAddress)}&sort=desc&page=1&offset=200`;
+
+      const normalTxPromise = fetchWithTimeout(normalTxUrl, {}, 9000)
         .then(r => r.ok ? r.json() : null)
         .catch(() => null);
 
-      const tokenTxPromise = fetchWithTimeout(`https://eth.blockscout.com/api?module=account&action=tokentx&address=${encodeURIComponent(normalizedAddress)}&sort=desc&page=1&offset=50`)
+      const tokenTxPromise = fetchWithTimeout(tokenTxUrl, {}, 9000)
         .then(r => r.ok ? r.json() : null)
         .catch(() => null);
 
-      const [vercelData, addressInfo, tokenHoldingsData, normalTxData, tokenTxData] = await Promise.all([
+      const [vercelData, addressInfo, tokenHoldingsData, v2TxItems, normalTxData, tokenTxData] = await Promise.all([
         vercelPromise,
         addressInfoPromise,
         tokenHoldingsPromise,
+        v2MultiPageTxPromise,
         normalTxPromise,
         tokenTxPromise
       ]);
 
-      // 3. Determine Live ETH Price in USD
       if (addressInfo && addressInfo.exchange_rate) {
         const parsedRate = parseFloat(addressInfo.exchange_rate);
         if (parsedRate > 100) {
           liveEthUsdPrice = parsedRate;
         }
+      } else {
+        await refreshLiveEthPriceFallback();
       }
 
-      // 4. Determine Native ETH Balance (from Vercel Alchemy bridge, Blockscout v2, or PublicNode RPC fallback)
       let nativeEthBalance = 0;
       if (vercelData && vercelData.balance !== undefined && vercelData.balance !== null) {
         nativeEthBalance = weiToEthFloat(vercelData.balance);
       } else if (addressInfo && addressInfo.coin_balance !== undefined && addressInfo.coin_balance !== null) {
         nativeEthBalance = weiToEthFloat(addressInfo.coin_balance);
       } else {
-        // Fallback to direct Ethereum Mainnet JSON-RPC eth_getBalance
         try {
           const rpcRes = await fetchWithTimeout('https://ethereum-rpc.publicnode.com', {
             method: 'POST',
@@ -1774,7 +2049,6 @@
 
       const nativeEthUsd = nativeEthBalance * liveEthUsdPrice;
 
-      // 5. Parse Real ERC-20 Token Holdings & Sum Accurate Portfolio USD Value
       const tokenPriceLookup = new Map();
       tokenPriceLookup.set('ETH', liveEthUsdPrice);
 
@@ -1810,7 +2084,6 @@
           tokenPriceLookup.set(rawSymbol, unitPriceUsd);
         }
 
-        // Only add to portfolio USD if the token has a verified exchange rate or is a known major asset
         const holdingUsd = unitPriceUsd > 0 ? (units * unitPriceUsd) : 0;
         totalErc20Usd += holdingUsd;
 
@@ -1821,7 +2094,6 @@
         });
       }
 
-      // Sort wallet tokens by USD value descending so the most valuable holdings (e.g. USDC $2B, ETH, WBTC) appear first
       parsedHoldings.sort((a, b) => b.usdValue - a.usdValue);
       const topWalletTokens = parsedHoldings.slice(0, 6);
       if (topWalletTokens.length === 0) {
@@ -1830,14 +2102,12 @@
 
       const totalPortfolioUsd = nativeEthUsd + totalErc20Usd;
 
-      // 6. Parse Real Historical Inbound & Outbound Transactions (Merging Native ETH + ERC-20 Transfers)
       const normalTxList = Array.isArray(normalTxData?.result) ? normalTxData.result : [];
       const tokenTxList = Array.isArray(tokenTxData?.result) ? tokenTxData.result : [];
 
       const combinedEvents = [];
       const seenEventKeys = new Set();
 
-      // A) Process ERC-20 Token Transfers first (captures high-value stablecoin/token transfers)
       for (const tx of tokenTxList) {
         if (!tx || !tx.hash) continue;
         const fromAddr = String(tx.from || '').trim();
@@ -1880,7 +2150,6 @@
         });
       }
 
-      // B) Process Native ETH Transactions
       for (const tx of normalTxList) {
         if (!tx || !tx.hash || tx.isError === '1') continue;
         const fromAddr = String(tx.from || '').trim();
@@ -1896,7 +2165,6 @@
         const isOutbound = fromAddr.toLowerCase() === cacheKey;
         if (!isInbound && !isOutbound) continue;
 
-        // Skip 0-ETH contract calls if we already captured an ERC-20 transfer for the same transaction hash
         const hasTokenTransferForHash = Array.from(seenEventKeys).some(k => k.startsWith(tx.hash.toLowerCase()));
         if (ethVal <= 0 && hasTokenTransferForHash) continue;
 
@@ -1916,30 +2184,66 @@
         });
       }
 
-      // Sort newest first to select up to MAX_SIDE_NODES (15) recent inbound and outbound transactions
+      if (Array.isArray(v2TxItems)) {
+        for (const item of v2TxItems) {
+          if (!item || !item.hash || item.status === 'error') continue;
+          const fromAddr = String(item.from?.hash || '').trim();
+          const toAddr = String(item.to?.hash || item.created_contract?.hash || '').trim();
+          if (!fromAddr || !toAddr) continue;
+
+          const isInbound = toAddr.toLowerCase() === cacheKey && fromAddr.toLowerCase() !== cacheKey;
+          const isOutbound = fromAddr.toLowerCase() === cacheKey;
+          if (!isInbound && !isOutbound) continue;
+
+          const eventKey = `${item.hash.toLowerCase()}_${isInbound ? 'in' : 'out'}_ETH`;
+          const alreadyHasHash = Array.from(seenEventKeys).some(k => k.startsWith(item.hash.toLowerCase()));
+          if (seenEventKeys.has(eventKey) || alreadyHasHash) continue;
+          seenEventKeys.add(eventKey);
+
+          const ethVal = weiToEthFloat(item.value);
+          const amountUsd = ethVal * liveEthUsdPrice;
+          const parsedMs = item.timestamp ? new Date(item.timestamp).getTime() : maxAllowedTxMs;
+          const tsMs = parsedMs > 0 ? Math.min(maxAllowedTxMs, parsedMs) : maxAllowedTxMs;
+
+          combinedEvents.push({
+            txHash: item.hash,
+            type: isInbound ? 'inbound' : 'outbound',
+            counterparty: isInbound ? fromAddr : toAddr,
+            amountUsd,
+            amountEth: ethVal,
+            timestampMs: tsMs,
+            dateStr: formatTimestampUTC(tsMs),
+            tokens: [{ ticker: 'ETH', amount: formatCompactTokenUnits(ethVal) }]
+          });
+        }
+      }
+
       combinedEvents.sort((a, b) => b.timestampMs - a.timestampMs);
 
       const rawInbound = combinedEvents.filter(e => e.type === 'inbound').slice(0, MAX_SIDE_NODES);
       const rawOutbound = combinedEvents.filter(e => e.type === 'outbound').slice(0, MAX_SIDE_NODES);
 
-      // Sort chronologically (oldest -> newest) for timeline placement
       rawInbound.sort((a, b) => a.timestampMs - b.timestampMs);
       rawOutbound.sort((a, b) => a.timestampMs - b.timestampMs);
 
+      const maxSideCount = Math.max(rawInbound.length, rawOutbound.length, 6);
+      const dynamicHalfSpanX = Math.max(1680, 820 + Math.max(0, maxSideCount - 6) * 105);
+      WORLD_TIMELINE_HALF_SPAN_X = dynamicHalfSpanX;
+
       const closest6InboundY = [-310, 195, -105, 315, 70, -215];
-      const outer9InboundY = [435, -430, 140, -370, 275, -155, 495, -490, -25];
+      const outerInboundYLanes = [-660, 560, -490, 420, -350, 275, -175, 130, -35, 680, -580, 495];
       const closest6OutboundY = [-250, 125, 295, -90, 215, -330];
-      const outer9OutboundY = [420, -425, 45, -205, 365, -485, 165, -365, 485];
+      const outerOutboundYLanes = [550, -640, 415, -485, 355, -210, 165, -380, 45, 670, -560, 485];
 
       const inboundNodes = rawInbound.map((ev, i) => {
         const totalIn = rawInbound.length;
-        const distRank = (totalIn - 1) - i; // 0 = closest to center (most recent inbound), higher = older
+        const distRank = (totalIn - 1) - i;
         const worldX = distRank < 6
-          ? -Math.round(285 + distRank * 86)
-          : -Math.round(815 + (distRank - 6) * 96);
+          ? -Math.round(285 + distRank * 88)
+          : -Math.round(825 + (distRank - 6) * 102);
         const worldY = distRank < 6
           ? closest6InboundY[distRank % closest6InboundY.length]
-          : outer9InboundY[(distRank - 6) % outer9InboundY.length];
+          : outerInboundYLanes[(distRank - 6) % outerInboundYLanes.length];
 
         return {
           id: `inbound-node-${i}`,
@@ -1959,18 +2263,18 @@
             linkContext?.previousWallet &&
             ev.counterparty.toLowerCase() === linkContext.previousWallet.address.toLowerCase()
           ),
-          timelineRatio: Math.max(0.02, Math.min(0.48, 0.5 + (worldX / (WORLD_TIMELINE_HALF_SPAN_X * 2))))
+          timelineRatio: Math.max(0.02, Math.min(0.48, 0.5 + (worldX / (dynamicHalfSpanX * 2))))
         };
       });
 
       const outboundNodes = rawOutbound.map((ev, i) => {
-        const distRank = i; // 0 = closest to center, higher = further right
+        const distRank = i;
         const worldX = distRank < 6
-          ? Math.round(285 + distRank * 86)
-          : Math.round(815 + (distRank - 6) * 96);
+          ? Math.round(285 + distRank * 88)
+          : Math.round(825 + (distRank - 6) * 102);
         const worldY = distRank < 6
           ? closest6OutboundY[distRank % closest6OutboundY.length]
-          : outer9OutboundY[(distRank - 6) % outer9OutboundY.length];
+          : outerOutboundYLanes[(distRank - 6) % outerOutboundYLanes.length];
 
         return {
           id: `outbound-node-${i}`,
@@ -1990,11 +2294,13 @@
             linkContext?.previousWallet &&
             ev.counterparty.toLowerCase() === linkContext.previousWallet.address.toLowerCase()
           ),
-          timelineRatio: Math.max(0.52, Math.min(0.98, 0.5 + (worldX / (WORLD_TIMELINE_HALF_SPAN_X * 2))))
+          timelineRatio: Math.max(0.52, Math.min(0.98, 0.5 + (worldX / (dynamicHalfSpanX * 2))))
         };
       });
 
-      // 7. Determine Center Wallet's Last Transaction Date/Time & Direction
+      const inboundDayClusters = buildDayClustersForSide(inboundNodes, 'inbound', dynamicHalfSpanX);
+      const outboundDayClusters = buildDayClustersForSide(outboundNodes, 'outbound', dynamicHalfSpanX);
+
       const mostRecentEvent = combinedEvents.length > 0 ? combinedEvents[0] : null;
       const centerTimestampMs = linkContext?.referenceTimestampMs
         ? Math.min(maxAllowedTxMs, linkContext.referenceTimestampMs)
@@ -2023,12 +2329,15 @@
         tokens: topWalletTokens,
         inboundNodes,
         outboundNodes,
+        inboundDayClusters,
+        outboundDayClusters,
+        worldHalfSpanX: dynamicHalfSpanX,
         minTimelineMs,
         maxTimelineMs
       };
 
       setNetworkStatusBadge(
-        VERCEL_BACKEND_URL ? 'VERCEL + ETH MAINNET // LIVE' : 'ETH MAINNET // LIVE',
+        VERCEL_BACKEND_URL ? 'VERCEL + ETH MAINNET // LIVE' : `ETH MAINNET // ${inboundNodes.length + outboundNodes.length} NODES`,
         true
       );
 
@@ -2056,7 +2365,7 @@
     const rightOverflowListEl = document.getElementById('right-overflow-list');
     const rightOverflowCountEl = document.getElementById('right-overflow-count');
 
-    const MIN_ZOOM_SCALE = 0.18; // Allows zooming out far enough to fit all 30+ nodes over the entire timeline
+    const MIN_ZOOM_SCALE = 0.18;
     const MAX_ZOOM_SCALE = 2.75;
 
     let camPanX = 0;
@@ -2076,54 +2385,76 @@
       }
       worldLayerEl.style.transform = `translate3d(${camPanX}px, ${camPanY}px, 0) scale(${camZoom})`;
       zoomReadoutEl.textContent = `${Math.round(camZoom * 100)}%`;
+
+      if (currentFocalWalletData && !isAnimatingNodeTransition) {
+        const nextGroupedState = shouldUseDayGrouping();
+        if (nextGroupedState !== isCurrentlyDayGrouped) {
+          isCurrentlyDayGrouped = nextGroupedState;
+          renderWalletGraphDOM(currentFocalWalletData, false);
+        }
+        updateLodBadgeUI();
+      }
+
       syncTimelineViewportAndMarkers();
       drawHoverLaserGuideline();
     }
 
-    // Primary Default View: Start significantly more zoomed in on the Center 16:10 Focal Wallet Node (~1.28x)
     function focusCenterNodeZoom(smooth = true) {
       const rect = viewportEl.getBoundingClientRect();
       if (!rect.width || !rect.height) {
-        camZoom = 1.28;
+        camZoom = 1.25;
       } else {
-        // Frame tightly around the 352x220 center node and its immediate inner orthogonal connectors
         const targetZoom = Math.min(rect.width / 820, rect.height / 500);
-        camZoom = Math.max(1.18, Math.min(1.36, targetZoom));
+        camZoom = Math.max(1.15, Math.min(1.34, targetZoom));
       }
       camPanX = 0;
       camPanY = 0;
       updateWorldTransform(smooth);
     }
 
-    // Secondary View: Frame the Center Wallet + Closest 6 Inbound & Closest 6 Outbound Transactions on Either Side
     function fitClosestSixToViewport(smooth = true) {
       const rect = viewportEl.getBoundingClientRect();
-      if (!rect.width || !rect.height) return;
-      const requiredWidth = CLOSEST_SIX_WORLD_HALF_SPAN_X * 2 + 120; // ~2400px world span for the closest 6 on each side
-      const requiredHeight = 820; // Covers [-350px, +350px] Y range + node height
-      const scaleX = (rect.width * 0.94) / requiredWidth;
-      const scaleY = (rect.height * 0.88) / requiredHeight;
-      camZoom = Math.max(0.32, Math.min(1.05, Math.min(scaleX, scaleY)));
+      if (!rect.width || !rect.height) {
+        camZoom = 0.72;
+      } else {
+        const requiredWidth = CLOSEST_SIX_WORLD_HALF_SPAN_X * 2 + 220;
+        const requiredHeight = 780;
+        const scaleX = (rect.width * 0.92) / requiredWidth;
+        const scaleY = (rect.height * 0.88) / requiredHeight;
+        camZoom = Math.max(0.60, Math.min(1.02, Math.min(scaleX, scaleY)));
+      }
       camPanX = 0;
       camPanY = 0;
       updateWorldTransform(smooth);
     }
 
-    // Full Timeline Zoom-Out: Fit All 30 Connected Inbound & Outbound Nodes Across the Entire Timeline to Screen
     function fitAllNodesToViewport(smooth = true) {
       const rect = viewportEl.getBoundingClientRect();
       if (!rect.width || !rect.height) return;
-      const requiredWidth = WORLD_TIMELINE_HALF_SPAN_X * 2 + 160; // ~5720px world span for all 30 nodes
-      const requiredHeight = 1220; // Covers [-540px, +540px] Y range
-      const scaleX = (rect.width * 0.94) / requiredWidth;
-      const scaleY = (rect.height * 0.88) / requiredHeight;
-      camZoom = Math.max(MIN_ZOOM_SCALE, Math.min(0.85, Math.min(scaleX, scaleY)));
+
+      const totalNodes = (currentFocalWalletData?.inboundNodes?.length || 0) +
+                         (currentFocalWalletData?.outboundNodes?.length || 0);
+
+      const activeIn = (totalNodes > 12 && lodGroupingMode !== 'individual')
+        ? (currentFocalWalletData?.inboundDayClusters || [])
+        : (currentFocalWalletData?.inboundNodes || []);
+      const activeOut = (totalNodes > 12 && lodGroupingMode !== 'individual')
+        ? (currentFocalWalletData?.outboundDayClusters || [])
+        : (currentFocalWalletData?.outboundNodes || []);
+
+      const allX = [...activeIn.map(n => Math.abs(n.worldX)), ...activeOut.map(n => Math.abs(n.worldX)), 600];
+      const maxAbsX = Math.max(...allX);
+      const requiredWidth = maxAbsX * 2 + 340;
+      const requiredHeight = 1360;
+      const scaleX = (rect.width * 0.92) / requiredWidth;
+      const scaleY = (rect.height * 0.86) / requiredHeight;
+      const targetCap = totalNodes > 12 ? 0.52 : 0.85;
+      camZoom = Math.max(MIN_ZOOM_SCALE, Math.min(targetCap, Math.min(scaleX, scaleY)));
       camPanX = 0;
       camPanY = 0;
       updateWorldTransform(smooth);
     }
 
-    // Mouse Wheel Zoom (Centered around cursor position, down to MIN_ZOOM_SCALE = 0.18)
     viewportEl.addEventListener('wheel', (e) => {
       e.preventDefault();
       if (isAnimatingNodeTransition) return;
@@ -2135,7 +2466,6 @@
       const zoomFactor = e.deltaY < 0 ? 1.12 : 0.89;
       const nextZoom = Math.max(MIN_ZOOM_SCALE, Math.min(MAX_ZOOM_SCALE, camZoom * zoomFactor));
 
-      // Keep world point under cursor stationary
       const worldXUnderCursor = (cursorOffsetX - camPanX) / camZoom;
       const worldYUnderCursor = (cursorOffsetY - camPanY) / camZoom;
 
@@ -2146,10 +2476,9 @@
       updateWorldTransform(false);
     }, { passive: false });
 
-    // Click & Drag Background to Pan
     viewportEl.addEventListener('pointerdown', (e) => {
       if (isAnimatingNodeTransition) return;
-      if (e.target.closest('.cyber-node') || e.target.closest('button')) return;
+      if (e.target.closest('.cyber-node') || e.target.closest('button') || e.target.closest('a')) return;
 
       isDraggingViewport = true;
       dragStartX = e.clientX;
@@ -2175,7 +2504,6 @@
       }
     });
 
-    // Interactive Scrubbing / Dragging of the Soft Yellow Timeline Viewport Box
     let isDraggingTimelineBox = false;
     let timelineDragStartX = 0;
     let timelineDragOriginPanX = 0;
@@ -2196,7 +2524,6 @@
 
       const deltaTrackPx = e.clientX - timelineDragStartX;
       const deltaWorldX = (deltaTrackPx / trackRect.width) * (WORLD_TIMELINE_HALF_SPAN_X * 2);
-      // Moving the timeline viewport box right shifts camera view right (which decreases camPanX)
       camPanX = timelineDragOriginPanX - deltaWorldX * camZoom;
       updateWorldTransform(false);
     });
@@ -2208,7 +2535,6 @@
       }
     });
 
-    // Clicking anywhere on the yellow timeline track centers the camera view at that point on the timeline
     timelineTrackEl.addEventListener('pointerdown', (e) => {
       if (e.target.closest('#timeline-viewport-box') || e.target.closest('[data-tick-for]')) return;
       if (isAnimatingNodeTransition) return;
@@ -2221,7 +2547,6 @@
       updateWorldTransform(true);
     });
 
-    // Zoom HUD Buttons
     document.getElementById('zoom-in-btn').addEventListener('click', () => {
       camZoom = Math.min(MAX_ZOOM_SCALE, camZoom * 1.22);
       updateWorldTransform(true);
@@ -2244,6 +2569,28 @@
       focusCenterNodeZoom(true);
     });
 
+    const lodModeToggleBtn = document.getElementById('lod-mode-toggle');
+    if (lodModeToggleBtn) {
+      lodModeToggleBtn.addEventListener('click', () => {
+        if (lodGroupingMode === 'auto') {
+          lodGroupingMode = 'day';
+          showToast('LOD VIEW: LOCKED TO DAY GROUPING');
+        } else if (lodGroupingMode === 'day') {
+          lodGroupingMode = 'individual';
+          showToast('LOD VIEW: LOCKED TO INDIVIDUAL NODES');
+        } else {
+          lodGroupingMode = 'auto';
+          showToast('LOD VIEW: AUTOMATIC BY ZOOM LEVEL');
+        }
+        isCurrentlyDayGrouped = shouldUseDayGrouping();
+        if (currentFocalWalletData) {
+          renderWalletGraphDOM(currentFocalWalletData, false);
+        }
+        updateLodBadgeUI();
+        syncTimelineViewportAndMarkers();
+      });
+    }
+
     window.addEventListener('resize', () => {
       renderStaticTokenBrickWall();
       syncTimelineViewportAndMarkers();
@@ -2251,739 +2598,824 @@
     });
 
     /***************************************************************************
-     * 7. RENDER STAGGERED NODES, TOKEN ACRONYMS, ETHERSCAN LINK & 90° CONNECTORS
+     * 7. BREADCRUMBS, LASER GUIDELINE, TIMELINE VIEWPORT SYNC & SIDE OVERFLOW PANELS
      ***************************************************************************/
-    function showToast(msg) {
-      const toast = document.getElementById('toast-notification');
-      toast.textContent = msg;
-      toast.style.opacity = '1';
-      clearTimeout(toast._timer);
-      toast._timer = setTimeout(() => {
-        toast.style.opacity = '0';
-      }, 2200);
-    }
-
-    function copyTextToClipboard(text, btnEl = null) {
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(text).catch(() => {});
-      }
-      const ta = document.createElement('textarea');
-      ta.value = text;
-      ta.style.position = 'fixed';
-      ta.style.opacity = '0';
-      document.body.appendChild(ta);
-      ta.select();
-      try {
-        document.execCommand('copy');
-      } catch (e) {}
-      document.body.removeChild(ta);
-
-      showToast(`COPIED HASH: ${formatShortHash(text)}`);
-      if (btnEl) {
-        const orig = btnEl.textContent;
-        btnEl.textContent = 'COPIED ✓';
-        btnEl.classList.add('bg-[#00ffaa]/30', 'text-[#00ffaa]', 'border-[#00ffaa]');
-        setTimeout(() => {
-          btnEl.textContent = orig;
-          btnEl.classList.remove('bg-[#00ffaa]/30', 'text-[#00ffaa]', 'border-[#00ffaa]');
-        }, 1600);
-      }
-    }
-
     function renderBreadcrumbs() {
+      if (!breadcrumbsEl) return;
       breadcrumbsEl.innerHTML = '';
+
       walletHistoryTrail.forEach((item, idx) => {
-        const isCurrent = idx === walletHistoryTrail.length - 1;
+        const isLast = idx === walletHistoryTrail.length - 1;
         const btn = document.createElement('button');
         btn.type = 'button';
-        btn.className = `px-2 py-0.5 transition cursor-pointer shrink-0 ${
-          isCurrent
-            ? 'bg-[#ff9900]/20 border border-[#ff9900] text-[#ff9900] font-bold'
-            : 'bg-zinc-950 hover:bg-zinc-900 text-zinc-400 border border-zinc-800'
-        }`;
+        btn.className = isLast
+          ? 'px-2 py-0.5 bg-[#ff9900]/20 text-[#ff9900] border border-[#ff9900]/70 font-mono-code text-[10px] font-bold shrink-0 cursor-default'
+          : 'px-2 py-0.5 bg-zinc-950 hover:bg-zinc-900 text-zinc-400 hover:text-white border border-zinc-800 font-mono-code text-[10px] shrink-0 cursor-pointer transition';
         btn.textContent = formatShortHash(item.address);
-        btn.title = `Jump to ${item.address}`;
-        if (!isCurrent) {
-          btn.addEventListener('click', () => {
+        btn.title = item.address;
+
+        if (!isLast) {
+          btn.addEventListener('click', async () => {
             if (isAnimatingNodeTransition) return;
             walletHistoryTrail = walletHistoryTrail.slice(0, idx + 1);
             renderBreadcrumbs();
-            getOrCreateWalletGraph(item.address).then(data => {
-              renderWalletGraphDOM(data, true);
-              focusCenterNodeZoom(true);
-            });
+            const graphData = await getOrCreateWalletGraph(item.address);
+            renderWalletGraphDOM(graphData, true);
+            fitClosestSixToViewport(true);
           });
         }
+
         breadcrumbsEl.appendChild(btn);
 
-        if (!isCurrent) {
+        if (!isLast) {
           const sep = document.createElement('span');
-          sep.className = 'text-zinc-600 select-none';
-          sep.textContent = '>>';
+          sep.className = 'text-zinc-600 font-mono-code text-[10px] select-none';
+          sep.textContent = '>';
           breadcrumbsEl.appendChild(sep);
         }
       });
     }
 
-    function renderTokenAcronymBadges(tokens, accentColorHex) {
-      return `
-        <div class="mt-1 pt-1 border-t border-white/10">
-          <div class="font-display text-[7px] uppercase tracking-widest text-zinc-400 mb-0.5">
-            WALLET TOKENS / COINS:
-          </div>
-          <div class="flex flex-wrap gap-1">
-            ${tokens.map(t => `
-              <span class="px-1 py-0.2 bg-black/90 border border-[${accentColorHex}]/45 font-mono-code text-[8px] text-zinc-200 leading-tight">
-                <strong class="text-[${accentColorHex}]">${t.ticker}</strong> ${t.amount}
-              </span>
-            `).join('')}
-          </div>
-        </div>
-      `;
-    }
+    function setNodeAndTimelineHighlight(nodeId, isHighlighted) {
+      activeHoverNodeId = isHighlighted ? nodeId : null;
 
-    function renderWalletGraphDOM(graphData, fadeInNewConnections = false) {
-      currentFocalWalletData = graphData;
-      nodesContainerEl.innerHTML = '';
-
-      const totalConnectedCount = (graphData.inboundNodes?.length || 0) + (graphData.outboundNodes?.length || 0);
-      const fitBtnEl = document.getElementById('zoom-fit-btn');
-      if (fitBtnEl) {
-        fitBtnEl.textContent = `FIT ALL (${totalConnectedCount})`;
+      const nodeEl = document.getElementById(nodeId);
+      if (nodeEl) {
+        if (isHighlighted) nodeEl.classList.add('timeline-highlighted');
+        else nodeEl.classList.remove('timeline-highlighted');
       }
 
-      // 1. Render Real Timeline-Staggered Inbound Nodes (World Coordinates)
-      graphData.inboundNodes.forEach((node) => {
-        const card = document.createElement('div');
-        card.id = node.id;
-        card.dataset.nodeId = node.id;
-        card.className = `cyber-node node-inbound px-2.5 py-2 flex flex-col justify-center ${fadeInNewConnections ? 'opacity-0' : ''}`;
-        card.style.left = `${node.worldX}px`;
-        card.style.top = `${node.worldY}px`;
-
-        const fiatAmountStr = formatUsdInSelectedCurrency(
-          node.amountUsd !== undefined ? node.amountUsd : (node.amountEth * liveEthUsdPrice)
-        );
-
-        card.innerHTML = `
-          <div class="flex items-center justify-between gap-1 leading-none">
-            <span class="font-display text-[8px] uppercase tracking-wider text-[#ff3377]">
-              wallet address,
-            </span>
-            <span class="font-mono-code text-[8px] text-[#ff0055]">${node.isLinkedPrevious ? '[PREV]' : '[IN]'}</span>
-          </div>
-          <div class="font-mono-code text-[11px] font-bold text-white truncate mt-0.5" title="${node.address}">
-            ${formatShortHash(node.address)}
-          </div>
-          <div class="text-[9px] font-semibold text-[#ff6699] leading-tight mt-0.5">
-            amount sent: <span class="font-mono-code text-white font-bold">${fiatAmountStr}</span>
-          </div>
-          <div class="text-[8px] font-mono-code text-[#ff3377]/85 leading-tight mt-0.5">
-            date/time tx: ${node.dateStr}
-          </div>
-          ${renderTokenAcronymBadges(node.tokens, '#ff3377')}
-        `;
-
-        card.addEventListener('mouseenter', () => setHoverNode(node.id));
-        card.addEventListener('mouseleave', () => setHoverNode(null));
-        card.addEventListener('click', (e) => {
-          e.stopPropagation();
-          if (isAnimatingNodeTransition) return;
-          selectAndSlideNodeToCenter(node, 'inbound');
-        });
-
-        nodesContainerEl.appendChild(card);
-      });
-
-      // 2. Render 1.5x Larger 16:10 Center Focal Node at World Origin (0, 0) with Direct Etherscan Link & Copy Hash Button
-      const centerCard = document.createElement('div');
-      centerCard.id = 'center-focal-node';
-      centerCard.dataset.nodeId = 'center-focal-node';
-      centerCard.className = 'cyber-node node-center px-4 py-2.5 flex flex-col justify-between';
-      centerCard.style.left = '0px';
-      centerCard.style.top = '0px';
-
-      const centerFiatStr = formatUsdInSelectedCurrency(
-        graphData.totalPortfolioUsd !== undefined
-          ? graphData.totalPortfolioUsd
-          : (parseFloat(graphData.balanceEth || 0) * liveEthUsdPrice)
-      );
-      const etherscanUrl = `https://etherscan.io/address/${encodeURIComponent(graphData.address)}`;
-      const isLastTxInbound = graphData.lastTxDirection === 'inbound';
-      const isLastTxNone = graphData.lastTxDirection === 'none';
-      const lastTxDirColor = isLastTxNone
-        ? 'text-zinc-500'
-        : (isLastTxInbound ? 'text-[#ff0055]' : 'text-[#00ffaa]');
-      const lastTxDirDot = isLastTxNone
-        ? 'bg-zinc-600'
-        : (isLastTxInbound ? 'bg-[#ff0055] shadow-[0_0_6px_#ff0055]' : 'bg-[#00ffaa] shadow-[0_0_6px_#00ffaa]');
-      const lastTxDirLabel = isLastTxNone ? 'none (0 tx)' : graphData.lastTxDirection;
-
-      centerCard.innerHTML = `
-        <div class="flex items-center justify-between border-b border-[#ff9900]/40 pb-1.5 gap-2">
-          <span class="font-display text-[10px] uppercase tracking-widest text-[#ff9900] font-extrabold">
-            FOCAL WALLET // 16:10
-          </span>
-          <div class="flex items-center gap-1.5">
-            <button
-              id="copy-focal-hash-btn"
-              type="button"
-              class="px-2 py-0.5 bg-[#ff9900]/15 hover:bg-[#ff9900]/35 border border-[#ff9900]/80 text-[#ffbb33] font-mono-code text-[9px] uppercase transition cursor-pointer"
-              title="Copy full hash address"
-            >
-              COPY HASH
-            </button>
-            <a
-              href="${etherscanUrl}"
-              target="_blank"
-              rel="noopener noreferrer"
-              id="etherscan-direct-link"
-              class="px-2 py-0.5 bg-cyan-950/70 hover:bg-cyan-900/90 border border-cyan-400/80 text-cyan-300 font-mono-code text-[9px] uppercase transition cursor-pointer inline-flex items-center gap-1"
-              title="View Wallet on Etherscan"
-            >
-              <span>ETHERSCAN</span>
-              <span>↗</span>
-            </a>
-          </div>
-        </div>
-
-        <div class="leading-tight my-0.5">
-          <div class="font-display text-[9px] uppercase tracking-wider text-[#ff9900]">
-            selected hash address
-          </div>
-          <div class="font-mono-code text-xs font-bold text-white truncate mt-0.5 select-text" title="${graphData.address}">
-            ${graphData.address}
-          </div>
-        </div>
-
-        <div class="grid grid-cols-2 gap-2 items-start border-t border-[#ff9900]/20 pt-1.5">
-          <div class="leading-tight">
-            <div class="font-display text-[9px] uppercase tracking-wider text-[#ff9900]">
-              amount (${selectedCurrency})
-            </div>
-            <div class="font-mono-code text-base font-extrabold text-[#ffbb33] truncate mt-0.5" title="${centerFiatStr}">
-              ${centerFiatStr}
-            </div>
-          </div>
-
-          <div class="leading-tight text-right flex flex-col items-end">
-            <div class="font-display text-[9px] uppercase tracking-wider text-[#ff9900]">
-              last transaction date/time
-            </div>
-            <div class="font-mono-code text-[11px] text-white mt-0.5">
-              ${graphData.lastTxTimestampMs > 0 ? `${graphData.lastTxDateStr} UTC` : 'NO TX RECORDED'}
-            </div>
-            <div class="inline-flex items-center gap-1 font-display text-[9px] font-bold uppercase tracking-widest ${lastTxDirColor} mt-0.5">
-              <span class="w-1.5 h-1.5 inline-block ${lastTxDirDot}"></span>
-              <span>${lastTxDirLabel}</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="pt-1 border-t border-white/10">
-          <div class="font-display text-[8px] uppercase tracking-widest text-zinc-400 mb-1">
-            WALLET TOKENS / COINS:
-          </div>
-          <div class="flex flex-wrap gap-1">
-            ${graphData.tokens.map(t => `
-              <span class="px-1.5 py-0.5 bg-black/90 border border-[#ff9900]/55 font-mono-code text-[9px] text-zinc-100 leading-tight">
-                <strong class="text-[#ff9900]">${t.ticker}</strong> ${t.amount}
-              </span>
-            `).join('')}
-          </div>
-        </div>
-      `;
-
-      const copyBtn = centerCard.querySelector('#copy-focal-hash-btn');
-      copyBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        copyTextToClipboard(graphData.address, copyBtn);
-      });
-
-      const esLink = centerCard.querySelector('#etherscan-direct-link');
-      esLink.addEventListener('click', (e) => {
-        e.stopPropagation();
-      });
-
-      centerCard.addEventListener('mouseenter', () => setHoverNode('center-focal-node'));
-      centerCard.addEventListener('mouseleave', () => setHoverNode(null));
-
-      nodesContainerEl.appendChild(centerCard);
-
-      // 3. Render Real Timeline-Staggered Outbound Nodes (World Coordinates)
-      graphData.outboundNodes.forEach((node) => {
-        const card = document.createElement('div');
-        card.id = node.id;
-        card.dataset.nodeId = node.id;
-        card.className = `cyber-node node-outbound px-2.5 py-2 flex flex-col justify-center ${fadeInNewConnections ? 'opacity-0' : ''}`;
-        card.style.left = `${node.worldX}px`;
-        card.style.top = `${node.worldY}px`;
-
-        const fiatAmountStr = formatUsdInSelectedCurrency(
-          node.amountUsd !== undefined ? node.amountUsd : (node.amountEth * liveEthUsdPrice)
-        );
-
-        card.innerHTML = `
-          <div class="flex items-center justify-between gap-1 leading-none">
-            <span class="font-display text-[8px] uppercase tracking-wider text-[#00ffaa]">
-              wallet address
-            </span>
-            <span class="font-mono-code text-[8px] text-[#00ffaa]">${node.isLinkedPrevious ? '[PREV]' : '[OUT]'}</span>
-          </div>
-          <div class="font-mono-code text-[11px] font-bold text-white truncate mt-0.5" title="${node.address}">
-            ${formatShortHash(node.address)}
-          </div>
-          <div class="text-[9px] font-semibold text-[#55ffcc] leading-tight mt-0.5">
-            amount received: <span class="font-mono-code text-white font-bold">${fiatAmountStr}</span>
-          </div>
-          <div class="text-[8px] font-mono-code text-[#00ffaa]/85 leading-tight mt-0.5">
-            date/time tx: ${node.dateStr}
-          </div>
-          ${renderTokenAcronymBadges(node.tokens, '#00ffaa')}
-        `;
-
-        card.addEventListener('mouseenter', () => setHoverNode(node.id));
-        card.addEventListener('mouseleave', () => setHoverNode(null));
-        card.addEventListener('click', (e) => {
-          e.stopPropagation();
-          if (isAnimatingNodeTransition) return;
-          selectAndSlideNodeToCenter(node, 'outbound');
-        });
-
-        nodesContainerEl.appendChild(card);
-      });
-
-      // 4. Update Timeline Date Readouts & Interactive Markers
-      document.getElementById('timeline-min-date').textContent = graphData.minTimelineMs > 0
-        ? `${formatTimestampUTC(graphData.minTimelineMs)} UTC`
-        : 'NO PRIOR TX';
-      document.getElementById('timeline-center-date').textContent = graphData.lastTxTimestampMs > 0
-        ? `FOCAL LAST TX: ${graphData.lastTxDateStr} UTC`
-        : 'FOCAL LAST TX: NONE (0 TX)';
-      document.getElementById('timeline-max-date').textContent = graphData.maxTimelineMs > 0
-        ? `${formatTimestampUTC(graphData.maxTimelineMs)} UTC`
-        : 'NO SUBSEQUENT TX';
-
-      renderTimelineMarkers(graphData);
-      drawWorldOrthogonalConnectors(fadeInNewConnections);
-
-      if (fadeInNewConnections) {
-        requestAnimationFrame(() => {
-          nodesContainerEl.querySelectorAll('.cyber-node').forEach(el => {
-            el.classList.remove('opacity-0');
-          });
-          svgCurvesGroup.querySelectorAll('.fade-in-target').forEach(el => {
-            el.style.opacity = '1';
-          });
-        });
-      }
-    }
-
-    // Draw Solid 90-Degree Orthogonal Connector Lines in World Coordinates
-    function drawWorldOrthogonalConnectors(startHidden = false) {
-      if (!currentFocalWalletData) return;
-      svgCurvesGroup.innerHTML = '';
-
-      const centerHalfW = 176; // Half of 352px (1.5x 16:10) center node width
-      const centerHalfH = 98;  // Vertical anchor range on the 220px tall 16:10 center node
-      const sideNodeHalfW = 88; // Half of 176px inbound/outbound node width
-
-      const inCount = currentFocalWalletData.inboundNodes.length;
-      // 1. Orthogonal 90-Degree Inbound Connectors
-      currentFocalWalletData.inboundNodes.forEach((node, idx) => {
-        const startX = Math.round(node.worldX + sideNodeHalfW);
-        const startY = Math.round(node.worldY);
-        const endX = -centerHalfW;
-        // Distribute anchor points evenly along the left edge of the 16:10 center node sorted by node Y
-        const normIdx = inCount > 1 ? (idx / (inCount - 1)) * 2 - 1 : 0; // [-1, +1]
-        const endY = Math.round(normIdx * centerHalfH);
-
-        // Distinct 90-degree vertical channel X between the node and the center wallet so vertical segments never collide
-        const elbowX = Math.round(-194 - ((inCount - 1 - idx) * 7.5));
-
-        const pathData = `M ${startX} ${startY} L ${elbowX} ${startY} L ${elbowX} ${endY} L ${endX} ${endY}`;
-        const isHovered = activeHoverNodeId === node.id;
-
-        const pathEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        pathEl.setAttribute('d', pathData);
-        pathEl.setAttribute('data-connector-for', node.id);
-        pathEl.setAttribute('class', `connector-path-inbound fade-in-target ${isHovered ? 'connector-active-inbound' : ''}`);
-        if (startHidden) pathEl.style.opacity = '0';
-        svgCurvesGroup.appendChild(pathEl);
-
-        if (isHovered) {
-          const animPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-          animPath.setAttribute('d', pathData);
-          animPath.setAttribute('fill', 'none');
-          animPath.setAttribute('stroke', '#fcee0a');
-          animPath.setAttribute('stroke-width', '2.8');
-          animPath.setAttribute('class', 'flow-Overlay-anim');
-          svgCurvesGroup.appendChild(animPath);
-        }
-
-        // Directional Arrowhead (>) on the horizontal segment
-        const arrowX = Math.round((startX + elbowX) / 2);
-        const arrowY = startY;
-        const chevron = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        chevron.setAttribute('d', 'M -6 -5 L 3 0 L -6 5');
-        chevron.setAttribute('transform', `translate(${arrowX}, ${arrowY})`);
-        chevron.setAttribute('class', `connector-chevron-inbound fade-in-target ${isHovered ? 'connector-active-inbound' : ''}`);
-        if (startHidden) chevron.style.opacity = '0';
-        svgCurvesGroup.appendChild(chevron);
-      });
-
-      const outCount = currentFocalWalletData.outboundNodes.length;
-      // 2. Orthogonal 90-Degree Outbound Connectors
-      currentFocalWalletData.outboundNodes.forEach((node, idx) => {
-        const startX = centerHalfW;
-        const normIdx = outCount > 1 ? (idx / (outCount - 1)) * 2 - 1 : 0; // [-1, +1]
-        const startY = Math.round(normIdx * centerHalfH);
-        const endX = Math.round(node.worldX - sideNodeHalfW);
-        const endY = Math.round(node.worldY);
-
-        const elbowX = Math.round(194 + idx * 7.5);
-
-        const pathData = `M ${startX} ${startY} L ${elbowX} ${startY} L ${elbowX} ${endY} L ${endX} ${endY}`;
-        const isHovered = activeHoverNodeId === node.id;
-
-        const pathEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        pathEl.setAttribute('d', pathData);
-        pathEl.setAttribute('data-connector-for', node.id);
-        pathEl.setAttribute('class', `connector-path-outbound fade-in-target ${isHovered ? 'connector-active-outbound' : ''}`);
-        if (startHidden) pathEl.style.opacity = '0';
-        svgCurvesGroup.appendChild(pathEl);
-
-        if (isHovered) {
-          const animPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-          animPath.setAttribute('d', pathData);
-          animPath.setAttribute('fill', 'none');
-          animPath.setAttribute('stroke', '#ffffff');
-          animPath.setAttribute('stroke-width', '2.8');
-          animPath.setAttribute('class', 'flow-Overlay-anim');
-          svgCurvesGroup.appendChild(animPath);
-        }
-
-        const arrowX = Math.round((elbowX + endX) / 2);
-        const arrowY = endY;
-        const chevron = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        chevron.setAttribute('d', 'M -6 -5 L 3 0 L -6 5');
-        chevron.setAttribute('transform', `translate(${arrowX}, ${arrowY})`);
-        chevron.setAttribute('class', `connector-chevron-outbound fade-in-target ${isHovered ? 'connector-active-outbound' : ''}`);
-        if (startHidden) chevron.style.opacity = '0';
-        svgCurvesGroup.appendChild(chevron);
-      });
-    }
-
-    /***************************************************************************
-     * 8. INTERACTIVE BOTTOM TIMELINE MARKERS & SOFT YELLOW VIEWPORT BOX
-     ***************************************************************************/
-    function renderTimelineMarkers(graphData) {
-      timelineTicksLayer.innerHTML = '';
-
-      const allNodes = [
-        ...graphData.inboundNodes,
-        {
-          id: 'center-focal-node',
-          type: 'center',
-          address: graphData.address,
-          amountUsd: graphData.totalPortfolioUsd,
-          amountEth: graphData.balanceEth,
-          dateStr: graphData.lastTxDateStr,
-          worldX: 0,
-          worldY: 0,
-          timelineRatio: 0.5
-        },
-        ...graphData.outboundNodes
-      ];
-
-      allNodes.forEach((node) => {
-        const tick = document.createElement('div');
-        tick.dataset.tickFor = node.id;
-        tick.dataset.worldX = node.worldX;
-        tick.dataset.timelineRatio = node.timelineRatio;
-        tick.className = 'absolute top-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center cursor-pointer group z-20 pointer-events-auto';
-        // Position each marker permanently at its chronological position along the full timeline track
-        tick.style.left = `${(node.timelineRatio * 100).toFixed(2)}%`;
-
-        let colorClass = 'bg-[#ff9900] shadow-[0_0_10px_rgba(255,153,0,0.95)] w-3.5 h-6';
-        let borderAccent = 'border-[#ff9900] text-[#ff9900]';
-        let roleTag = 'FOCAL WALLET';
-        if (node.type === 'inbound') {
-          colorClass = 'bg-[#ff0055] shadow-[0_0_8px_rgba(255,0,85,0.95)] w-2 h-4';
-          borderAccent = 'border-[#ff0055] text-[#ff3377]';
-          roleTag = 'INBOUND // CLICK TO CENTER';
-        } else if (node.type === 'outbound') {
-          colorClass = 'bg-[#00ffaa] shadow-[0_0_8px_rgba(0,255,170,0.95)] w-2 h-4';
-          borderAccent = 'border-[#00ffaa] text-[#00ffaa]';
-          roleTag = 'OUTBOUND // CLICK TO CENTER';
-        }
-
-        const fiatStr = formatUsdInSelectedCurrency(
-          node.amountUsd !== undefined ? node.amountUsd : (parseFloat(node.amountEth || 0) * liveEthUsdPrice)
-        );
-
-        tick.innerHTML = `
-          <!-- Floating Cyber Tooltip on Timeline Marker Hover -->
-          <div class="timeline-tooltip hidden group-hover:flex flex-col items-center absolute bottom-7 px-2.5 py-1.5 bg-black/95 border ${borderAccent} shadow-2xl whitespace-nowrap pointer-events-none z-50">
-            <span class="font-display text-[8px] uppercase tracking-wider font-bold">${roleTag}</span>
-            <span class="font-mono-code text-[10px] text-white font-bold">${formatShortHash(node.address)} • ${fiatStr}</span>
-            <span class="font-mono-code text-[8px] text-zinc-400">${node.dateStr} UTC</span>
-          </div>
-          <!-- Marker Block -->
-          <div class="tick-pill ${colorClass} border border-black transition-transform duration-150"></div>
-        `;
-
-        tick.addEventListener('mouseenter', () => setHoverNode(node.id));
-        tick.addEventListener('mouseleave', () => setHoverNode(null));
-
-        tick.addEventListener('click', (e) => {
-          e.stopPropagation();
-          if (isAnimatingNodeTransition) return;
-          if (node.type === 'center') {
-            focusCenterNodeZoom(true);
-          } else {
-            selectAndSlideNodeToCenter(node, node.type);
-          }
-        });
-
-        timelineTicksLayer.appendChild(tick);
-      });
-
-      syncTimelineViewportAndMarkers();
-    }
-
-    // Update the soft yellow see-through square/box on the Timeline bar so it represents the exact horizontal world window visible on screen
-    function syncTimelineViewportAndMarkers() {
-      if (!currentFocalWalletData) return;
-      const viewRect = viewportEl.getBoundingClientRect();
-      if (!viewRect.width) return;
-
-      // Calculate left and right edges of the user's current screen in World X coordinates
-      // Since screenX = viewWidth/2 + camPanX + worldX * camZoom:
-      // Left edge (screenX = 0)  => worldLeft  = (-viewWidth/2 - camPanX) / camZoom
-      // Right edge (screenX = W) => worldRight = (+viewWidth/2 - camPanX) / camZoom
-      const worldLeft = (-viewRect.width / 2 - camPanX) / camZoom;
-      const worldRight = (viewRect.width / 2 - camPanX) / camZoom;
-
-      const totalWorldSpan = WORLD_TIMELINE_HALF_SPAN_X * 2;
-      const rawLeftPct = (0.5 + (worldLeft / totalWorldSpan)) * 100;
-      const rawRightPct = (0.5 + (worldRight / totalWorldSpan)) * 100;
-
-      const clampedLeftPct = Math.max(0, Math.min(98, rawLeftPct));
-      const clampedRightPct = Math.max(clampedLeftPct + 2, Math.min(100, rawRightPct));
-      const widthPct = clampedRightPct - clampedLeftPct;
-
-      timelineViewportBoxEl.style.left = `${clampedLeftPct.toFixed(2)}%`;
-      timelineViewportBoxEl.style.width = `${widthPct.toFixed(2)}%`;
-
-      // Highlight markers that are currently inside the user's visible viewport window
-      timelineTicksLayer.querySelectorAll('[data-tick-for]').forEach(tick => {
-        const ratioPct = parseFloat(tick.dataset.timelineRatio || '0.5') * 100;
-        const isInsideScreen = ratioPct >= clampedLeftPct && ratioPct <= clampedRightPct;
-        tick.style.opacity = isInsideScreen ? '1' : '0.42';
-      });
-
-      updateSideOverflowLists(viewRect);
-    }
-
-    // Dynamically detect connected Inbound & Outbound transactions outside the current screen Field of View (FOV)
-    // and list their address, amount in selected currency, and date/time on the left/right sides of the webpage
-    function updateSideOverflowLists(viewRect) {
-      if (!currentFocalWalletData || !viewRect || !viewRect.width || !viewRect.height) return;
-
-      const halfW = viewRect.width / 2;
-      const halfH = viewRect.height / 2;
-      const nodeHalfWidthScreen = 80 * camZoom;
-      const nodeHalfHeightScreen = 55 * camZoom;
-
-      function isNodeOutsideFOV(node) {
-        const screenOffsetX = camPanX + node.worldX * camZoom;
-        const screenOffsetY = camPanY + node.worldY * camZoom;
-        return (
-          (screenOffsetX - nodeHalfWidthScreen) < -halfW ||
-          (screenOffsetX + nodeHalfWidthScreen) > halfW ||
-          (screenOffsetY - nodeHalfHeightScreen) < -halfH ||
-          (screenOffsetY + nodeHalfHeightScreen) > halfH
-        );
-      }
-
-      // 1. Left Side Panel: Out-of-FOV Inbound Transactions (#ff0055)
-      const offscreenInbound = currentFocalWalletData.inboundNodes.filter(isNodeOutsideFOV);
-      leftOverflowCountEl.textContent = String(offscreenInbound.length);
-
-      if (offscreenInbound.length === 0) {
-        leftOverflowPanelEl.classList.add('panel-hidden');
-        leftOverflowListEl.innerHTML = '';
-      } else {
-        leftOverflowPanelEl.classList.remove('panel-hidden');
-        leftOverflowListEl.innerHTML = offscreenInbound.map(node => {
-          const fiatStr = formatUsdInSelectedCurrency(
-            node.amountUsd !== undefined ? node.amountUsd : (node.amountEth * liveEthUsdPrice)
-          );
-          const isHovered = activeHoverNodeId === node.id;
-          return `
-            <div
-              data-overflow-node-id="${node.id}"
-              class="overflow-item-inbound px-2.5 py-1.5 flex flex-col gap-0.5 ${isHovered ? 'active-fov-hover' : ''}"
-              title="Click to track & center ${node.address}"
-            >
-              <div class="flex items-center justify-between gap-1">
-                <span class="font-mono-code text-[11px] font-bold text-white truncate">${formatShortHash(node.address)}</span>
-                <span class="font-display text-[7px] uppercase tracking-widest text-[#ff0055] shrink-0">[IN]</span>
-              </div>
-              <div class="font-mono-code text-[10px] font-bold text-[#ff3377] truncate">
-                ${fiatStr}
-              </div>
-              <div class="font-mono-code text-[8px] text-[#ff6699]/90 truncate">
-                ${node.dateStr} UTC
-              </div>
-            </div>
-          `;
-        }).join('');
-
-        leftOverflowListEl.querySelectorAll('[data-overflow-node-id]').forEach(itemEl => {
-          const nodeId = itemEl.dataset.overflowNodeId;
-          const nodeObj = currentFocalWalletData.inboundNodes.find(n => n.id === nodeId);
-          if (!nodeObj) return;
-          itemEl.addEventListener('mouseenter', () => setHoverNode(nodeId));
-          itemEl.addEventListener('mouseleave', () => setHoverNode(null));
-          itemEl.addEventListener('click', (e) => {
-            e.stopPropagation();
-            if (isAnimatingNodeTransition) return;
-            selectAndSlideNodeToCenter(nodeObj, 'inbound');
-          });
-        });
-      }
-
-      // 2. Right Side Panel: Out-of-FOV Outbound Transactions (#00ffaa)
-      const offscreenOutbound = currentFocalWalletData.outboundNodes.filter(isNodeOutsideFOV);
-      rightOverflowCountEl.textContent = String(offscreenOutbound.length);
-
-      if (offscreenOutbound.length === 0) {
-        rightOverflowPanelEl.classList.add('panel-hidden');
-        rightOverflowListEl.innerHTML = '';
-      } else {
-        rightOverflowPanelEl.classList.remove('panel-hidden');
-        rightOverflowListEl.innerHTML = offscreenOutbound.map(node => {
-          const fiatStr = formatUsdInSelectedCurrency(
-            node.amountUsd !== undefined ? node.amountUsd : (node.amountEth * liveEthUsdPrice)
-          );
-          const isHovered = activeHoverNodeId === node.id;
-          return `
-            <div
-              data-overflow-node-id="${node.id}"
-              class="overflow-item-outbound px-2.5 py-1.5 flex flex-col gap-0.5 text-right ${isHovered ? 'active-fov-hover' : ''}"
-              title="Click to track & center ${node.address}"
-            >
-              <div class="flex items-center justify-between gap-1">
-                <span class="font-display text-[7px] uppercase tracking-widest text-[#00ffaa] shrink-0">[OUT]</span>
-                <span class="font-mono-code text-[11px] font-bold text-white truncate">${formatShortHash(node.address)}</span>
-              </div>
-              <div class="font-mono-code text-[10px] font-bold text-[#00ffaa] truncate">
-                ${fiatStr}
-              </div>
-              <div class="font-mono-code text-[8px] text-[#55ffcc]/90 truncate">
-                ${node.dateStr} UTC
-              </div>
-            </div>
-          `;
-        }).join('');
-
-        rightOverflowListEl.querySelectorAll('[data-overflow-node-id]').forEach(itemEl => {
-          const nodeId = itemEl.dataset.overflowNodeId;
-          const nodeObj = currentFocalWalletData.outboundNodes.find(n => n.id === nodeId);
-          if (!nodeObj) return;
-          itemEl.addEventListener('mouseenter', () => setHoverNode(nodeId));
-          itemEl.addEventListener('mouseleave', () => setHoverNode(null));
-          itemEl.addEventListener('click', (e) => {
-            e.stopPropagation();
-            if (isAnimatingNodeTransition) return;
-            selectAndSlideNodeToCenter(nodeObj, 'outbound');
-          });
-        });
-      }
-    }
-
-    function setHoverNode(nodeId) {
-      activeHoverNodeId = nodeId;
-
-      // 1. Highlight matching node on the page
-      nodesContainerEl.querySelectorAll('.cyber-node').forEach(nodeEl => {
-        if (nodeEl.dataset.nodeId === nodeId) {
-          nodeEl.classList.add('timeline-highlighted');
+      const pathEl = svgCurvesGroup.querySelector(`path[data-connector-for="${nodeId}"]`);
+      const chevEl = svgCurvesGroup.querySelector(`path[data-chevron-for="${nodeId}"]`);
+      if (pathEl) {
+        const isInbound = nodeId.startsWith('inbound');
+        const activeClass = isInbound ? 'connector-active-inbound' : 'connector-active-outbound';
+        if (isHighlighted) {
+          pathEl.classList.add(activeClass, 'flow-Overlay-anim');
+          if (chevEl) chevEl.classList.add(activeClass);
         } else {
-          nodeEl.classList.remove('timeline-highlighted');
+          pathEl.classList.remove(activeClass, 'flow-Overlay-anim');
+          if (chevEl) chevEl.classList.remove(activeClass);
         }
-      });
+      }
 
-      // 1b. Highlight matching item in the side overflow lists if present
-      document.querySelectorAll('[data-overflow-node-id]').forEach(itemEl => {
-        if (itemEl.dataset.overflowNodeId === nodeId) {
-          itemEl.classList.add('active-fov-hover');
+      const tickEl = timelineTicksLayer.querySelector(`[data-tick-for="${nodeId}"]`);
+      if (tickEl) {
+        if (isHighlighted) {
+          tickEl.style.transform = 'translate(-50%, -50%) scale(1.65)';
+          tickEl.style.zIndex = '50';
+          tickEl.style.boxShadow = '0 0 12px #fcee0a';
         } else {
-          itemEl.classList.remove('active-fov-hover');
+          tickEl.style.transform = 'translate(-50%, -50%) scale(1)';
+          tickEl.style.zIndex = '20';
+          tickEl.style.boxShadow = '';
         }
-      });
+      }
 
-      // 2. Highlight matching marker on the timeline
-      timelineTicksLayer.querySelectorAll('[data-tick-for]').forEach(tickEl => {
-        const pill = tickEl.querySelector('.tick-pill');
-        const tooltip = tickEl.querySelector('.timeline-tooltip');
-        if (!pill) return;
-        if (tickEl.dataset.tickFor === nodeId) {
-          pill.classList.add('scale-150', 'ring-2', 'ring-[#fcee0a]');
-          if (tooltip) tooltip.classList.remove('hidden');
-          if (tooltip) tooltip.classList.add('flex');
-        } else {
-          pill.classList.remove('scale-150', 'ring-2', 'ring-[#fcee0a]');
-          if (tooltip) tooltip.classList.add('hidden');
-          if (tooltip) tooltip.classList.remove('flex');
-        }
-      });
-
-      drawWorldOrthogonalConnectors(false);
       drawHoverLaserGuideline();
     }
 
-    // Draw orthogonal screen-space laser line linking hovered node and its bottom timeline marker
     function drawHoverLaserGuideline() {
+      if (!svgHoverGuideline) return;
       svgHoverGuideline.innerHTML = '';
       if (!activeHoverNodeId || isAnimatingNodeTransition) return;
 
       const nodeEl = document.getElementById(activeHoverNodeId);
       const tickEl = timelineTicksLayer.querySelector(`[data-tick-for="${activeHoverNodeId}"]`);
-      const viewRect = viewportEl.getBoundingClientRect();
-      if (!nodeEl || !tickEl || !viewRect.width) return;
+      if (!nodeEl || !tickEl) return;
 
-      const nRect = nodeEl.getBoundingClientRect();
-      const tRect = tickEl.getBoundingClientRect();
+      const vpRect = viewportEl.getBoundingClientRect();
+      const nodeRect = nodeEl.getBoundingClientRect();
+      const tickRect = tickEl.getBoundingClientRect();
 
-      const x1 = Math.round(nRect.left - viewRect.left + nRect.width / 2);
-      const y1 = Math.round(nRect.bottom - viewRect.top);
-      const x2 = Math.round(tRect.left - viewRect.left + tRect.width / 2);
-      const y2 = Math.round(viewRect.height);
+      const startX = (nodeRect.left + nodeRect.width / 2) - vpRect.left;
+      const startY = nodeRect.bottom - vpRect.top;
+      const endX = (tickRect.left + tickRect.width / 2) - vpRect.left;
+      const endY = vpRect.height;
 
-      let strokeColor = '#ff9900';
-      if (activeHoverNodeId.startsWith('inbound')) strokeColor = '#ff0055';
-      if (activeHoverNodeId.startsWith('outbound')) strokeColor = '#00ffaa';
+      const isInbound = activeHoverNodeId.startsWith('inbound');
+      const isCenter = activeHoverNodeId === 'center-focal-node';
+      const strokeColor = isCenter ? '#ff9900' : (isInbound ? '#ff0055' : '#00ffaa');
 
-      const midY = Math.round(y2 - 14);
-      const guidePath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-      guidePath.setAttribute('d', `M ${x1} ${y1} L ${x1} ${midY} L ${x2} ${midY} L ${x2} ${y2}`);
-      guidePath.setAttribute('fill', 'none');
-      guidePath.setAttribute('stroke', strokeColor);
-      guidePath.setAttribute('stroke-width', '1.8');
-      guidePath.setAttribute('stroke-dasharray', '4 4');
-      svgHoverGuideline.appendChild(guidePath);
+      const midY = startY + (endY - startY) * 0.65;
+      const d = `M ${startX.toFixed(1)} ${startY.toFixed(1)} L ${startX.toFixed(1)} ${midY.toFixed(1)} L ${endX.toFixed(1)} ${midY.toFixed(1)} L ${endX.toFixed(1)} ${endY.toFixed(1)}`;
+
+      const laserPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      laserPath.setAttribute('d', d);
+      laserPath.setAttribute('fill', 'none');
+      laserPath.setAttribute('stroke', strokeColor);
+      laserPath.setAttribute('stroke-width', '1.6');
+      laserPath.setAttribute('stroke-dasharray', '4 4');
+      laserPath.style.opacity = '0.88';
+      svgHoverGuideline.appendChild(laserPath);
+    }
+
+    function syncTimelineViewportAndMarkers() {
+      if (!viewportEl || !timelineTrackEl || !timelineViewportBoxEl) return;
+
+      const vpRect = viewportEl.getBoundingClientRect();
+      if (!vpRect.width || !vpRect.height) return;
+
+      const halfSpan = Math.max(800, WORLD_TIMELINE_HALF_SPAN_X);
+      const totalWorldSpan = halfSpan * 2;
+
+      // World X coordinates visible at the left and right edges of #flowchart-viewport
+      const leftWorldX = (-vpRect.width / 2 - camPanX) / camZoom;
+      const rightWorldX = (vpRect.width / 2 - camPanX) / camZoom;
+
+      let leftRatio = (leftWorldX + halfSpan) / totalWorldSpan;
+      let rightRatio = (rightWorldX + halfSpan) / totalWorldSpan;
+
+      leftRatio = Math.max(0, Math.min(0.96, leftRatio));
+      rightRatio = Math.max(leftRatio + 0.04, Math.min(1, rightRatio));
+
+      timelineViewportBoxEl.style.left = `${(leftRatio * 100).toFixed(2)}%`;
+      timelineViewportBoxEl.style.width = `${((rightRatio - leftRatio) * 100).toFixed(2)}%`;
+
+      // Update Left & Right Side Overflow Panels for transactions currently outside the viewport FOV
+      updateSideOverflowPanels(vpRect);
+    }
+
+    function updateSideOverflowPanels(vpRect) {
+      if (!currentFocalWalletData || isAnimatingNodeTransition) {
+        leftOverflowPanelEl.classList.add('panel-hidden');
+        rightOverflowPanelEl.classList.add('panel-hidden');
+        return;
+      }
+
+      const centerScreenX = vpRect.width / 2 + camPanX;
+      const centerScreenY = vpRect.height / 2 + camPanY;
+
+      const outOfFovInbound = [];
+      const outOfFovOutbound = [];
+
+      (currentFocalWalletData.inboundNodes || []).forEach(node => {
+        const sx = centerScreenX + node.worldX * camZoom;
+        const sy = centerScreenY + node.worldY * camZoom;
+        if (sx < 30 || sx > vpRect.width - 30 || sy < 24 || sy > vpRect.height - 24) {
+          outOfFovInbound.push(node);
+        }
+      });
+
+      (currentFocalWalletData.outboundNodes || []).forEach(node => {
+        const sx = centerScreenX + node.worldX * camZoom;
+        const sy = centerScreenY + node.worldY * camZoom;
+        if (sx < 30 || sx > vpRect.width - 30 || sy < 24 || sy > vpRect.height - 24) {
+          outOfFovOutbound.push(node);
+        }
+      });
+
+      // Render Left Inbound Overflow List (#ff0055)
+      if (outOfFovInbound.length > 0) {
+        leftOverflowPanelEl.classList.remove('panel-hidden');
+        leftOverflowCountEl.textContent = String(outOfFovInbound.length);
+        leftOverflowListEl.innerHTML = '';
+
+        outOfFovInbound.forEach(node => {
+          const itemEl = document.createElement('div');
+          itemEl.className = 'overflow-item-inbound px-2 py-1.5 font-mono-code text-[10px]';
+          const fiatStr = formatUsdInSelectedCurrency(
+            node.amountUsd !== undefined ? node.amountUsd : (node.amountEth * liveEthUsdPrice)
+          );
+          itemEl.innerHTML = `
+            <div class="flex items-center justify-between font-bold text-white">
+              <span>${formatShortHash(node.address)}</span>
+              <span class="text-[#ff3377]">[IN]</span>
+            </div>
+            <div class="text-[#ff3377] font-semibold truncate">${fiatStr}</div>
+            <div class="text-[9px] text-zinc-400 truncate">${node.dateStr} UTC</div>
+          `;
+          itemEl.addEventListener('mouseenter', () => setNodeAndTimelineHighlight(node.id, true));
+          itemEl.addEventListener('mouseleave', () => setNodeAndTimelineHighlight(node.id, false));
+          itemEl.addEventListener('click', (e) => {
+            e.stopPropagation();
+            selectAndSlideNodeToCenter(node, 'inbound');
+          });
+          leftOverflowListEl.appendChild(itemEl);
+        });
+      } else {
+        leftOverflowPanelEl.classList.add('panel-hidden');
+      }
+
+      // Render Right Outbound Overflow List (#00ffaa)
+      if (outOfFovOutbound.length > 0) {
+        rightOverflowPanelEl.classList.remove('panel-hidden');
+        rightOverflowCountEl.textContent = String(outOfFovOutbound.length);
+        rightOverflowListEl.innerHTML = '';
+
+        outOfFovOutbound.forEach(node => {
+          const itemEl = document.createElement('div');
+          itemEl.className = 'overflow-item-outbound px-2 py-1.5 font-mono-code text-[10px]';
+          const fiatStr = formatUsdInSelectedCurrency(
+            node.amountUsd !== undefined ? node.amountUsd : (node.amountEth * liveEthUsdPrice)
+          );
+          itemEl.innerHTML = `
+            <div class="flex items-center justify-between font-bold text-white">
+              <span>${formatShortHash(node.address)}</span>
+              <span class="text-[#00ffaa]">[OUT]</span>
+            </div>
+            <div class="text-[#55ffcc] font-semibold truncate">${fiatStr}</div>
+            <div class="text-[9px] text-zinc-400 truncate">${node.dateStr} UTC</div>
+          `;
+          itemEl.addEventListener('mouseenter', () => setNodeAndTimelineHighlight(node.id, true));
+          itemEl.addEventListener('mouseleave', () => setNodeAndTimelineHighlight(node.id, false));
+          itemEl.addEventListener('click', (e) => {
+            e.stopPropagation();
+            selectAndSlideNodeToCenter(node, 'outbound');
+          });
+          rightOverflowListEl.appendChild(itemEl);
+        });
+      } else {
+        rightOverflowPanelEl.classList.add('panel-hidden');
+      }
     }
 
     /***************************************************************************
-     * 9. SMOOTH NODE SELECTION TRANSITION:
-     *    - DO NOT sink away or transition to black!
-     *    - Fade out all other nodes & old connectors
-     *    - Slide the selected node directly into the center view
-     *    - Fade in the new node's connections
+     * 8. GRAPH DOM RENDERER, 90-DEGREE ORTHOGONAL CONNECTORS & TIMELINE MARKERS
      ***************************************************************************/
+    function buildOrthogonalPathData(x1, y1, x2, y2, midX) {
+      const dPath = `M ${x1.toFixed(1)} ${y1.toFixed(1)} L ${midX.toFixed(1)} ${y1.toFixed(1)} L ${midX.toFixed(1)} ${y2.toFixed(1)} L ${x2.toFixed(1)} ${y2.toFixed(1)}`;
+      // Place directional arrowhead '>' pointing right (+X direction) along the horizontal segment
+      const arrowX = (x1 + midX) / 2;
+      const arrowY = y1;
+      const sz = 5.5;
+      const dChevron = `M ${(arrowX - sz).toFixed(1)} ${(arrowY - sz).toFixed(1)} L ${(arrowX + sz * 0.4).toFixed(1)} ${arrowY.toFixed(1)} L ${(arrowX - sz).toFixed(1)} ${(arrowY + sz).toFixed(1)}`;
+      return { dPath, dChevron };
+    }
+
+    function renderOrthogonalConnectors(activeInbound, activeOutbound, fadeInNew = false) {
+      svgCurvesGroup.innerHTML = '';
+
+      const centerHalfW = 176; // 352px / 2
+      const centerHalfH = 92;
+
+      // 1. Inbound Orthogonal Connectors (Left Node Right Edge -> Center Node Left Edge)
+      activeInbound.forEach((node, i) => {
+        const nodeHalfW = node.isDayCluster ? 102 : 88;
+        const startX = node.worldX + nodeHalfW;
+        const startY = node.worldY;
+        const endX = -centerHalfW;
+        const count = Math.max(1, activeInbound.length);
+        const portRatio = count === 1 ? 0 : ((i / (count - 1)) * 2 - 1);
+        const endY = Math.round(portRatio * (centerHalfH * 0.78));
+
+        const channelSpread = ((i % 9) - 4) * 9;
+        const midX = Math.min(endX - 24, Math.max(startX + 18, (startX + endX) * 0.52 + channelSpread));
+
+        const { dPath, dChevron } = buildOrthogonalPathData(startX, startY, endX, endY, midX);
+
+        const pathEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        pathEl.setAttribute('d', dPath);
+        pathEl.setAttribute('class', 'connector-path-inbound');
+        pathEl.dataset.connectorFor = node.id;
+
+        const chevEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        chevEl.setAttribute('d', dChevron);
+        chevEl.setAttribute('class', 'connector-chevron-inbound');
+        chevEl.dataset.chevronFor = node.id;
+
+        if (fadeInNew) {
+          pathEl.style.opacity = '0';
+          chevEl.style.opacity = '0';
+          requestAnimationFrame(() => {
+            pathEl.style.opacity = '1';
+            chevEl.style.opacity = '1';
+          });
+        }
+
+        svgCurvesGroup.appendChild(pathEl);
+        svgCurvesGroup.appendChild(chevEl);
+      });
+
+      // 2. Outbound Orthogonal Connectors (Center Node Right Edge -> Right Node Left Edge)
+      activeOutbound.forEach((node, i) => {
+        const nodeHalfW = node.isDayCluster ? 102 : 88;
+        const startX = centerHalfW;
+        const count = Math.max(1, activeOutbound.length);
+        const portRatio = count === 1 ? 0 : ((i / (count - 1)) * 2 - 1);
+        const startY = Math.round(portRatio * (centerHalfH * 0.78));
+
+        const endX = node.worldX - nodeHalfW;
+        const endY = node.worldY;
+
+        const channelSpread = ((i % 9) - 4) * 9;
+        const midX = Math.max(startX + 24, Math.min(endX - 18, (startX + endX) * 0.48 + channelSpread));
+
+        const { dPath, dChevron } = buildOrthogonalPathData(startX, startY, endX, endY, midX);
+
+        const pathEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        pathEl.setAttribute('d', dPath);
+        pathEl.setAttribute('class', 'connector-path-outbound');
+        pathEl.dataset.connectorFor = node.id;
+
+        const chevEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        chevEl.setAttribute('d', dChevron);
+        chevEl.setAttribute('class', 'connector-chevron-outbound');
+        chevEl.dataset.chevronFor = node.id;
+
+        if (fadeInNew) {
+          pathEl.style.opacity = '0';
+          chevEl.style.opacity = '0';
+          requestAnimationFrame(() => {
+            pathEl.style.opacity = '1';
+            chevEl.style.opacity = '1';
+          });
+        }
+
+        svgCurvesGroup.appendChild(pathEl);
+        svgCurvesGroup.appendChild(chevEl);
+      });
+    }
+
+    function renderTimelineMarkers(walletData, activeInbound, activeOutbound) {
+      if (!timelineTicksLayer) return;
+      timelineTicksLayer.innerHTML = '';
+
+      const halfSpan = Math.max(800, WORLD_TIMELINE_HALF_SPAN_X);
+      const totalSpan = halfSpan * 2;
+
+      const createTick = (nodeId, worldX, colorHex, tooltipText, onClickFn, isCenter = false) => {
+        const ratio = Math.max(0.015, Math.min(0.985, (worldX + halfSpan) / totalSpan));
+        const tick = document.createElement('button');
+        tick.type = 'button';
+        tick.dataset.tickFor = nodeId;
+        tick.title = tooltipText;
+        tick.className = 'absolute top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-auto cursor-pointer transition-transform duration-150';
+        tick.style.left = `${(ratio * 100).toFixed(2)}%`;
+        tick.style.width = isCenter ? '10px' : '6px';
+        tick.style.height = isCenter ? '22px' : '15px';
+        tick.style.backgroundColor = colorHex;
+        tick.style.border = '1px solid #000000';
+        tick.style.zIndex = isCenter ? '30' : '20';
+
+        tick.addEventListener('mouseenter', () => setNodeAndTimelineHighlight(nodeId, true));
+        tick.addEventListener('mouseleave', () => setNodeAndTimelineHighlight(nodeId, false));
+        tick.addEventListener('click', (e) => {
+          e.stopPropagation();
+          onClickFn();
+        });
+
+        timelineTicksLayer.appendChild(tick);
+      };
+
+      activeInbound.forEach(node => {
+        const label = node.isDayCluster
+          ? `INBOUND DAY ${node.dayKey} (${node.txCount} TXs)`
+          : `INBOUND ${formatShortHash(node.address)} // ${node.dateStr} UTC`;
+        createTick(node.id, node.worldX, '#ff0055', label, () => {
+          if (node.isDayCluster) {
+            lodGroupingMode = 'individual';
+            isCurrentlyDayGrouped = false;
+            renderWalletGraphDOM(currentFocalWalletData, false);
+            camZoom = 0.85;
+            camPanX = -(node.focusWorldX || node.worldX) * camZoom;
+            camPanY = -(node.focusWorldY || 0) * camZoom;
+            updateWorldTransform(true);
+          } else {
+            selectAndSlideNodeToCenter(node, 'inbound');
+          }
+        });
+      });
+
+      createTick(
+        'center-focal-node',
+        0,
+        '#ff9900',
+        `FOCAL WALLET ${walletData.shortAddress} // LAST TX: ${walletData.lastTxDateStr} UTC`,
+        () => focusCenterNodeZoom(true),
+        true
+      );
+
+      activeOutbound.forEach(node => {
+        const label = node.isDayCluster
+          ? `OUTBOUND DAY ${node.dayKey} (${node.txCount} TXs)`
+          : `OUTBOUND ${formatShortHash(node.address)} // ${node.dateStr} UTC`;
+        createTick(node.id, node.worldX, '#00ffaa', label, () => {
+          if (node.isDayCluster) {
+            lodGroupingMode = 'individual';
+            isCurrentlyDayGrouped = false;
+            renderWalletGraphDOM(currentFocalWalletData, false);
+            camZoom = 0.85;
+            camPanX = -(node.focusWorldX || node.worldX) * camZoom;
+            camPanY = -(node.focusWorldY || 0) * camZoom;
+            updateWorldTransform(true);
+          } else {
+            selectAndSlideNodeToCenter(node, 'outbound');
+          }
+        });
+      });
+
+      const minDateEl = document.getElementById('timeline-min-date');
+      const centerDateEl = document.getElementById('timeline-center-date');
+      const maxDateEl = document.getElementById('timeline-max-date');
+
+      if (minDateEl) {
+        minDateEl.textContent = walletData.minTimelineMs > 0
+          ? `EARLIEST: ${formatTimestampUTC(walletData.minTimelineMs)} UTC`
+          : 'EARLIEST: --';
+      }
+      if (centerDateEl) {
+        centerDateEl.textContent = `FOCAL LAST TX: ${walletData.lastTxDateStr} UTC`;
+      }
+      if (maxDateEl) {
+        maxDateEl.textContent = walletData.maxTimelineMs > 0
+          ? `LATEST: ${formatTimestampUTC(walletData.maxTimelineMs)} UTC`
+          : 'LATEST: --';
+      }
+    }
+
+    function renderWalletGraphDOM(walletData, fadeInNew = false) {
+      if (!walletData) return;
+      currentFocalWalletData = walletData;
+      WORLD_TIMELINE_HALF_SPAN_X = walletData.worldHalfSpanX || 2400;
+
+      isCurrentlyDayGrouped = shouldUseDayGrouping();
+      updateLodBadgeUI();
+
+      const activeInbound = isCurrentlyDayGrouped
+        ? (walletData.inboundDayClusters || [])
+        : (walletData.inboundNodes || []);
+      const activeOutbound = isCurrentlyDayGrouped
+        ? (walletData.outboundDayClusters || [])
+        : (walletData.outboundNodes || []);
+
+      const totalCount = (walletData.inboundNodes?.length || 0) + (walletData.outboundNodes?.length || 0);
+      const fitBtn = document.getElementById('zoom-fit-btn');
+      if (fitBtn) {
+        fitBtn.textContent = `FIT ALL (${totalCount})`;
+      }
+
+      nodesContainerEl.innerHTML = '';
+
+      // 1. RENDER CENTER 16:10 FOCAL WALLET NODE AT WORLD (0, 0)
+      const centerEl = document.createElement('div');
+      centerEl.id = 'center-focal-node';
+      centerEl.dataset.nodeId = 'center-focal-node';
+      centerEl.className = 'cyber-node node-center p-3 flex flex-col justify-between';
+      centerEl.style.left = '0px';
+      centerEl.style.top = '0px';
+
+      const centerPortfolioStr = formatUsdInSelectedCurrency(walletData.totalPortfolioUsd || 0);
+      const dirType = (walletData.lastTxDirection || 'none').toLowerCase();
+      let dirBadgeHtml = `<span class="text-zinc-500 font-bold">NONE (0 TX)</span>`;
+      if (dirType === 'inbound') {
+        dirBadgeHtml = `<span class="text-[#ff0055] font-extrabold tracking-widest flex items-center justify-end gap-1"><span class="w-1.5 h-1.5 bg-[#ff0055] inline-block"></span>INBOUND</span>`;
+      } else if (dirType === 'outbound') {
+        dirBadgeHtml = `<span class="text-[#00ffaa] font-extrabold tracking-widest flex items-center justify-end gap-1"><span class="w-1.5 h-1.5 bg-[#00ffaa] inline-block"></span>OUTBOUND</span>`;
+      }
+
+      const centerTokensHtml = (walletData.tokens || []).slice(0, 6).map(t => `
+        <span class="px-1.5 py-0.5 bg-[#ff9900]/15 border border-[#ff9900]/50 text-[#ffbb33] font-mono-code text-[9px] font-bold">
+          ${t.ticker} ${t.amount}
+        </span>
+      `).join('');
+
+      centerEl.innerHTML = `
+        <div class="flex items-center justify-between border-b border-[#ff9900]/40 pb-1.5">
+          <span class="font-display text-[10px] font-extrabold uppercase tracking-widest text-[#ff9900]">
+            FOCAL WALLET // 16:10
+          </span>
+          <div class="flex items-center gap-1.5">
+            <button
+              type="button"
+              id="copy-focal-hash-btn"
+              class="px-2 py-0.5 bg-[#ff9900]/20 hover:bg-[#ff9900] text-[#ffbb33] hover:text-black border border-[#ff9900] font-mono-code text-[9px] font-bold uppercase transition cursor-pointer"
+              title="Copy Full Wallet Hash Address"
+            >
+              COPY HASH
+            </button>
+            <a
+              href="https://etherscan.io/address/${encodeURIComponent(walletData.address)}"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="px-2 py-0.5 bg-cyan-950/80 hover:bg-cyan-500 text-cyan-300 hover:text-black border border-cyan-500 font-mono-code text-[9px] font-bold uppercase transition cursor-pointer"
+              title="Open Wallet directly on Etherscan"
+            >
+              ETHERSCAN ↗
+            </a>
+          </div>
+        </div>
+
+        <div class="my-1">
+          <div class="text-[9px] font-display uppercase tracking-wider text-[#ff9900]/80">
+            selected hash address
+          </div>
+          <div class="font-mono-code text-[11px] font-bold text-white truncate select-text" title="${walletData.address}">
+            ${walletData.address}
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2 items-center border-y border-[#ff9900]/30 py-1.5 my-0.5">
+          <div>
+            <div class="text-[9px] font-display uppercase tracking-wider text-[#ff9900]/80">
+              amount (${selectedCurrency})
+            </div>
+            <div class="font-mono-code text-base font-extrabold text-[#ffbb33] truncate">
+              ${centerPortfolioStr}
+            </div>
+          </div>
+          <div class="text-right">
+            <div class="text-[9px] font-display uppercase tracking-wider text-[#ff9900]/80">
+              last transaction date/time
+            </div>
+            <div class="font-mono-code text-[10px] font-bold text-white">
+              ${walletData.lastTxDateStr} UTC
+            </div>
+            <div class="font-mono-code text-[9px] uppercase mt-0.5">
+              ${dirBadgeHtml}
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="text-[8px] font-display uppercase tracking-wider text-[#ff9900]/80 mb-1">
+            WALLET TOKENS / COINS:
+          </div>
+          <div class="flex flex-wrap gap-1">
+            ${centerTokensHtml}
+          </div>
+        </div>
+      `;
+
+      centerEl.addEventListener('mouseenter', () => setNodeAndTimelineHighlight('center-focal-node', true));
+      centerEl.addEventListener('mouseleave', () => setNodeAndTimelineHighlight('center-focal-node', false));
+
+      nodesContainerEl.appendChild(centerEl);
+
+      const copyBtn = centerEl.querySelector('#copy-focal-hash-btn');
+      if (copyBtn) {
+        copyBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          navigator.clipboard?.writeText(walletData.address).catch(() => {});
+          showToast(`COPIED ${formatShortHash(walletData.address)} TO CLIPBOARD`);
+        });
+      }
+
+      // 2. RENDER INBOUND NODES (LEFT SIDE)
+      activeInbound.forEach(node => {
+        const el = document.createElement('div');
+        el.id = node.id;
+        el.dataset.nodeId = node.id;
+        el.className = `cyber-node ${node.isDayCluster ? 'node-day-cluster-inbound' : 'node-inbound'} px-2.5 py-2`;
+        el.style.left = `${node.worldX}px`;
+        el.style.top = `${node.worldY}px`;
+
+        if (fadeInNew) {
+          el.style.opacity = '0';
+          requestAnimationFrame(() => { el.style.opacity = '1'; });
+        }
+
+        const fiatVal = formatUsdInSelectedCurrency(
+          node.amountUsd !== undefined ? node.amountUsd : (node.amountEth * liveEthUsdPrice)
+        );
+        const tokensHtml = (node.tokens || []).slice(0, 4).map(t => `
+          <span class="px-1 py-0.2 bg-[#ff0055]/15 border border-[#ff0055]/50 text-[#ff88aa] font-mono-code text-[8px]">
+            ${t.ticker} ${t.amount}
+          </span>
+        `).join('');
+
+        if (node.isDayCluster) {
+          el.innerHTML = `
+            <div class="flex items-center justify-between text-[8px] font-display uppercase tracking-wider text-[#fcee0a] border-b border-[#ff0055]/40 pb-0.5 mb-1">
+              <span>DAY GROUP // ${node.dayKey}</span>
+              <span>[IN]</span>
+            </div>
+            <div class="font-mono-code text-[11px] font-bold text-white">
+              ${node.txCount} TXs // ${node.walletCount} WALLETS
+            </div>
+            <div class="font-mono-code text-[10px] text-[#ff3377] font-bold mt-0.5 truncate">
+              total sent: ${fiatVal}
+            </div>
+            <div class="mt-1 flex flex-wrap gap-1">${tokensHtml}</div>
+            <div class="mt-1.5 pt-1 border-t border-[#ff0055]/30 flex items-center justify-between text-[8px] font-mono-code">
+              <span class="text-zinc-300">CLICK: EXPAND DAY</span>
+              <button type="button" class="track-top-btn text-[#fcee0a] hover:underline font-bold cursor-pointer">[TRACK TOP ↗]</button>
+            </div>
+          `;
+          const trackTopBtn = el.querySelector('.track-top-btn');
+          if (trackTopBtn && node.topNode) {
+            trackTopBtn.addEventListener('click', (ev) => {
+              ev.stopPropagation();
+              selectAndSlideNodeToCenter(node.topNode, 'inbound');
+            });
+          }
+          el.addEventListener('click', (ev) => {
+            ev.stopPropagation();
+            lodGroupingMode = 'individual';
+            isCurrentlyDayGrouped = false;
+            renderWalletGraphDOM(currentFocalWalletData, false);
+            camZoom = 0.85;
+            camPanX = -(node.focusWorldX || node.worldX) * camZoom;
+            camPanY = -(node.focusWorldY || 0) * camZoom;
+            updateWorldTransform(true);
+          });
+        } else {
+          el.innerHTML = `
+            <div class="flex items-center justify-between text-[8px] font-display uppercase tracking-wider text-[#ff0055]/90">
+              <span>wallet address,</span>
+              <span>[IN]</span>
+            </div>
+            <div class="font-mono-code text-xs font-bold text-white truncate" title="${node.address}">
+              ${formatShortHash(node.address)}
+            </div>
+            <div class="font-mono-code text-[10px] text-[#ff3377] font-semibold truncate mt-0.5">
+              amount sent: <span class="text-white font-bold">${fiatVal}</span>
+            </div>
+            <div class="font-mono-code text-[9px] text-[#ff0055]/80 truncate">
+              date/time tx: ${node.dateStr}
+            </div>
+            <div class="mt-1 pt-1 border-t border-[#ff0055]/25">
+              <div class="text-[7px] font-display uppercase text-[#ff0055]/75 mb-0.5">WALLET TOKENS / COINS:</div>
+              <div class="flex flex-wrap gap-1">${tokensHtml}</div>
+            </div>
+          `;
+          el.addEventListener('click', (ev) => {
+            ev.stopPropagation();
+            selectAndSlideNodeToCenter(node, 'inbound');
+          });
+        }
+
+        el.addEventListener('mouseenter', () => setNodeAndTimelineHighlight(node.id, true));
+        el.addEventListener('mouseleave', () => setNodeAndTimelineHighlight(node.id, false));
+
+        nodesContainerEl.appendChild(el);
+      });
+
+      // 3. RENDER OUTBOUND NODES (RIGHT SIDE)
+      activeOutbound.forEach(node => {
+        const el = document.createElement('div');
+        el.id = node.id;
+        el.dataset.nodeId = node.id;
+        el.className = `cyber-node ${node.isDayCluster ? 'node-day-cluster-outbound' : 'node-outbound'} px-2.5 py-2`;
+        el.style.left = `${node.worldX}px`;
+        el.style.top = `${node.worldY}px`;
+
+        if (fadeInNew) {
+          el.style.opacity = '0';
+          requestAnimationFrame(() => { el.style.opacity = '1'; });
+        }
+
+        const fiatVal = formatUsdInSelectedCurrency(
+          node.amountUsd !== undefined ? node.amountUsd : (node.amountEth * liveEthUsdPrice)
+        );
+        const tokensHtml = (node.tokens || []).slice(0, 4).map(t => `
+          <span class="px-1 py-0.2 bg-[#00ffaa]/15 border border-[#00ffaa]/50 text-[#88ffdd] font-mono-code text-[8px]">
+            ${t.ticker} ${t.amount}
+          </span>
+        `).join('');
+
+        if (node.isDayCluster) {
+          el.innerHTML = `
+            <div class="flex items-center justify-between text-[8px] font-display uppercase tracking-wider text-[#fcee0a] border-b border-[#00ffaa]/40 pb-0.5 mb-1">
+              <span>DAY GROUP // ${node.dayKey}</span>
+              <span>[OUT]</span>
+            </div>
+            <div class="font-mono-code text-[11px] font-bold text-white">
+              ${node.txCount} TXs // ${node.walletCount} WALLETS
+            </div>
+            <div class="font-mono-code text-[10px] text-[#55ffcc] font-bold mt-0.5 truncate">
+              total received: ${fiatVal}
+            </div>
+            <div class="mt-1 flex flex-wrap gap-1">${tokensHtml}</div>
+            <div class="mt-1.5 pt-1 border-t border-[#00ffaa]/30 flex items-center justify-between text-[8px] font-mono-code">
+              <span class="text-zinc-300">CLICK: EXPAND DAY</span>
+              <button type="button" class="track-top-btn text-[#fcee0a] hover:underline font-bold cursor-pointer">[TRACK TOP ↗]</button>
+            </div>
+          `;
+          const trackTopBtn = el.querySelector('.track-top-btn');
+          if (trackTopBtn && node.topNode) {
+            trackTopBtn.addEventListener('click', (ev) => {
+              ev.stopPropagation();
+              selectAndSlideNodeToCenter(node.topNode, 'outbound');
+            });
+          }
+          el.addEventListener('click', (ev) => {
+            ev.stopPropagation();
+            lodGroupingMode = 'individual';
+            isCurrentlyDayGrouped = false;
+            renderWalletGraphDOM(currentFocalWalletData, false);
+            camZoom = 0.85;
+            camPanX = -(node.focusWorldX || node.worldX) * camZoom;
+            camPanY = -(node.focusWorldY || 0) * camZoom;
+            updateWorldTransform(true);
+          });
+        } else {
+          el.innerHTML = `
+            <div class="flex items-center justify-between text-[8px] font-display uppercase tracking-wider text-[#00ffaa]/90">
+              <span>wallet address</span>
+              <span>[OUT]</span>
+            </div>
+            <div class="font-mono-code text-xs font-bold text-white truncate" title="${node.address}">
+              ${formatShortHash(node.address)}
+            </div>
+            <div class="font-mono-code text-[10px] text-[#55ffcc] font-semibold truncate mt-0.5">
+              amount received: <span class="text-white font-bold">${fiatVal}</span>
+            </div>
+            <div class="font-mono-code text-[9px] text-[#00ffaa]/80 truncate">
+              date/time tx: ${node.dateStr}
+            </div>
+            <div class="mt-1 pt-1 border-t border-[#00ffaa]/25">
+              <div class="text-[7px] font-display uppercase text-[#00ffaa]/75 mb-0.5">WALLET TOKENS / COINS:</div>
+              <div class="flex flex-wrap gap-1">${tokensHtml}</div>
+            </div>
+          `;
+          el.addEventListener('click', (ev) => {
+            ev.stopPropagation();
+            selectAndSlideNodeToCenter(node, 'outbound');
+          });
+        }
+
+        el.addEventListener('mouseenter', () => setNodeAndTimelineHighlight(node.id, true));
+        el.addEventListener('mouseleave', () => setNodeAndTimelineHighlight(node.id, false));
+
+        nodesContainerEl.appendChild(el);
+      });
+
+      // 4. DRAW ORTHOGONAL 90-DEGREE CONNECTORS & TIMELINE MARKERS
+      renderOrthogonalConnectors(activeInbound, activeOutbound, fadeInNew);
+      renderTimelineMarkers(walletData, activeInbound, activeOutbound);
+      syncTimelineViewportAndMarkers();
+    }
+
+    /***************************************************************************
+     * 9. SMOOTH 3.5-SECOND PACED NODE SELECTION TRANSITION (ANTI-FREEZE & RATE-LIMIT SHIELD)
+     ***************************************************************************/
+    const PACED_NODE_TRANSITION_MS = 3500;
+
+    function animatePacedNodeSlideToCenter(selectedEl, startWorldX, startWorldY, durationMs = PACED_NODE_TRANSITION_MS) {
+      return new Promise((resolve) => {
+        const startTime = performance.now();
+        const initialPanX = camPanX;
+        const initialPanY = camPanY;
+        const initialZoom = camZoom;
+
+        const rect = viewportEl.getBoundingClientRect();
+        let targetZoom = 0.78;
+        if (rect.width && rect.height) {
+          const reqW = CLOSEST_SIX_WORLD_HALF_SPAN_X * 2 + 220;
+          const reqH = 780;
+          targetZoom = Math.max(0.62, Math.min(1.02, Math.min((rect.width * 0.92) / reqW, (rect.height * 0.88) / reqH)));
+        }
+
+        const progressFillEl = selectedEl ? selectedEl.querySelector('.paced-sync-bar-fill') : null;
+        const progressPctEl = selectedEl ? selectedEl.querySelector('.paced-sync-pct') : null;
+        const phaseLabelEl = selectedEl ? selectedEl.querySelector('.paced-sync-phase') : null;
+
+        worldLayerEl.classList.remove('smooth-camera-transition');
+
+        function stepFrame(now) {
+          const elapsed = now - startTime;
+          const rawProgress = Math.min(1, elapsed / durationMs);
+
+          const ease = rawProgress < 0.5
+            ? 4 * rawProgress * rawProgress * rawProgress
+            : 1 - Math.pow(-2 * rawProgress + 2, 3) / 2;
+
+          const curNodeWorldX = startWorldX * (1 - ease);
+          const curNodeWorldY = startWorldY * (1 - ease);
+          if (selectedEl) {
+            selectedEl.style.left = `${curNodeWorldX.toFixed(2)}px`;
+            selectedEl.style.top = `${curNodeWorldY.toFixed(2)}px`;
+            const scaleVal = 1 + 0.14 * Math.sin(rawProgress * Math.PI);
+            selectedEl.style.transform = `translate(-50%, -50%) scale(${scaleVal.toFixed(3)})`;
+          }
+
+          camZoom = initialZoom + (targetZoom - initialZoom) * ease;
+          const focusTrackingPanX = -curNodeWorldX * camZoom;
+          const focusTrackingPanY = -curNodeWorldY * camZoom;
+          camPanX = initialPanX * (1 - ease) + focusTrackingPanX * ease;
+          camPanY = initialPanY * (1 - ease) + focusTrackingPanY * ease;
+
+          worldLayerEl.style.transform = `translate3d(${camPanX.toFixed(2)}px, ${camPanY.toFixed(2)}px, 0) scale(${camZoom.toFixed(4)})`;
+          zoomReadoutEl.textContent = `${Math.round(camZoom * 100)}%`;
+
+          const pct = Math.min(100, Math.round(rawProgress * 100));
+          if (progressFillEl) progressFillEl.style.width = `${pct}%`;
+          if (progressPctEl) progressPctEl.textContent = `${pct}%`;
+          if (phaseLabelEl) {
+            if (pct < 35) {
+              phaseLabelEl.textContent = 'LOCKING FOCAL WALLET // RATE-LIMIT SHIELD';
+            } else if (pct < 75) {
+              phaseLabelEl.textContent = 'FETCHING ETH + ERC-20 MAINNET LEDGER';
+            } else {
+              phaseLabelEl.textContent = 'MAPPING ORTHOGONAL TIMELINE NODES';
+            }
+          }
+
+          setNetworkStatusBadge(`PACED MAINNET SYNC // ${pct}%`, false);
+          syncTimelineViewportAndMarkers();
+
+          if (rawProgress < 1) {
+            requestAnimationFrame(stepFrame);
+          } else {
+            resolve();
+          }
+        }
+
+        requestAnimationFrame(stepFrame);
+      });
+    }
+
     async function selectAndSlideNodeToCenter(clickedNode, direction) {
       if (isAnimatingNodeTransition) return;
       isAnimatingNodeTransition = true;
@@ -2999,9 +3431,27 @@
       walletHistoryTrail.push({ address: clickedNode.address });
       renderBreadcrumbs();
 
-      // 1. Fade out all unselected nodes and all existing orthogonal connector lines
+      leftOverflowPanelEl.classList.add('panel-hidden');
+      rightOverflowPanelEl.classList.add('panel-hidden');
+
+      let selectedEl = document.getElementById(clickedNode.id);
+      if (!selectedEl) {
+        selectedEl = document.createElement('div');
+        selectedEl.id = clickedNode.id;
+        selectedEl.dataset.nodeId = clickedNode.id;
+        selectedEl.className = `cyber-node ${direction === 'inbound' ? 'node-inbound' : 'node-outbound'} px-2.5 py-2 flex flex-col justify-center`;
+        selectedEl.style.left = `${clickedNode.worldX}px`;
+        selectedEl.style.top = `${clickedNode.worldY}px`;
+        nodesContainerEl.appendChild(selectedEl);
+      }
+
+      const fiatAmountStr = formatUsdInSelectedCurrency(
+        clickedNode.amountUsd !== undefined ? clickedNode.amountUsd : (clickedNode.amountEth * liveEthUsdPrice)
+      );
+
       nodesContainerEl.querySelectorAll('.cyber-node').forEach(el => {
-        if (el.dataset.nodeId === clickedNode.id) {
+        if (el === selectedEl || el.dataset.nodeId === clickedNode.id) {
+          el.classList.remove('fade-out-element', 'timeline-highlighted');
           el.classList.add('node-sliding-to-center');
         } else {
           el.classList.add('fade-out-element');
@@ -3012,30 +3462,50 @@
         pathEl.classList.add('fade-out-element');
       });
 
-      // 2. Simultaneously slide the selected node smoothly into the exact center of the viewport (0, 0)
-      camPanX = -clickedNode.worldX * camZoom;
-      camPanY = -clickedNode.worldY * camZoom;
-      updateWorldTransform(true);
+      selectedEl.innerHTML = `
+        <div class="flex items-center justify-between border-b border-[#ff9900]/45 pb-1 mb-1">
+          <span class="font-display text-[8px] font-extrabold uppercase tracking-widest text-[#ff9900]">
+            CENTERING FOCAL WALLET
+          </span>
+          <span class="paced-sync-pct font-mono-code text-[10px] font-bold text-[#fcee0a]">0%</span>
+        </div>
+        <div class="font-mono-code text-xs font-bold text-white truncate" title="${clickedNode.address}">
+          ${clickedNode.address}
+        </div>
+        <div class="flex items-center justify-between text-[9px] font-mono-code text-[#ffbb33] mt-0.5">
+          <span>TX VALUE: ${fiatAmountStr}</span>
+          <span class="uppercase">${direction}</span>
+        </div>
+        <div class="w-full h-1.5 bg-zinc-900 border border-[#ff9900]/60 mt-2 overflow-hidden">
+          <div class="paced-sync-bar-fill h-full bg-gradient-to-r from-[#ff5500] via-[#ff9900] to-[#fcee0a] w-0"></div>
+        </div>
+        <div class="paced-sync-phase font-mono-code text-[8px] text-[#fcee0a] uppercase tracking-wider mt-1 truncate">
+          LOCKING FOCAL WALLET // RATE-LIMIT SHIELD
+        </div>
+      `;
 
-      // 3. Wait for the smooth camera slide-to-center animation (580ms) while computing new wallet graph
+      const startWorldX = parseFloat(clickedNode.worldX) || 0;
+      const startWorldY = parseFloat(clickedNode.worldY) || 0;
+
       const [newGraphData] = await Promise.all([
         getOrCreateWalletGraph(clickedNode.address, linkContext),
-        new Promise(resolve => setTimeout(resolve, 590))
+        animatePacedNodeSlideToCenter(selectedEl, startWorldX, startWorldY, PACED_NODE_TRANSITION_MS)
       ]);
 
-      // 4. Seamlessly reset world origin (0,0) at the center of the screen and fade in the new connections
       camPanX = 0;
       camPanY = 0;
       updateWorldTransform(false);
 
       renderWalletGraphDOM(newGraphData, true);
-      focusCenterNodeZoom(true);
+      fitClosestSixToViewport(true);
 
       setTimeout(() => {
         isAnimatingNodeTransition = false;
         syncTimelineViewportAndMarkers();
       }, 460);
     }
+
+    const selectNodeAsCenter = selectAndSlideNodeToCenter;
 
     /***************************************************************************
      * 10. INITIAL HOMEPAGE SEARCH EXECUTION (3S RANDOM BRICK PUNCH-OUT & GRAPH ZOOM-IN)
@@ -3056,10 +3526,8 @@
 
       const queryHash = hashInput.value.trim() || '0x742d35Cc6634C0532925a3b844Bc454e4438f44e';
 
-      // 1. Sink & fade away the foreground title and search bar while each brick in the background wall is punched out individually over 3 seconds
       landingView.classList.add('sink-away');
 
-      // 2. Prepare initial graph data in parallel with the 3-second brick punch-out animation
       walletHistoryTrail = [{ address: queryHash.startsWith('0x') ? queryHash : `0x${queryHash}` }];
       renderBreadcrumbs();
 
@@ -3071,9 +3539,8 @@
       bgCanvas.classList.add('sink-away');
       renderWalletGraphDOM(initialGraphData, false);
 
-      // 3. Zoom flowchart nodes and timeline into view after the bricks have punched out, starting zoomed in on the Center Selected Node
       graphView.classList.add('zoom-in-active');
-      focusCenterNodeZoom(false);
+      fitClosestSixToViewport(false);
 
       setTimeout(() => {
         syncTimelineViewportAndMarkers();
@@ -3081,7 +3548,6 @@
       }, 350);
     });
 
-    // Return to Homepage Search Screen (Audio continues playing persistently)
     backToSearchBtn.addEventListener('click', () => {
       isSearchTransitionRunning = false;
       graphView.classList.remove('zoom-in-active');
