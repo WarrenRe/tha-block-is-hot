@@ -4,6 +4,101 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>THA BLOCK IS HOT</title>
+  <!-- Site Favicon: Pixel-Art Flaming Earth Globe (Supports uploaded image_b3f92a.png + immediate self-contained pixel canvas fallback) -->
+  <link id="site-favicon" rel="icon" type="image/png" href="image_b3f92a.png" />
+  <link id="site-shortcut-icon" rel="shortcut icon" type="image/png" href="image_b3f92a.png" />
+  <link id="site-apple-icon" rel="apple-touch-icon" href="image_b3f92a.png" />
+  <script>
+    (function initFlamingEarthFavicon() {
+      // Self-contained 32x32 pixel-art matrix matching image_b3f92a.png (Flaming Pixel Earth Globe with Embers)
+      const palette = {
+        '.': null,
+        'R': '#c84b20', // Outer dark red-orange flame tip
+        'O': '#e57028', // Mid orange flame
+        'Y': '#f7b538', // Bright golden yellow flame
+        'L': '#fce762', // Inner pale yellow flame core
+        'D': '#16384c', // Dark globe outline
+        'B': '#4ab3d6', // Ocean blue
+        'S': '#3b8ead', // Shaded ocean blue
+        'H': '#8dd8ef', // Ocean highlight
+        'G': '#78a842', // Continent green
+        'E': '#5c8731'  // Shaded continent green
+      };
+
+      const rows = [
+        "...............R................",
+        "...............R................",
+        "...............O........R.......",
+        "...........R...O.......YO.......",
+        ".....R.....OR.OYR..R...O..R.....",
+        ".....OR....YO.OYO..OR....RO.....",
+        "....ROY..R.OY.YLY.ROY...ROY.....",
+        "....OYO.ROYOYYLYYROYO..ROYO.....",
+        "....YLYROYLYYLLLLYYLYR.OYLY..R..",
+        "....YLYOYLLLLLLLLLLLYOYLLYO.OY..",
+        "..Y.OYYLLLLDDDDDDDDLLLLYYLY.Y...",
+        "..O..YLLLLDDGGGGbbDDLLLLYYO.....",
+        "....RYLLLDDGGGGGBBbbDDLLLYR.R...",
+        "....OYLLDDBGGGGBBBBBEDDLLYO.OR..",
+        "....YYLLDDHGGGBBBBBGGDDLLYYROY..",
+        "....YLLLDDBBGBBBBBGGGEDDLLYYLY..",
+        "....OYLLDDHBBBBBBGGGGEDDLLYLLY..",
+        "....RYLLDDBGGGGBBGGGGEDDLLYLYO..",
+        "....ROYLDDHGGGGGBBGGGEDDLLYYOR..",
+        ".....OYLDDBBGGGGBBBGEDDLLLYYO...",
+        ".....RYLLDDHBBGGBBBBBSDDLLYYR...",
+        "......YLLLDDBBGBBBBBSSDDLLYYR...",
+        "......OYLLDDSSBBBBBBSSDDLLYO....",
+        ".......YLLLDDSSSSSSSSDDLLYYR.O..",
+        ".......RYLLLDDDDDDDDDDLLLYO.....",
+        "........OYLLLLLLLLLLLLLLYYR.....",
+        ".........RYYLLLLLLLLLLYYOR......",
+        "..........ROYYYYYYYYYYORR.......",
+        "............RROOOOOORRR.........",
+        "..............RRRRRRR...........",
+        "................................",
+        "................................"
+      ];
+
+      function generatePixelEarthDataURL() {
+        const canvas = document.createElement('canvas');
+        canvas.width = 64;
+        canvas.height = 64;
+        const ctx = canvas.getContext('2d');
+        ctx.imageSmoothingEnabled = false;
+
+        for (let y = 0; y < 32; y++) {
+          const row = rows[y] || '';
+          for (let x = 0; x < 32; x++) {
+            const ch = row[x];
+            const color = palette[ch];
+            if (color) {
+              ctx.fillStyle = color;
+              ctx.fillRect(x * 2, y * 2, 2, 2);
+            }
+          }
+        }
+        return canvas.toDataURL('image/png');
+      }
+
+      // Verify if external image_b3f92a.png is present in the repo; if not (or while loading), apply exact pixel-art Data URL
+      const fallbackDataUrl = generatePixelEarthDataURL();
+      const applyFaviconHref = (href) => {
+        ['site-favicon', 'site-shortcut-icon', 'site-apple-icon'].forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.href = href;
+        });
+      };
+
+      // Immediately set the pixel-art flaming Earth favicon so it always works out-of-the-box
+      applyFaviconHref(fallbackDataUrl);
+
+      // If image_b3f92a.png is uploaded alongside index.html, swap to the raw PNG file once verified
+      const probeImg = new Image();
+      probeImg.onload = () => applyFaviconHref('image_b3f92a.png');
+      probeImg.src = 'image_b3f92a.png';
+    })();
+  </script>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Google Fonts: Orbitron, Share Tech Mono & Rajdhani (Futuristic Cyber Typography) -->
@@ -386,6 +481,79 @@
       background-color: rgba(252, 238, 10, 0.32);
     }
 
+    /* Side Overflow Lists for Off-Screen / Out-of-FOV Transactions */
+    .side-overflow-panel {
+      position: absolute;
+      top: 12px;
+      bottom: 62px;
+      width: 208px;
+      z-index: 38;
+      display: flex;
+      flex-direction: column;
+      pointer-events: none;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+
+    .side-overflow-panel.panel-hidden {
+      opacity: 0;
+      pointer-events: none !important;
+    }
+
+    #left-overflow-panel {
+      left: 10px;
+    }
+
+    #right-overflow-panel {
+      right: 10px;
+    }
+
+    .side-overflow-list {
+      overflow-y: auto;
+      pointer-events: auto;
+      max-height: 100%;
+      padding-right: 2px;
+    }
+
+    .overflow-item-inbound {
+      background-color: rgba(8, 0, 4, 0.9);
+      border-left: 3px solid var(--inbound-neon);
+      border-top: 1px solid rgba(255, 0, 85, 0.35);
+      border-right: 1px solid rgba(255, 0, 85, 0.35);
+      border-bottom: 1px solid rgba(255, 0, 85, 0.35);
+      color: var(--inbound-neon-bright);
+      box-shadow: 0 0 12px rgba(255, 0, 85, 0.2);
+      transition: all 0.15s ease;
+      cursor: pointer;
+    }
+
+    .overflow-item-inbound:hover,
+    .overflow-item-inbound.active-fov-hover {
+      background-color: rgba(28, 0, 14, 0.96);
+      border-color: #ff88aa;
+      box-shadow: 0 0 18px rgba(255, 0, 85, 0.65);
+      transform: translateX(3px);
+    }
+
+    .overflow-item-outbound {
+      background-color: rgba(0, 9, 6, 0.9);
+      border-right: 3px solid var(--outbound-neon);
+      border-top: 1px solid rgba(0, 255, 170, 0.35);
+      border-left: 1px solid rgba(0, 255, 170, 0.35);
+      border-bottom: 1px solid rgba(0, 255, 170, 0.35);
+      color: var(--outbound-neon-bright);
+      box-shadow: 0 0 12px rgba(0, 255, 170, 0.2);
+      transition: all 0.15s ease;
+      cursor: pointer;
+    }
+
+    .overflow-item-outbound:hover,
+    .overflow-item-outbound.active-fov-hover {
+      background-color: rgba(0, 26, 18, 0.96);
+      border-color: #99ffee;
+      box-shadow: 0 0 18px rgba(0, 255, 170, 0.65);
+      transform: translateX(-3px);
+    }
+
     /* Range Input Styling for Top-Left Audio Control */
     input[type="range"].cyber-slider {
       -webkit-appearance: none;
@@ -622,6 +790,30 @@
         <svg id="screen-guideline-svg" class="absolute inset-0 w-full h-full pointer-events-none z-30">
           <g id="svg-hover-guideline"></g>
         </svg>
+
+        <!-- LEFT SIDE OVERFLOW LIST: OFF-SCREEN INBOUND TRANSACTIONS (#ff0055) -->
+        <aside id="left-overflow-panel" class="side-overflow-panel panel-hidden">
+          <div class="bg-black/95 border border-[#ff0055]/80 px-2.5 py-1 mb-1.5 flex items-center justify-between shadow-[0_0_15px_rgba(255,0,85,0.3)] pointer-events-auto">
+            <span class="font-display text-[9px] font-bold uppercase tracking-wider text-[#ff0055] flex items-center gap-1.5">
+              <span class="w-1.5 h-1.5 bg-[#ff0055] inline-block shadow-[0_0_6px_#ff0055]"></span>
+              <span>OUT OF FOV // INBOUND</span>
+            </span>
+            <span id="left-overflow-count" class="font-mono-code text-[10px] font-bold text-white bg-[#ff0055]/25 px-1.5 py-0.2 border border-[#ff0055]/60">0</span>
+          </div>
+          <div id="left-overflow-list" class="side-overflow-list flex flex-col gap-1.5"></div>
+        </aside>
+
+        <!-- RIGHT SIDE OVERFLOW LIST: OFF-SCREEN OUTBOUND TRANSACTIONS (#00ffaa) -->
+        <aside id="right-overflow-panel" class="side-overflow-panel panel-hidden">
+          <div class="bg-black/95 border border-[#00ffaa]/80 px-2.5 py-1 mb-1.5 flex items-center justify-between shadow-[0_0_15px_rgba(0,255,170,0.3)] pointer-events-auto">
+            <span class="font-display text-[9px] font-bold uppercase tracking-wider text-[#00ffaa] flex items-center gap-1.5">
+              <span class="w-1.5 h-1.5 bg-[#00ffaa] inline-block shadow-[0_0_6px_#00ffaa]"></span>
+              <span>OUT OF FOV // OUTBOUND</span>
+            </span>
+            <span id="right-overflow-count" class="font-mono-code text-[10px] font-bold text-white bg-[#00ffaa]/25 px-1.5 py-0.2 border border-[#00ffaa]/60">0</span>
+          </div>
+          <div id="right-overflow-list" class="side-overflow-list flex flex-col gap-1.5"></div>
+        </aside>
 
         <!-- ZOOM & PAN CONTROLS HUD (Bottom-Right of Viewport) -->
         <div class="absolute bottom-3 right-4 z-40 flex items-center gap-1.5 bg-black/90 border border-zinc-800 p-1 shadow-2xl">
@@ -1377,8 +1569,8 @@
     }
 
     const TOTAL_SIDE_NODES = 15; // 15 Inbound & 15 Outbound (30 connected nodes total across timeline; default view frames closest 6 on each side)
-    const WORLD_TIMELINE_HALF_SPAN_X = 2780; // Full world horizontal span [-2780px, +2780px] mapped across the bottom Timeline bar
-    const CLOSEST_SIX_WORLD_HALF_SPAN_X = 1140; // World horizontal span [-1140px, +1140px] framing the closest 6 inbound & 6 outbound transactions
+    const WORLD_TIMELINE_HALF_SPAN_X = 1680; // Compressed world horizontal span [-1680px, +1680px] so all connected nodes fit cleanly on the timeline
+    const CLOSEST_SIX_WORLD_HALF_SPAN_X = 820; // World horizontal span [-820px, +820px] framing the closest 6 inbound & 6 outbound transactions
 
     async function getOrCreateWalletGraph(rawAddress, linkContext = null) {
       const normalizedAddress = rawAddress.trim().startsWith('0x')
@@ -1391,52 +1583,69 @@
       }
 
       const rand = createHashPRNG(cacheKey);
-      const baseAnchorMs = linkContext?.referenceTimestampMs
-        ? linkContext.referenceTimestampMs
-        : Date.UTC(2026, 9, 29, 16, 30, 0) - Math.floor(rand() * 86400000 * 3);
+      const nowMs = Date.now();
+      const maxAllowedTxMs = nowMs - 60 * 1000; // Strictly historical: never allow any transaction in the future
+
+      // Use the exact date/time the selected transaction was initiated (capped in the past),
+      // or a realistic recent historical timestamp on initial wallet search.
+      let initiatedAnchorMs = linkContext?.referenceTimestampMs
+        ? Math.min(linkContext.referenceTimestampMs, maxAllowedTxMs)
+        : (nowMs - Math.floor((18 + rand() * 72) * 3600 * 1000));
 
       const inboundNodes = [];
       const outboundNodes = [];
 
-      // Symmetrical 75-hour time span on each side of the center wallet's last transaction
-      const maxSpanHours = 75.0;
-      const maxSpanMs = maxSpanHours * 3600 * 1000;
-      const minTimelineMs = baseAnchorMs - maxSpanMs;
-      const maxTimelineMs = baseAnchorMs + maxSpanMs;
+      // Historical window calculation:
+      // Outbound transactions from this wallet must ALSO have been initiated in the past (<= maxAllowedTxMs).
+      // If initiatedAnchorMs is within 36 hours of Date.now(), we compress or shift the outbound historical window
+      // so every single outbound transaction timestamp is strictly <= maxAllowedTxMs (never advancing into the future).
+      const inboundSpanHours = 48.0;
+      const inboundSpanMs = inboundSpanHours * 3600 * 1000;
+
+      // Ensure there is a valid historical window after the anchor for outbound transactions while staying <= maxAllowedTxMs
+      const availableFutureMs = Math.max(0, maxAllowedTxMs - initiatedAnchorMs);
+      const outboundWindowEndMs = availableFutureMs >= 6 * 3600 * 1000
+        ? Math.min(maxAllowedTxMs, initiatedAnchorMs + 48.0 * 3600 * 1000)
+        : maxAllowedTxMs;
+      // Pivot point separating earlier inbound history from subsequent outbound history (always <= maxAllowedTxMs)
+      const timelinePivotMs = Math.min(
+        initiatedAnchorMs,
+        outboundWindowEndMs - Math.floor((6.0 + rand() * 10.0) * 3600 * 1000)
+      );
+
+      const minTimelineMs = timelinePivotMs - inboundSpanMs;
+      const maxTimelineMs = outboundWindowEndMs;
+      const outboundSpanMs = Math.max(3600 * 1000, maxTimelineMs - timelinePivotMs);
 
       // Staggered Y positions so none of the 15 inbound or 15 outbound nodes line up on the same X or Y axis
-      // Closest 6 to the center wallet sit cleanly within [-350px, +350px] Y; outer 9 fan out across [-540px, +540px] Y
       const closest6InboundY = [-310, 195, -105, 315, 70, -215];
       const outer9InboundY = [435, -430, 140, -370, 275, -155, 495, -490, -25];
 
       // Generate 15 Inbound transactions ordered from oldest (index 0, furthest left) to closest to center (index 14, closest left)
       for (let i = 0; i < TOTAL_SIDE_NODES; i++) {
-        // Distributes distance-from-center rank (0 = closest to center, 14 = furthest from center)
-        const distRank = (TOTAL_SIDE_NODES - 1) - i; // i=14 -> distRank=0 (closest); i=0 -> distRank=14 (oldest)
-        let hoursBeforeCenter;
+        const distRank = (TOTAL_SIDE_NODES - 1) - i; // 0 = closest to center, 14 = oldest
         let worldX;
         let worldY;
 
         if (distRank < 6) {
-          // Closest 6 inbound transactions: spaced cleanly between -320px and -1045px
-          const slotMinH = 1.8 + distRank * 4.2;
-          const slotMaxH = slotMinH + 3.1;
-          hoursBeforeCenter = slotMinH + rand() * (slotMaxH - slotMinH);
-          worldX = -Math.round(325 + distRank * 138 + (rand() - 0.5) * 32);
+          worldX = -Math.round(285 + distRank * 86 + (rand() - 0.5) * 18);
           worldY = closest6InboundY[distRank];
         } else {
-          // Outer 9 older inbound transactions: spaced between -1210px and -2640px
           const outerIdx = distRank - 6; // 0..8
-          const slotMinH = 28.0 + outerIdx * 5.1;
-          const slotMaxH = slotMinH + 4.2;
-          hoursBeforeCenter = slotMinH + rand() * (slotMaxH - slotMinH);
-          worldX = -Math.round(1220 + outerIdx * 172 + (rand() - 0.5) * 38);
+          worldX = -Math.round(815 + outerIdx * 96 + (rand() - 0.5) * 20);
           worldY = outer9InboundY[outerIdx];
         }
 
-        const tsMs = Math.floor(baseAnchorMs - hoursBeforeCenter * 3600 * 1000);
-        const amountEth = (0.45 + rand() * 26.5).toFixed(3);
+        const timeFraction = (distRank + 0.35 + rand() * 0.5) / TOTAL_SIDE_NODES; // (0..1]
         const isClosestInbound = (i === TOTAL_SIDE_NODES - 1);
+
+        // If we arrived here by clicking an outbound transaction from a previous wallet, preserve that exact initiated timestamp
+        let tsMs = Math.floor(timelinePivotMs - timeFraction * inboundSpanMs);
+        if (isClosestInbound && linkContext?.clickedDirection === 'outbound' && linkContext?.referenceTimestampMs) {
+          tsMs = Math.min(maxAllowedTxMs, linkContext.referenceTimestampMs);
+        }
+
+        const amountEth = (0.45 + rand() * 26.5).toFixed(3);
         const addr = (isClosestInbound && linkContext?.clickedDirection === 'outbound' && linkContext?.previousWallet)
           ? linkContext.previousWallet.address
           : generateAddressFromPRNG(rand);
@@ -1461,32 +1670,30 @@
       const outer9OutboundY = [420, -425, 45, -205, 365, -485, 165, -365, 485];
 
       // Generate 15 Outbound transactions ordered from closest to center (index 0) to furthest right (index 14)
+      // All outbound timestamps are strictly clamped <= maxAllowedTxMs (never in the future!)
       for (let i = 0; i < TOTAL_SIDE_NODES; i++) {
-        const distRank = i; // i=0 -> distRank=0 (closest to center); i=14 -> distRank=14 (furthest right)
-        let hoursAfterCenter;
+        const distRank = i; // 0 = closest to center, 14 = furthest right
         let worldX;
         let worldY;
 
         if (distRank < 6) {
-          // Closest 6 outbound transactions: spaced cleanly between +325px and +1045px
-          const slotMinH = 1.8 + distRank * 4.2;
-          const slotMaxH = slotMinH + 3.1;
-          hoursAfterCenter = slotMinH + rand() * (slotMaxH - slotMinH);
-          worldX = Math.round(325 + distRank * 138 + (rand() - 0.5) * 32);
+          worldX = Math.round(285 + distRank * 86 + (rand() - 0.5) * 18);
           worldY = closest6OutboundY[distRank];
         } else {
-          // Outer 9 later outbound transactions: spaced between +1220px and +2640px
           const outerIdx = distRank - 6; // 0..8
-          const slotMinH = 28.0 + outerIdx * 5.1;
-          const slotMaxH = slotMinH + 4.2;
-          hoursAfterCenter = slotMinH + rand() * (slotMaxH - slotMinH);
-          worldX = Math.round(1220 + outerIdx * 172 + (rand() - 0.5) * 38);
+          worldX = Math.round(815 + outerIdx * 96 + (rand() - 0.5) * 20);
           worldY = outer9OutboundY[outerIdx];
         }
 
-        const tsMs = Math.floor(baseAnchorMs + hoursAfterCenter * 3600 * 1000);
-        const amountEth = (0.75 + rand() * 31.4).toFixed(3);
+        const timeFraction = (distRank + 0.35 + rand() * 0.5) / TOTAL_SIDE_NODES; // (0..1]
         const isClosestOutbound = (i === 0);
+
+        let tsMs = Math.min(maxAllowedTxMs, Math.floor(timelinePivotMs + timeFraction * outboundSpanMs));
+        if (isClosestOutbound && linkContext?.clickedDirection === 'inbound' && linkContext?.referenceTimestampMs) {
+          tsMs = Math.min(maxAllowedTxMs, linkContext.referenceTimestampMs);
+        }
+
+        const amountEth = (0.75 + rand() * 31.4).toFixed(3);
         const addr = (isClosestOutbound && linkContext?.clickedDirection === 'inbound' && linkContext?.previousWallet)
           ? linkContext.previousWallet.address
           : generateAddressFromPRNG(rand);
@@ -1507,20 +1714,21 @@
         });
       }
 
-      // Sort chronologically and compute exact timeline ratio [0..1] based on worldX across [-WORLD_TIMELINE_HALF_SPAN_X, +WORLD_TIMELINE_HALF_SPAN_X]
+      // Sort chronologically and map every connected transaction into the timeline [0.02 .. 0.98]
       inboundNodes.sort((a, b) => a.timestampMs - b.timestampMs);
       inboundNodes.forEach((node, i) => {
         node.id = `inbound-node-${i}`;
-        node.timelineRatio = Math.max(0.015, Math.min(0.485, 0.5 + (node.worldX / (WORLD_TIMELINE_HALF_SPAN_X * 2))));
+        node.timelineRatio = Math.max(0.02, Math.min(0.48, 0.5 + (node.worldX / (WORLD_TIMELINE_HALF_SPAN_X * 2))));
       });
 
       outboundNodes.sort((a, b) => a.timestampMs - b.timestampMs);
       outboundNodes.forEach((node, i) => {
         node.id = `outbound-node-${i}`;
-        node.timelineRatio = Math.max(0.515, Math.min(0.985, 0.5 + (node.worldX / (WORLD_TIMELINE_HALF_SPAN_X * 2))));
+        node.timelineRatio = Math.max(0.52, Math.min(0.98, 0.5 + (node.worldX / (WORLD_TIMELINE_HALF_SPAN_X * 2))));
       });
 
-      const centerTimestampMs = baseAnchorMs;
+      // Center wallet displays the exact date/time the selected transaction was initiated (strictly <= maxAllowedTxMs)
+      const centerTimestampMs = Math.min(maxAllowedTxMs, initiatedAnchorMs);
       const centerDateStr = formatTimestampUTC(centerTimestampMs);
 
       const totalInbound = inboundNodes.reduce((acc, n) => acc + parseFloat(n.amountEth), 0);
@@ -1542,8 +1750,8 @@
         tokens: generateHeldTokenAcronyms(normalizedAddress, 5),
         inboundNodes,
         outboundNodes,
-        minTimelineMs,
-        maxTimelineMs
+        minTimelineMs: inboundNodes[0]?.timestampMs || minTimelineMs,
+        maxTimelineMs: outboundNodes[outboundNodes.length - 1]?.timestampMs || maxTimelineMs
       };
 
       walletGraphCache.set(cacheKey, walletGraph);
@@ -1563,6 +1771,12 @@
     const timelineViewportBoxEl = document.getElementById('timeline-viewport-box');
     const breadcrumbsEl = document.getElementById('wallet-breadcrumbs');
     const zoomReadoutEl = document.getElementById('zoom-level-readout');
+    const leftOverflowPanelEl = document.getElementById('left-overflow-panel');
+    const leftOverflowListEl = document.getElementById('left-overflow-list');
+    const leftOverflowCountEl = document.getElementById('left-overflow-count');
+    const rightOverflowPanelEl = document.getElementById('right-overflow-panel');
+    const rightOverflowListEl = document.getElementById('right-overflow-list');
+    const rightOverflowCountEl = document.getElementById('right-overflow-count');
 
     const MIN_ZOOM_SCALE = 0.18; // Allows zooming out far enough to fit all 30+ nodes over the entire timeline
     const MAX_ZOOM_SCALE = 2.75;
@@ -2261,6 +2475,122 @@
         const isInsideScreen = ratioPct >= clampedLeftPct && ratioPct <= clampedRightPct;
         tick.style.opacity = isInsideScreen ? '1' : '0.42';
       });
+
+      updateSideOverflowLists(viewRect);
+    }
+
+    // Dynamically detect connected Inbound & Outbound transactions outside the current screen Field of View (FOV)
+    // and list their address, amount in selected currency, and date/time on the left/right sides of the webpage
+    function updateSideOverflowLists(viewRect) {
+      if (!currentFocalWalletData || !viewRect || !viewRect.width || !viewRect.height) return;
+
+      const halfW = viewRect.width / 2;
+      const halfH = viewRect.height / 2;
+      const nodeHalfWidthScreen = 80 * camZoom;
+      const nodeHalfHeightScreen = 55 * camZoom;
+
+      function isNodeOutsideFOV(node) {
+        const screenOffsetX = camPanX + node.worldX * camZoom;
+        const screenOffsetY = camPanY + node.worldY * camZoom;
+        return (
+          (screenOffsetX - nodeHalfWidthScreen) < -halfW ||
+          (screenOffsetX + nodeHalfWidthScreen) > halfW ||
+          (screenOffsetY - nodeHalfHeightScreen) < -halfH ||
+          (screenOffsetY + nodeHalfHeightScreen) > halfH
+        );
+      }
+
+      // 1. Left Side Panel: Out-of-FOV Inbound Transactions (#ff0055)
+      const offscreenInbound = currentFocalWalletData.inboundNodes.filter(isNodeOutsideFOV);
+      leftOverflowCountEl.textContent = String(offscreenInbound.length);
+
+      if (offscreenInbound.length === 0) {
+        leftOverflowPanelEl.classList.add('panel-hidden');
+        leftOverflowListEl.innerHTML = '';
+      } else {
+        leftOverflowPanelEl.classList.remove('panel-hidden');
+        leftOverflowListEl.innerHTML = offscreenInbound.map(node => {
+          const fiatStr = formatEthInSelectedCurrency(node.amountEth);
+          const isHovered = activeHoverNodeId === node.id;
+          return `
+            <div
+              data-overflow-node-id="${node.id}"
+              class="overflow-item-inbound px-2.5 py-1.5 flex flex-col gap-0.5 ${isHovered ? 'active-fov-hover' : ''}"
+              title="Click to track & center ${node.address}"
+            >
+              <div class="flex items-center justify-between gap-1">
+                <span class="font-mono-code text-[11px] font-bold text-white truncate">${formatShortHash(node.address)}</span>
+                <span class="font-display text-[7px] uppercase tracking-widest text-[#ff0055] shrink-0">[IN]</span>
+              </div>
+              <div class="font-mono-code text-[10px] font-bold text-[#ff3377] truncate">
+                ${fiatStr}
+              </div>
+              <div class="font-mono-code text-[8px] text-[#ff6699]/90 truncate">
+                ${node.dateStr} UTC
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        leftOverflowListEl.querySelectorAll('[data-overflow-node-id]').forEach(itemEl => {
+          const nodeId = itemEl.dataset.overflowNodeId;
+          const nodeObj = currentFocalWalletData.inboundNodes.find(n => n.id === nodeId);
+          if (!nodeObj) return;
+          itemEl.addEventListener('mouseenter', () => setHoverNode(nodeId));
+          itemEl.addEventListener('mouseleave', () => setHoverNode(null));
+          itemEl.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (isAnimatingNodeTransition) return;
+            selectAndSlideNodeToCenter(nodeObj, 'inbound');
+          });
+        });
+      }
+
+      // 2. Right Side Panel: Out-of-FOV Outbound Transactions (#00ffaa)
+      const offscreenOutbound = currentFocalWalletData.outboundNodes.filter(isNodeOutsideFOV);
+      rightOverflowCountEl.textContent = String(offscreenOutbound.length);
+
+      if (offscreenOutbound.length === 0) {
+        rightOverflowPanelEl.classList.add('panel-hidden');
+        rightOverflowListEl.innerHTML = '';
+      } else {
+        rightOverflowPanelEl.classList.remove('panel-hidden');
+        rightOverflowListEl.innerHTML = offscreenOutbound.map(node => {
+          const fiatStr = formatEthInSelectedCurrency(node.amountEth);
+          const isHovered = activeHoverNodeId === node.id;
+          return `
+            <div
+              data-overflow-node-id="${node.id}"
+              class="overflow-item-outbound px-2.5 py-1.5 flex flex-col gap-0.5 text-right ${isHovered ? 'active-fov-hover' : ''}"
+              title="Click to track & center ${node.address}"
+            >
+              <div class="flex items-center justify-between gap-1">
+                <span class="font-display text-[7px] uppercase tracking-widest text-[#00ffaa] shrink-0">[OUT]</span>
+                <span class="font-mono-code text-[11px] font-bold text-white truncate">${formatShortHash(node.address)}</span>
+              </div>
+              <div class="font-mono-code text-[10px] font-bold text-[#00ffaa] truncate">
+                ${fiatStr}
+              </div>
+              <div class="font-mono-code text-[8px] text-[#55ffcc]/90 truncate">
+                ${node.dateStr} UTC
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        rightOverflowListEl.querySelectorAll('[data-overflow-node-id]').forEach(itemEl => {
+          const nodeId = itemEl.dataset.overflowNodeId;
+          const nodeObj = currentFocalWalletData.outboundNodes.find(n => n.id === nodeId);
+          if (!nodeObj) return;
+          itemEl.addEventListener('mouseenter', () => setHoverNode(nodeId));
+          itemEl.addEventListener('mouseleave', () => setHoverNode(null));
+          itemEl.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (isAnimatingNodeTransition) return;
+            selectAndSlideNodeToCenter(nodeObj, 'outbound');
+          });
+        });
+      }
     }
 
     function setHoverNode(nodeId) {
@@ -2272,6 +2602,15 @@
           nodeEl.classList.add('timeline-highlighted');
         } else {
           nodeEl.classList.remove('timeline-highlighted');
+        }
+      });
+
+      // 1b. Highlight matching item in the side overflow lists if present
+      document.querySelectorAll('[data-overflow-node-id]').forEach(itemEl => {
+        if (itemEl.dataset.overflowNodeId === nodeId) {
+          itemEl.classList.add('active-fov-hover');
+        } else {
+          itemEl.classList.remove('active-fov-hover');
         }
       });
 
