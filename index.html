@@ -1,0 +1,2446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>THA BLOCK IS HOT</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Orbitron, Share Tech Mono & Rajdhani (Futuristic Cyber Typography) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800;900&family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-pure-black: #000000;
+      --inbound-neon: #ff0055;
+      --inbound-neon-bright: #ff3377;
+      --center-cyber: #ff9900;
+      --center-cyber-bright: #ffbb33;
+      --outbound-neon: #00ffaa;
+      --outbound-neon-bright: #55ffcc;
+      --timeline-yellow: #fcee0a;
+    }
+
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      border-radius: 0px !important; /* Strictly sharp 90-degree corners everywhere */
+    }
+
+    body, html {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #000000;
+      color: #f8fafc;
+      font-family: 'Rajdhani', sans-serif;
+      overflow: hidden;
+      letter-spacing: 0.03em;
+    }
+
+    .font-mono-code {
+      font-family: 'Share Tech Mono', monospace;
+    }
+
+    .font-display {
+      font-family: 'Orbitron', sans-serif;
+    }
+
+    /* Neon Emissive Cyberpunk Orange Flaming Title Text */
+    .cyber-flame-title {
+      color: #fff7e6;
+      white-space: nowrap;
+      font-size: clamp(2.1rem, 5.4vw, 4.75rem);
+      line-height: 1.05;
+      text-shadow:
+        0 0 6px #ffffff,
+        0 0 14px #ffbb33,
+        0 0 28px #ff7700,
+        0 0 48px #ff4500,
+        0 -8px 65px #ff2200,
+        0 -16px 95px rgba(255, 40, 0, 0.85),
+        0 4px 12px rgba(0, 0, 0, 0.95);
+      animation: neonFlamePulse 1.8s infinite alternate ease-in-out;
+    }
+
+    @keyframes neonFlamePulse {
+      0% {
+        text-shadow:
+          0 0 6px #ffffff,
+          0 0 12px #ffbb33,
+          0 0 26px #ff7700,
+          0 0 44px #ff4500,
+          0 -6px 60px #ff2200,
+          0 -14px 85px rgba(255, 30, 0, 0.8),
+          0 4px 14px rgba(0, 0, 0, 0.98);
+        filter: brightness(1);
+      }
+      50% {
+        text-shadow:
+          0 0 8px #ffffff,
+          0 0 18px #ffee55,
+          0 0 34px #ff8800,
+          0 0 58px #ff3300,
+          0 -12px 75px #ff1100,
+          0 -22px 110px rgba(255, 60, 0, 0.95),
+          0 4px 14px rgba(0, 0, 0, 0.98);
+        filter: brightness(1.09);
+      }
+      100% {
+        text-shadow:
+          0 0 5px #fff5cc,
+          0 0 15px #ffaa22,
+          0 0 30px #ff6600,
+          0 0 52px #ff2a00,
+          0 -10px 70px #ff0000,
+          0 -18px 95px rgba(255, 50, 0, 0.9),
+          0 4px 14px rgba(0, 0, 0, 0.98);
+        filter: brightness(1.04);
+      }
+    }
+
+    /* 3D Perspective Stage for Initial Search Z-Axis Sink & Zoom Transition */
+    #perspective-root {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      perspective: 1400px;
+      perspective-origin: 50% 50%;
+      overflow: hidden;
+      background-color: #000000;
+    }
+
+    /* Background Canvas for Static Square Brick-Wall of Tokens & Memecoins */
+    #blockchain-bg-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      pointer-events: none;
+      transition: opacity 1.15s cubic-bezier(0.4, 0, 0.2, 1),
+                  transform 1.25s cubic-bezier(0.55, 0.05, 0.67, 0.19);
+      transform-style: preserve-3d;
+    }
+
+    /* Landing View Container (No black rectangle behind title!) */
+    #landing-view {
+      position: absolute;
+      inset: 0;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      transform-style: preserve-3d;
+      transition: transform 1.2s cubic-bezier(0.55, 0.06, 0.68, 0.19),
+                  opacity 1.05s cubic-bezier(0.4, 0, 0.2, 1),
+                  filter 1.05s ease;
+      will-change: transform, opacity;
+    }
+
+    /* Sinking & Zooming out along Z-axis to pure black on initial search */
+    #landing-view.sink-away {
+      transform: translate3d(0, 260px, -1900px) rotateX(18deg) scale(0.14);
+      opacity: 0;
+      filter: blur(6px);
+      pointer-events: none;
+    }
+
+    #blockchain-bg-canvas.sink-away {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* Graph View Container */
+    #graph-view {
+      position: absolute;
+      inset: 0;
+      z-index: 5;
+      background-color: #000000;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      opacity: 0;
+      pointer-events: none;
+      transform: translate3d(0, -40px, -1300px) scale(0.22);
+      transform-style: preserve-3d;
+      transition: transform 1.05s cubic-bezier(0.16, 1, 0.3, 1),
+                  opacity 0.85s ease-out;
+      will-change: transform, opacity;
+    }
+
+    #graph-view.zoom-in-active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translate3d(0, 0, 0) scale(1);
+      z-index: 20;
+    }
+
+    /* Interactive Pan & Zoom Viewport */
+    #flowchart-viewport {
+      position: relative;
+      flex: 1;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      cursor: grab;
+      background:
+        radial-gradient(circle at 50% 50%, rgba(255, 110, 0, 0.04) 0%, rgba(0, 0, 0, 0) 65%),
+        linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 100% 100%, 64px 64px, 64px 64px;
+    }
+
+    #flowchart-viewport:active {
+      cursor: grabbing;
+    }
+
+    /* World Layer centered at viewport center (50%, 50%) */
+    #world-layer {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 0;
+      height: 0;
+      transform-origin: 0 0;
+      will-change: transform;
+    }
+
+    #world-layer.smooth-camera-transition {
+      transition: transform 0.58s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    /* Compact Futuristic Sharp-Cornered Nodes */
+    .cyber-node {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      transition: opacity 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+                  box-shadow 0.2s ease,
+                  border-color 0.2s ease,
+                  background-color 0.2s ease,
+                  transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+      will-change: transform, opacity;
+    }
+
+    .node-inbound {
+      width: 176px;
+      background-color: #070004;
+      border: 2px solid var(--inbound-neon);
+      color: var(--inbound-neon-bright);
+      box-shadow: 0 0 14px rgba(255, 0, 85, 0.32), inset 0 0 12px rgba(255, 0, 85, 0.12);
+      cursor: pointer;
+      z-index: 20;
+    }
+
+    .node-inbound:hover,
+    .node-inbound.timeline-highlighted {
+      transform: translate(-50%, -50%) scale(1.08);
+      border-color: #ff88aa;
+      background-color: #19000b;
+      box-shadow: 0 0 28px rgba(255, 0, 85, 0.85), 0 0 8px #fcee0a, inset 0 0 16px rgba(255, 0, 85, 0.28);
+      z-index: 45;
+    }
+
+    /* 1.5x Larger Center Focal Node with Exact 16:10 Aspect Ratio (352px x 220px) */
+    .node-center {
+      width: 352px;
+      height: 220px;
+      aspect-ratio: 16 / 10;
+      background-color: #090400;
+      border: 2.5px solid var(--center-cyber);
+      color: var(--center-cyber-bright);
+      box-shadow: 0 0 30px rgba(255, 153, 0, 0.46), inset 0 0 22px rgba(255, 153, 0, 0.16);
+      z-index: 30;
+    }
+
+    .node-center:hover,
+    .node-center.timeline-highlighted {
+      transform: translate(-50%, -50%) scale(1.04);
+      border-color: #ffee55;
+      box-shadow: 0 0 38px rgba(255, 153, 0, 0.85), inset 0 0 24px rgba(255, 153, 0, 0.25);
+      z-index: 45;
+    }
+
+    .node-outbound {
+      width: 176px;
+      background-color: #000805;
+      border: 2px solid var(--outbound-neon);
+      color: var(--outbound-neon-bright);
+      box-shadow: 0 0 14px rgba(0, 255, 170, 0.32), inset 0 0 12px rgba(0, 255, 170, 0.12);
+      cursor: pointer;
+      z-index: 20;
+    }
+
+    .node-outbound:hover,
+    .node-outbound.timeline-highlighted {
+      transform: translate(-50%, -50%) scale(1.08);
+      border-color: #99ffee;
+      background-color: #001810;
+      box-shadow: 0 0 28px rgba(0, 255, 170, 0.85), 0 0 8px #fcee0a, inset 0 0 16px rgba(0, 255, 170, 0.28);
+      z-index: 45;
+    }
+
+    /* Selected Node Morphing to Center Focal State during Transition */
+    .node-sliding-to-center {
+      border-color: #ff9900 !important;
+      background-color: #0c0500 !important;
+      box-shadow: 0 0 38px rgba(255, 153, 0, 0.9), 0 0 12px #ffee55 !important;
+      transform: translate(-50%, -50%) scale(1.1) !important;
+      z-index: 60 !important;
+    }
+
+    /* Fade-out class for unselected nodes and connectors */
+    .fade-out-element {
+      opacity: 0 !important;
+      pointer-events: none !important;
+    }
+
+    /* Solid Orthogonal 90-Degree SVG Connector Lines */
+    .connector-path-inbound {
+      fill: none;
+      stroke: #ff5500;
+      stroke-width: 2.3;
+      stroke-linecap: square;
+      stroke-linejoin: miter;
+      stroke-miterlimit: 10;
+      transition: stroke-width 0.18s ease, filter 0.18s ease, stroke 0.18s ease, opacity 0.42s ease;
+    }
+
+    .connector-path-outbound {
+      fill: none;
+      stroke: #00ffaa;
+      stroke-width: 2.3;
+      stroke-linecap: square;
+      stroke-linejoin: miter;
+      stroke-miterlimit: 10;
+      transition: stroke-width 0.18s ease, filter 0.18s ease, stroke 0.18s ease, opacity 0.42s ease;
+    }
+
+    .connector-chevron-inbound {
+      fill: none;
+      stroke: #ff5500;
+      stroke-width: 2.6;
+      stroke-linecap: square;
+      stroke-linejoin: miter;
+      transition: opacity 0.42s ease;
+    }
+
+    .connector-chevron-outbound {
+      fill: none;
+      stroke: #00ffaa;
+      stroke-width: 2.6;
+      stroke-linecap: square;
+      stroke-linejoin: miter;
+      transition: opacity 0.42s ease;
+    }
+
+    .connector-active-inbound {
+      stroke: #ff0055 !important;
+      stroke-width: 3.8 !important;
+      filter: drop-shadow(0 0 9px rgba(255, 0, 85, 0.98));
+    }
+
+    .connector-active-outbound {
+      stroke: #55ffcc !important;
+      stroke-width: 3.8 !important;
+      filter: drop-shadow(0 0 9px rgba(0, 255, 170, 0.98));
+    }
+
+    @keyframes dashFlow {
+      to {
+        stroke-dashoffset: -36;
+      }
+    }
+
+    .flow-Overlay-anim {
+      stroke-dasharray: 6 12;
+      animation: dashFlow 0.75s linear infinite;
+    }
+
+    /* Soft Yellow See-Through Timeline Viewport Indicator Square/Box */
+    #timeline-viewport-box {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      height: 32px;
+      background-color: rgba(252, 238, 10, 0.18);
+      border: 1.5px solid rgba(252, 238, 10, 0.88);
+      box-shadow: 0 0 14px rgba(252, 238, 10, 0.28), inset 0 0 8px rgba(252, 238, 10, 0.15);
+      cursor: grab;
+      z-index: 15;
+      transition: background-color 0.15s ease, border-color 0.15s ease;
+    }
+
+    #timeline-viewport-box:hover {
+      background-color: rgba(252, 238, 10, 0.25);
+      border-color: #ffffff;
+    }
+
+    #timeline-viewport-box:active {
+      cursor: grabbing;
+      background-color: rgba(252, 238, 10, 0.32);
+    }
+
+    /* Range Input Styling for Top-Left Audio Control */
+    input[type="range"].cyber-slider {
+      -webkit-appearance: none;
+      appearance: none;
+      height: 4px;
+      background: #27272a;
+      outline: none;
+    }
+    input[type="range"].cyber-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 10px;
+      height: 14px;
+      background: #ff9900;
+      cursor: pointer;
+      border: 1px solid #ffffff;
+      box-shadow: 0 0 8px rgba(255, 153, 0, 0.9);
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #000000;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #27272a;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PERSISTENT UNFILTERED ARCHIVE.ORG BACKGROUND AUDIO ELEMENT (Loops continuously, never filtered or bitcrushed) -->
+  <audio id="bg-audio" loop preload="auto" playsinline style="display:none;">
+    <source src="https://archive.org/download/tha-block-is-hot/02%20Lil%20Wayne%20-%20Tha%20Block%20Is%20Hot.wav" type="audio/wav" />
+    <source src="https://archive.org/download/tha-block-is-hot/02+Lil+Wayne+-+Tha+Block+Is+Hot.wav" type="audio/wav" />
+    <source src="https://archive.org/download/tha-block-is-hot/02%20Lil%20Wayne%20-%20Tha%20Block%20Is%20Hot.mp3" type="audio/mpeg" />
+    <source src="https://archive.org/details/tha-block-is-hot/02+Lil+Wayne+-+Tha+Block+Is+Hot.wav" type="audio/wav" />
+  </audio>
+
+  <!-- PERSISTENT TOP-LEFT AUDIO CONTROL HUD (Visible on Homepage & Graph View) -->
+  <div id="audio-hud" class="fixed top-3 left-3 z-[9999] flex items-center gap-2.5 bg-black/90 border border-[#ff9900]/70 px-3 py-1.5 shadow-[0_0_18px_rgba(255,106,0,0.3)] backdrop-blur-md">
+    <button
+      id="audio-mute-btn"
+      type="button"
+      class="flex items-center gap-1.5 text-[#ff9900] hover:text-[#ffee55] font-display text-[10px] font-bold tracking-wider uppercase cursor-pointer transition"
+      title="Mute / Unmute Audio"
+    >
+      <span id="audio-icon" class="font-mono-code text-xs">[🔊]</span>
+      <span id="audio-status-label">AUDIO ON</span>
+    </button>
+
+    <div class="h-3 w-[1px] bg-zinc-800"></div>
+
+    <div class="flex items-center gap-2">
+      <input
+        id="audio-volume-slider"
+        type="range"
+        min="0"
+        max="100"
+        value="65"
+        class="cyber-slider w-20 sm:w-24 cursor-pointer"
+        title="Adjust Audio Volume"
+      />
+      <span id="audio-volume-value" class="font-mono-code text-[10px] text-zinc-300 w-7 text-right">65%</span>
+    </div>
+  </div>
+
+  <!-- 3D Perspective Root Container -->
+  <div id="perspective-root">
+
+    <!-- 1. STATIC SQUARE BRICK-WALL OF TOKENS & MEMECOINS BACKGROUND CANVAS -->
+    <canvas id="blockchain-bg-canvas"></canvas>
+
+    <!-- 2. HOMEPAGE LANDING VIEW (NO BLACK RECTANGLE BEHIND TITLE, FLAMING NEON HEADER + SEARCH + CURRENCY SELECTOR) -->
+    <main id="landing-view">
+      <div class="w-full max-w-5xl mx-auto flex flex-col items-center text-center px-3">
+        
+        <!-- Flaming Neon Emissive Cyberpunk Orange Title (Single Line, No Black Box Behind It) -->
+        <div class="relative inline-flex items-center justify-center mb-7 px-6 py-2 max-w-full">
+          <!-- Dedicated Transparent Flame Particle Canvas Spanning the Single-Line Title -->
+          <canvas
+            id="flame-title-canvas"
+            class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-[58%] w-[116%] h-[230px] pointer-events-none z-0"
+            width="1150"
+            height="240"
+          ></canvas>
+
+          <h1
+            id="main-hero-title"
+            class="relative z-10 font-display font-black tracking-[0.12em] uppercase cyber-flame-title select-none whitespace-nowrap"
+          >
+            THA BLOCK IS HOT
+          </h1>
+        </div>
+
+        <!-- Search Bar + Currency Dropdown + Interaction Button -->
+        <form id="search-form" class="w-full max-w-2xl relative z-20" autocomplete="off">
+          <div class="relative flex flex-col sm:flex-row items-stretch sm:items-center w-full bg-black/95 border-2 border-[#ff9900] p-1 shadow-[0_0_35px_rgba(255,106,0,0.45)] transition-colors">
+            
+            <!-- Hash Prefix -->
+            <div class="hidden sm:flex items-center pl-3 pr-1.5 text-[#ff9900] font-mono-code text-xs select-none">
+              [0x]
+            </div>
+
+            <!-- Query Input Field -->
+            <input
+              id="hash-input"
+              type="text"
+              spellcheck="false"
+              placeholder="ENTER WALLET OR TX HASH ADDRESS..."
+              value="0x742d35Cc6634C0532925a3b844Bc454e4438f44e"
+              class="w-full bg-transparent text-zinc-100 placeholder-zinc-500 font-mono-code text-xs sm:text-sm px-2.5 py-3 focus:outline-none select-text"
+              required
+            />
+
+            <!-- Currency Selector Dropdown (Replaces Presets, Default USD) -->
+            <div class="flex items-center border-t sm:border-t-0 sm:border-l border-zinc-800 bg-zinc-950 px-2">
+              <label for="currency-select" class="text-[9px] font-display uppercase tracking-wider text-zinc-400 mr-1.5 select-none">
+                FIAT:
+              </label>
+              <select
+                id="currency-select"
+                class="bg-zinc-950 text-[#ff9900] font-mono-code text-xs font-bold py-2.5 pr-2 focus:outline-none cursor-pointer"
+                title="Select Display Currency for Wallet Balances"
+              >
+                <option value="USD" selected>USD ($)</option>
+                <option value="EUR">EUR (€)</option>
+                <option value="GBP">GBP (£)</option>
+                <option value="JPY">JPY (¥)</option>
+                <option value="CAD">CAD (C$)</option>
+                <option value="AUD">AUD (A$)</option>
+                <option value="CHF">CHF (Fr)</option>
+                <option value="KRW">KRW (₩)</option>
+                <option value="INR">INR (₹)</option>
+                <option value="BRL">BRL (R$)</option>
+              </select>
+            </div>
+
+            <!-- Execute Search Button -->
+            <button
+              type="submit"
+              id="execute-search-btn"
+              class="shrink-0 bg-[#ff7700] hover:bg-[#ff9900] active:bg-[#e65c00] text-black font-display font-extrabold text-xs uppercase tracking-[0.16em] px-5 py-3 transition-all duration-150 flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(255,119,0,0.65)] cursor-pointer"
+            >
+              <span>Pocket Watch</span>
+              <span class="font-mono-code text-sm">&gt;&gt;</span>
+            </button>
+          </div>
+        </form>
+
+      </div>
+    </main>
+
+    <!-- 3. FLOWCHART DIAGRAM & TIMELINE VIEW (PURE BLACK #000000 WITH ZOOM/PAN WORLD VIEWPORT) -->
+    <section id="graph-view">
+      
+      <!-- Minimal Top Control Bar (Leaves Left Space for Persistent Audio HUD) -->
+      <header class="w-full pl-64 sm:pl-72 pr-4 sm:pr-6 py-2 flex flex-wrap items-center justify-between gap-2 z-30 border-b border-zinc-900 bg-black/95">
+        <div class="flex items-center gap-3">
+          <button
+            id="back-to-search-btn"
+            type="button"
+            class="px-2.5 py-1 bg-zinc-950 hover:bg-zinc-900 text-zinc-300 hover:text-white border border-zinc-800 font-display text-[10px] uppercase tracking-wider flex items-center gap-1.5 transition cursor-pointer"
+            title="Return to Homepage Search"
+          >
+            <span>&lt;&lt;</span>
+            <span>HOME</span>
+          </button>
+
+          <div class="hidden md:flex items-center gap-1.5 font-display font-extrabold text-xs tracking-[0.16em] text-[#ff9900]">
+            <span>THA BLOCK IS HOT</span>
+            <span class="text-zinc-700 font-mono-code text-xs">//</span>
+          </div>
+
+          <!-- Breadcrumb History Trail -->
+          <div id="wallet-breadcrumbs" class="flex items-center gap-1 overflow-x-auto max-w-[36vw] sm:max-w-[42vw] py-0.5 text-[11px] font-mono-code">
+            <!-- Dynamically populated breadcrumbs -->
+          </div>
+        </div>
+
+        <!-- Right HUD Controls: Live Currency Switcher & Legend -->
+        <div class="flex items-center gap-3 text-[10px] font-mono-code uppercase tracking-wider">
+          <div class="flex items-center gap-1.5 bg-zinc-950 border border-zinc-800 px-2 py-0.5">
+            <span class="text-zinc-400">CURRENCY:</span>
+            <select
+              id="graph-currency-select"
+              class="bg-transparent text-[#ff9900] font-mono-code text-[11px] font-bold focus:outline-none cursor-pointer"
+            >
+              <option value="USD">USD ($)</option>
+              <option value="EUR">EUR (€)</option>
+              <option value="GBP">GBP (£)</option>
+              <option value="JPY">JPY (¥)</option>
+              <option value="CAD">CAD (C$)</option>
+              <option value="AUD">AUD (A$)</option>
+              <option value="CHF">CHF (Fr)</option>
+              <option value="KRW">KRW (₩)</option>
+              <option value="INR">INR (₹)</option>
+              <option value="BRL">BRL (R$)</option>
+            </select>
+          </div>
+
+          <div class="hidden xl:flex items-center gap-3 text-[10px]">
+            <span class="flex items-center gap-1 text-[#ff0055]"><span class="w-2 h-2 border border-[#ff0055] inline-block"></span> INBOUND TX</span>
+            <span class="flex items-center gap-1 text-[#ff9900]"><span class="w-2 h-2 border border-[#ff9900] inline-block"></span> FOCAL WALLET</span>
+            <span class="flex items-center gap-1 text-[#00ffaa]"><span class="w-2 h-2 border border-[#00ffaa] inline-block"></span> OUTBOUND TX</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- MAIN INTERACTIVE PAN & ZOOM FLOWCHART VIEWPORT -->
+      <div id="flowchart-viewport">
+        
+        <!-- World Coordinate Layer (Origin 0,0 is Center of Viewport) -->
+        <div id="world-layer">
+          <!-- Large SVG Canvas in World Coordinates for 90-Degree Orthogonal Connectors -->
+          <svg
+            id="connections-svg"
+            width="8000"
+            height="3200"
+            viewBox="-4000 -1600 8000 3200"
+            class="absolute left-[-4000px] top-[-1600px] w-[8000px] h-[3200px] pointer-events-none z-10 overflow-visible"
+          >
+            <g id="svg-curves-group"></g>
+          </svg>
+
+          <!-- Staggered Nodes Container in World Coordinates -->
+          <div id="nodes-container" class="relative z-20"></div>
+        </div>
+
+        <!-- Screen-Space SVG Overlay for Laser Guide Line from Hovered Node to Bottom Timeline Marker -->
+        <svg id="screen-guideline-svg" class="absolute inset-0 w-full h-full pointer-events-none z-30">
+          <g id="svg-hover-guideline"></g>
+        </svg>
+
+        <!-- ZOOM & PAN CONTROLS HUD (Bottom-Right of Viewport) -->
+        <div class="absolute bottom-3 right-4 z-40 flex items-center gap-1.5 bg-black/90 border border-zinc-800 p-1 shadow-2xl">
+          <span class="px-2 text-[10px] font-mono-code text-zinc-400 hidden sm:inline">SCROLL TO ZOOM / DRAG TO PAN</span>
+          <button
+            id="zoom-out-btn"
+            type="button"
+            class="px-2.5 py-1 bg-zinc-950 hover:bg-zinc-900 text-zinc-200 border border-zinc-800 hover:border-[#ff9900] font-mono-code text-xs cursor-pointer"
+            title="Zoom Out"
+          >
+            -
+          </button>
+          <span id="zoom-level-readout" class="px-2 font-mono-code text-[11px] text-[#ff9900] min-w-[48px] text-center">
+            100%
+          </span>
+          <button
+            id="zoom-in-btn"
+            type="button"
+            class="px-2.5 py-1 bg-zinc-950 hover:bg-zinc-900 text-zinc-200 border border-zinc-800 hover:border-[#ff9900] font-mono-code text-xs cursor-pointer"
+            title="Zoom In"
+          >
+            +
+          </button>
+          <button
+            id="zoom-closest-btn"
+            type="button"
+            class="px-2.5 py-1 bg-[#fcee0a]/15 hover:bg-[#fcee0a]/30 text-[#fcee0a] border border-[#fcee0a]/60 font-display text-[9px] uppercase tracking-wider cursor-pointer"
+            title="Default View: Closest 6 Inbound & Outbound Transactions"
+          >
+            CLOSEST 6
+          </button>
+          <button
+            id="zoom-fit-btn"
+            type="button"
+            class="px-2.5 py-1 bg-zinc-950 hover:bg-zinc-900 text-zinc-300 border border-zinc-800 hover:border-[#ff9900] font-display text-[9px] uppercase tracking-wider cursor-pointer"
+            title="Fit All Connected Timeline Nodes to Screen"
+          >
+            FIT ALL (30)
+          </button>
+          <button
+            id="zoom-center-btn"
+            type="button"
+            class="px-2.5 py-1 bg-[#ff9900]/15 hover:bg-[#ff9900]/30 text-[#ff9900] border border-[#ff9900]/60 font-display text-[9px] uppercase tracking-wider cursor-pointer"
+            title="Center Focal Wallet"
+          >
+            CENTER
+          </button>
+        </div>
+
+      </div>
+
+      <!-- BOTTOM TIMELINE BAR (SIMPLIFIED "Timeline" LABEL IN YELLOW + SOFT YELLOW VIEWPORT BOX + INTERACTIVE NODE MARKERS) -->
+      <footer id="timeline-stage" class="relative w-full px-6 sm:px-14 pt-1.5 pb-4 bg-black border-t border-zinc-950 z-40 select-none">
+        <div class="w-full mx-auto flex flex-col items-center">
+          
+          <!-- Simplified Label: Just "Timeline" in Yellow -->
+          <p class="font-display text-xs sm:text-sm font-bold tracking-[0.28em] uppercase text-[#fcee0a] text-center mb-1.5">
+            Timeline
+          </p>
+
+          <!-- Yellow Timeline Bar with Left/Right Vertical End-Caps, Soft Yellow Viewport Indicator Box, and Node Timestamp Ticks -->
+          <div id="timeline-bar-container" class="relative w-full h-10 flex items-center">
+            
+            <!-- Left Vertical End Tick -->
+            <div class="w-1.5 h-7 bg-[#fcee0a] shrink-0 shadow-[0_0_10px_rgba(252,238,10,0.6)]"></div>
+
+            <!-- Horizontal Yellow Bar -->
+            <div id="timeline-track" class="relative flex-1 h-1 bg-[#fcee0a] shadow-[0_0_12px_rgba(252,238,10,0.5)] cursor-pointer" title="Click or Drag Soft Yellow Box to Pan Across Timeline">
+              <!-- Soft Yellow See-Through Square/Rectangle Representing Current Screen Viewport on the Timeline -->
+              <div id="timeline-viewport-box" title="Current Screen Viewport on Timeline (Drag to Scrub)">
+                <div class="w-full h-full flex items-center justify-between px-0.5 pointer-events-none">
+                  <div class="w-[1px] h-3 bg-[#fcee0a]/80"></div>
+                  <span class="font-display text-[7px] tracking-widest text-[#fcee0a] uppercase opacity-80 hidden sm:inline">VIEW</span>
+                  <div class="w-[1px] h-3 bg-[#fcee0a]/80"></div>
+                </div>
+              </div>
+
+              <!-- Dynamic Interactive Timestamp Ticks for Inbound, Center, and Outbound Nodes -->
+              <div id="timeline-ticks-layer" class="absolute inset-0 w-full h-full pointer-events-none"></div>
+            </div>
+
+            <!-- Right Vertical End Tick -->
+            <div class="w-1.5 h-7 bg-[#fcee0a] shrink-0 shadow-[0_0_10px_rgba(252,238,10,0.6)]"></div>
+          </div>
+
+          <!-- Timeline Axis Date Range Readout -->
+          <div class="w-full flex items-center justify-between text-[10px] font-mono-code text-[#fcee0a]/80 mt-0.5 px-1">
+            <span id="timeline-min-date">--</span>
+            <span id="timeline-center-date" class="text-[#ff9900] font-semibold">FOCAL LAST TX: --</span>
+            <span id="timeline-max-date">--</span>
+          </div>
+
+        </div>
+      </footer>
+
+    </section>
+
+    <!-- Copy / Status Toast Notification -->
+    <div id="toast-notification" class="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 px-4 py-1.5 bg-zinc-950 border border-[#ff9900] text-[#ff9900] font-mono-code text-xs shadow-2xl opacity-0 pointer-events-none transition-opacity duration-300 uppercase tracking-wider">
+      ADDRESS COPIED TO CLIPBOARD
+    </div>
+
+  </div>
+
+  <!-- APPLICATION LOGIC -->
+  <script>
+    /***************************************************************************
+     * 1. PERSISTENT UNFILTERED HTML5 BACKGROUND AUDIO ENGINE (ARCHIVE.ORG WAV)
+     ***************************************************************************/
+    const bgAudio = document.getElementById('bg-audio');
+    let isUserMuted = false;
+    let currentVolume = 65;
+
+    // Set initial unfiltered volume directly on the HTML5 Audio element
+    bgAudio.volume = currentVolume / 100;
+    bgAudio.muted = false;
+
+    function attemptPlayUnfilteredAudio() {
+      if (isUserMuted) return;
+      bgAudio.muted = false;
+      bgAudio.volume = currentVolume / 100;
+      const playPromise = bgAudio.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {
+          // Browser blocked initial unmuted autoplay; will seamlessly start on first user click/key gesture
+        });
+      }
+    }
+
+    // Attempt autoplay immediately when script loads and when DOM/window finishes loading
+    attemptPlayUnfilteredAudio();
+    window.addEventListener('DOMContentLoaded', attemptPlayUnfilteredAudio);
+    window.addEventListener('load', attemptPlayUnfilteredAudio);
+
+    // Ensure audio unlocks and plays on the first user interaction if autoplay was deferred by the browser
+    function unlockAudioOnFirstGesture() {
+      if (!isUserMuted && bgAudio.paused) {
+        bgAudio.muted = false;
+        bgAudio.volume = currentVolume / 100;
+        bgAudio.play().catch(() => {});
+      }
+    }
+
+    ['pointerdown', 'keydown', 'touchstart'].forEach(evtName => {
+      window.addEventListener(evtName, unlockAudioOnFirstGesture, { passive: true });
+    });
+
+    // Top-Left Audio Control HUD Wiring (Direct HTML5 Audio Volume & Mute, Zero Filters)
+    const audioMuteBtn = document.getElementById('audio-mute-btn');
+    const audioIcon = document.getElementById('audio-icon');
+    const audioStatusLabel = document.getElementById('audio-status-label');
+    const audioVolumeSlider = document.getElementById('audio-volume-slider');
+    const audioVolumeValue = document.getElementById('audio-volume-value');
+
+    function updateAudioHudUI() {
+      if (isUserMuted || currentVolume === 0) {
+        audioIcon.textContent = '[🔇]';
+        audioStatusLabel.textContent = 'MUTED';
+        audioMuteBtn.classList.replace('text-[#ff9900]', 'text-zinc-500');
+      } else {
+        audioIcon.textContent = currentVolume < 40 ? '[🔉]' : '[🔊]';
+        audioStatusLabel.textContent = 'AUDIO ON';
+        audioMuteBtn.classList.replace('text-zinc-500', 'text-[#ff9900]');
+      }
+      audioVolumeValue.textContent = `${isUserMuted ? 0 : currentVolume}%`;
+    }
+
+    audioMuteBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      isUserMuted = !isUserMuted;
+      bgAudio.muted = isUserMuted;
+      if (!isUserMuted) {
+        bgAudio.volume = currentVolume / 100;
+        if (bgAudio.paused) {
+          bgAudio.play().catch(() => {});
+        }
+      }
+      updateAudioHudUI();
+    });
+
+    audioVolumeSlider.addEventListener('input', (e) => {
+      e.stopPropagation();
+      currentVolume = parseInt(e.target.value, 10);
+      if (currentVolume > 0 && isUserMuted) {
+        isUserMuted = false;
+      }
+      bgAudio.volume = currentVolume / 100;
+      bgAudio.muted = (currentVolume === 0 || isUserMuted);
+      if (currentVolume > 0 && bgAudio.paused) {
+        bgAudio.play().catch(() => {});
+      }
+      updateAudioHudUI();
+    });
+
+    /***************************************************************************
+     * 2. CYBERPUNK ORANGE FLAME PARTICLE CANVAS FOR "THA BLOCK IS HOT" TITLE
+     ***************************************************************************/
+    const flameCanvas = document.getElementById('flame-title-canvas');
+    const flameCtx = flameCanvas.getContext('2d');
+    const flameParticles = [];
+
+    function initFlameParticles() {
+      flameParticles.length = 0;
+      const count = 135;
+      for (let i = 0; i < count; i++) {
+        flameParticles.push(createFlameParticle(true));
+      }
+    }
+
+    function createFlameParticle(randomY = false) {
+      const w = flameCanvas.width;
+      const h = flameCanvas.height;
+      return {
+        x: w * 0.05 + Math.random() * (w * 0.90),
+        y: randomY ? (h * 0.35 + Math.random() * (h * 0.45)) : (h * 0.68 + (Math.random() - 0.5) * 16),
+        vx: (Math.random() - 0.5) * 0.9,
+        vy: -(1.1 + Math.random() * 2.4),
+        size: 11 + Math.random() * 24,
+        life: randomY ? Math.random() : 0,
+        maxLife: 0.65 + Math.random() * 0.55,
+        hue: 12 + Math.random() * 34 // Deep cyber orange-red to golden yellow
+      };
+    }
+
+    function animateTitleFlames() {
+      flameCtx.clearRect(0, 0, flameCanvas.width, flameCanvas.height);
+      flameCtx.globalCompositeOperation = 'lighter';
+
+      for (let i = 0; i < flameParticles.length; i++) {
+        const p = flameParticles[i];
+        p.life += 0.018;
+        p.x += p.vx + Math.sin(p.life * 8 + i) * 0.45;
+        p.y += p.vy;
+
+        const progress = p.life / p.maxLife;
+        if (progress >= 1) {
+          flameParticles[i] = createFlameParticle(false);
+          continue;
+        }
+
+        const radius = Math.max(1, p.size * (1 - progress * 0.72));
+        const alpha = (1 - progress) * 0.52;
+
+        const grad = flameCtx.createRadialGradient(p.x, p.y, 0, p.x, p.y, radius);
+        grad.addColorStop(0, `hsla(${p.hue + 18}, 100%, 72%, ${alpha})`);
+        grad.addColorStop(0.45, `hsla(${p.hue}, 100%, 54%, ${alpha * 0.75})`);
+        grad.addColorStop(1, `hsla(8, 100%, 40%, 0)`);
+
+        flameCtx.fillStyle = grad;
+        flameCtx.beginPath();
+        flameCtx.arc(p.x, p.y, radius, 0, Math.PI * 2);
+        flameCtx.fill();
+      }
+
+      requestAnimationFrame(animateTitleFlames);
+    }
+
+    initFlameParticles();
+    requestAnimationFrame(animateTitleFlames);
+
+    /***************************************************************************
+     * 3. STATIC SQUARE BRICK-WALL HOMEPAGE BACKGROUND WITH TOKEN & MEMECOIN LOGOS
+     ***************************************************************************/
+    const bgCanvas = document.getElementById('blockchain-bg-canvas');
+    const bgCtx = bgCanvas.getContext('2d');
+
+    let canvasWidth = window.innerWidth;
+    let canvasHeight = window.innerHeight;
+
+    const TOKEN_WALL_CATALOG = [
+      { symbol: 'ETH', name: 'ETHEREUM', color: '#627eea', type: 'diamond' },
+      { symbol: 'BTC', name: 'BITCOIN', color: '#f7931a', type: 'coinB' },
+      { symbol: 'PEPE', name: 'PEPE', color: '#3cb043', type: 'frog' },
+      { symbol: 'DOGE', name: 'DOGECOIN', color: '#c2a633', type: 'shiba' },
+      { symbol: 'SHIB', name: 'SHIBA INU', color: '#ffa409', type: 'fox' },
+      { symbol: 'UNI', name: 'UNISWAP', color: '#ff007a', type: 'unicorn' },
+      { symbol: 'LINK', name: 'CHAINLINK', color: '#2a5ada', type: 'hex' },
+      { symbol: 'USDT', name: 'TETHER', color: '#26a17b', type: 'crossT' },
+      { symbol: 'USDC', name: 'USD COIN', color: '#2775ca', type: 'brackets' },
+      { symbol: 'WIF', name: 'DOGWIFHAT', color: '#e58e73', type: 'beanie' },
+      { symbol: 'BONK', name: 'BONK', color: '#f89b1b', type: 'burst' },
+      { symbol: 'AAVE', name: 'AAVE', color: '#b6509e', type: 'ghost' },
+      { symbol: 'FLOKI', name: 'FLOKI', color: '#f0b90b', type: 'viking' },
+      { symbol: 'MOG', name: 'MOG COIN', color: '#ff2a85', type: 'glasses' },
+      { symbol: 'POPCAT', name: 'POPCAT', color: '#ff66cc', type: 'catO' },
+      { symbol: 'BRETT', name: 'BRETT', color: '#0066ff', type: 'visor' },
+      { symbol: 'DEGEN', name: 'DEGEN', color: '#a855f7', type: 'tophat' },
+      { symbol: 'SPX', name: 'SPX6900', color: '#00ffcc', type: 'cube' },
+      { symbol: 'SOL', name: 'SOLANA', color: '#14f195', type: 'bars' },
+      { symbol: 'ARB', name: 'ARBITRUM', color: '#28a0f0', type: 'slashHex' },
+      { symbol: 'OP', name: 'OPTIMISM', color: '#ff0420', type: 'ring' },
+      { symbol: 'LDO', name: 'LIDO DAO', color: '#00a3ff', type: 'drop' },
+      { symbol: 'MKR', name: 'MAKER', color: '#1aab9b', type: 'pillars' },
+      { symbol: 'PENGU', name: 'PUDGY', color: '#38bdf8', type: 'penguin' }
+    ];
+
+    function drawTokenVectorEmblem(ctx, cx, cy, r, token) {
+      ctx.save();
+      ctx.strokeStyle = token.color;
+      ctx.fillStyle = token.color;
+      ctx.lineWidth = 1.6;
+
+      ctx.globalAlpha = 0.22;
+      ctx.beginPath();
+      ctx.arc(cx, cy, r * 1.05, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.globalAlpha = 0.9;
+      ctx.beginPath();
+      ctx.arc(cx, cy, r * 1.05, 0, Math.PI * 2);
+      ctx.stroke();
+
+      switch (token.type) {
+        case 'diamond':
+          ctx.beginPath();
+          ctx.moveTo(cx, cy - r * 0.78);
+          ctx.lineTo(cx + r * 0.52, cy);
+          ctx.lineTo(cx, cy + r * 0.78);
+          ctx.lineTo(cx - r * 0.52, cy);
+          ctx.closePath();
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.moveTo(cx - r * 0.52, cy);
+          ctx.lineTo(cx + r * 0.52, cy);
+          ctx.moveTo(cx, cy - r * 0.78);
+          ctx.lineTo(cx, cy + r * 0.78);
+          ctx.stroke();
+          break;
+
+        case 'frog':
+          ctx.beginPath();
+          ctx.arc(cx - r * 0.32, cy - r * 0.25, r * 0.26, 0, Math.PI * 2);
+          ctx.arc(cx + r * 0.32, cy - r * 0.25, r * 0.26, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.fillRect(cx - r * 0.36, cy - r * 0.29, 3, 3);
+          ctx.fillRect(cx + r * 0.28, cy - r * 0.29, 3, 3);
+          ctx.beginPath();
+          ctx.strokeStyle = '#ef4444';
+          ctx.moveTo(cx - r * 0.52, cy + r * 0.25);
+          ctx.lineTo(cx + r * 0.52, cy + r * 0.25);
+          ctx.stroke();
+          break;
+
+        case 'shiba':
+        case 'fox':
+          ctx.beginPath();
+          ctx.moveTo(cx - r * 0.55, cy + r * 0.45);
+          ctx.lineTo(cx - r * 0.55, cy - r * 0.6);
+          ctx.lineTo(cx - r * 0.15, cy - r * 0.25);
+          ctx.lineTo(cx + r * 0.15, cy - r * 0.25);
+          ctx.lineTo(cx + r * 0.55, cy - r * 0.6);
+          ctx.lineTo(cx + r * 0.55, cy + r * 0.45);
+          ctx.lineTo(cx, cy + r * 0.65);
+          ctx.closePath();
+          ctx.stroke();
+          ctx.fillRect(cx - r * 0.28, cy - r * 0.05, 3, 3);
+          ctx.fillRect(cx + r * 0.2, cy - r * 0.05, 3, 3);
+          break;
+
+        case 'glasses':
+          ctx.fillRect(cx - r * 0.65, cy - r * 0.22, r * 1.3, r * 0.36);
+          ctx.clearRect(cx - r * 0.1, cy - r * 0.05, r * 0.2, r * 0.2);
+          break;
+
+        case 'viking':
+          ctx.beginPath();
+          ctx.arc(cx, cy + r * 0.15, r * 0.42, Math.PI, 0);
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.moveTo(cx - r * 0.4, cy - r * 0.05);
+          ctx.lineTo(cx - r * 0.72, cy - r * 0.55);
+          ctx.moveTo(cx + r * 0.4, cy - r * 0.05);
+          ctx.lineTo(cx + r * 0.72, cy - r * 0.55);
+          ctx.stroke();
+          break;
+
+        case 'catO':
+          ctx.beginPath();
+          ctx.arc(cx, cy + r * 0.12, r * 0.38, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.moveTo(cx - r * 0.45, cy - r * 0.2);
+          ctx.lineTo(cx - r * 0.55, cy - r * 0.62);
+          ctx.lineTo(cx - r * 0.15, cy - r * 0.38);
+          ctx.moveTo(cx + r * 0.45, cy - r * 0.2);
+          ctx.lineTo(cx + r * 0.55, cy - r * 0.62);
+          ctx.lineTo(cx + r * 0.15, cy - r * 0.38);
+          ctx.stroke();
+          break;
+
+        case 'hex':
+        case 'slashHex':
+          ctx.beginPath();
+          for (let s = 0; s < 6; s++) {
+            const ang = (Math.PI / 3) * s - Math.PI / 6;
+            const hx = cx + r * 0.62 * Math.cos(ang);
+            const hy = cy + r * 0.62 * Math.sin(ang);
+            if (s === 0) ctx.moveTo(hx, hy);
+            else ctx.lineTo(hx, hy);
+          }
+          ctx.closePath();
+          ctx.stroke();
+          break;
+
+        case 'tophat':
+          ctx.fillRect(cx - r * 0.38, cy - r * 0.55, r * 0.76, r * 0.75);
+          ctx.fillRect(cx - r * 0.65, cy + r * 0.2, r * 1.3, r * 0.18);
+          break;
+
+        default:
+          ctx.font = `700 ${Math.floor(r * 0.82)}px "Orbitron", sans-serif`;
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(token.symbol.slice(0, 3), cx, cy + 1);
+          break;
+      }
+
+      ctx.restore();
+    }
+
+    let wallBricks = [];
+    let brickPunchAnimFrameId = null;
+
+    function buildWallBricksData() {
+      canvasWidth = window.innerWidth;
+      canvasHeight = window.innerHeight;
+      bgCanvas.width = canvasWidth;
+      bgCanvas.height = canvasHeight;
+
+      const brickSize = 96;
+      const mortarGap = 4;
+      const step = brickSize + mortarGap;
+      const rows = Math.ceil(canvasHeight / step) + 2;
+      const cols = Math.ceil(canvasWidth / step) + 2;
+
+      let seed = 133742069;
+      function nextRand() {
+        seed = (seed * 1664525 + 1013904223) >>> 0;
+        return seed / 4294967296;
+      }
+
+      wallBricks = [];
+      for (let row = 0; row < rows; row++) {
+        const rowOffset = (row % 2 === 1) ? -Math.floor(step / 2) : 0;
+        const y = row * step;
+
+        for (let col = 0; col < cols; col++) {
+          const x = col * step + rowOffset;
+          const token = TOKEN_WALL_CATALOG[Math.floor(nextRand() * TOKEN_WALL_CATALOG.length)];
+          const shortHash = `0x${Math.floor(nextRand() * 0xffff).toString(16).padStart(4, '0')}`;
+
+          // Randomized punch-out timing so every brick punches out individually over 3000ms
+          const delay = nextRand() * 2250; // 0ms to 2250ms start time
+          const duration = 620 + nextRand() * 130; // ~620ms to 750ms individual Z-axis recession
+          const spinDir = (nextRand() - 0.5) * 0.38;
+
+          wallBricks.push({
+            x,
+            y,
+            brickSize,
+            token,
+            shortHash,
+            delay,
+            duration,
+            spinDir
+          });
+        }
+      }
+    }
+
+    function drawSingleBrick(ctx, brick, scale = 1, alpha = 1, punchProgress = 0, drawX = brick.x, drawY = brick.y, rotAngle = 0) {
+      if (alpha <= 0.01 || scale <= 0.02) return;
+
+      const s = brick.brickSize;
+      const cx = drawX + s / 2;
+      const cy = drawY + s / 2;
+
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.translate(cx, cy);
+      if (rotAngle !== 0) {
+        ctx.rotate(rotAngle);
+      }
+      ctx.scale(scale, scale);
+
+      const half = s / 2;
+
+      // Brick body
+      ctx.fillStyle = '#060609';
+      ctx.fillRect(-half, -half, s, s);
+
+      // Brief impact rim flash when the brick is initially punched out
+      if (punchProgress > 0 && punchProgress < 0.24) {
+        const flashIntensity = 1 - (punchProgress / 0.24);
+        ctx.strokeStyle = brick.token.color;
+        ctx.lineWidth = 1.5 + flashIntensity * 2.2;
+        ctx.strokeRect(-half + 0.75, -half + 0.75, s - 1.5, s - 1.5);
+      } else {
+        ctx.strokeStyle = '#1b1b24';
+        ctx.lineWidth = 1.5;
+        ctx.strokeRect(-half + 0.75, -half + 0.75, s - 1.5, s - 1.5);
+      }
+
+      // Corner accent dot
+      ctx.fillStyle = brick.token.color;
+      ctx.globalAlpha = alpha * 0.65;
+      ctx.fillRect(-half + 2, -half + 2, 5, 5);
+      ctx.globalAlpha = alpha;
+
+      // Token vector emblem
+      drawTokenVectorEmblem(ctx, 0, -half + s * 0.42, 20, brick.token);
+
+      // Ticker label
+      ctx.font = '700 10px "Orbitron", sans-serif';
+      ctx.fillStyle = '#d4d4d8';
+      ctx.textAlign = 'center';
+      ctx.fillText(`$${brick.token.symbol}`, 0, half - 19);
+
+      // Short block hash
+      ctx.font = '400 9px "Share Tech Mono", monospace';
+      ctx.fillStyle = '#52525b';
+      ctx.fillText(brick.shortHash, 0, half - 7);
+
+      ctx.restore();
+    }
+
+    function renderStaticTokenBrickWall() {
+      if (brickPunchAnimFrameId) {
+        cancelAnimationFrame(brickPunchAnimFrameId);
+        brickPunchAnimFrameId = null;
+      }
+      bgCanvas.classList.remove('sink-away');
+      buildWallBricksData();
+
+      bgCtx.fillStyle = '#000000';
+      bgCtx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+      for (let i = 0; i < wallBricks.length; i++) {
+        drawSingleBrick(bgCtx, wallBricks[i], 1, 1, 0);
+      }
+    }
+
+    function animateBricksPunchOut(totalDurationMs = 3000) {
+      return new Promise((resolve) => {
+        if (brickPunchAnimFrameId) {
+          cancelAnimationFrame(brickPunchAnimFrameId);
+          brickPunchAnimFrameId = null;
+        }
+        if (!wallBricks.length) {
+          buildWallBricksData();
+        }
+
+        const startTime = performance.now();
+        const vanishCenterX = canvasWidth / 2;
+        const vanishCenterY = canvasHeight / 2;
+
+        // Draw static bricks first, then punched bricks on top so receding bricks don't clip behind neighbors
+        function renderPunchFrame(now) {
+          const elapsed = now - startTime;
+
+          bgCtx.fillStyle = '#000000';
+          bgCtx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+          const activePunchingBricks = [];
+
+          for (let i = 0; i < wallBricks.length; i++) {
+            const b = wallBricks[i];
+            if (elapsed <= b.delay) {
+              // Brick has not been punched yet: remains completely static in the wall
+              drawSingleBrick(bgCtx, b, 1, 1, 0);
+            } else if (elapsed < b.delay + b.duration) {
+              activePunchingBricks.push(b);
+            }
+            // If elapsed >= b.delay + b.duration, the brick is fully punched out leaving pitch black #000000
+          }
+
+          // Render bricks currently receding along the Z-axis into the void
+          for (let i = 0; i < activePunchingBricks.length; i++) {
+            const b = activePunchingBricks[i];
+            const t = (elapsed - b.delay) / b.duration; // 0 -> 1
+            const eased = t * t * (3 - 2 * t);
+
+            // Simulate deep Z-axis punch-out perspective recession
+            const zDepth = Math.pow(t, 1.55) * 2800;
+            const fovScale = 420 / (420 + zDepth);
+            const alpha = Math.max(0, 1 - Math.pow(t, 1.35));
+
+            // Pull slightly toward the central Z-axis vanishing point as the brick falls deep into the void
+            const brickCenterX = b.x + b.brickSize / 2;
+            const brickCenterY = b.y + b.brickSize / 2;
+            const pullFactor = eased * 0.42;
+            const projX = brickCenterX + (vanishCenterX - brickCenterX) * pullFactor - b.brickSize / 2;
+            const projY = brickCenterY + (vanishCenterY - brickCenterY) * pullFactor - b.brickSize / 2;
+            const rotAngle = b.spinDir * eased;
+
+            drawSingleBrick(bgCtx, b, fovScale, alpha, t, projX, projY, rotAngle);
+          }
+
+          if (elapsed < totalDurationMs) {
+            brickPunchAnimFrameId = requestAnimationFrame(renderPunchFrame);
+          } else {
+            bgCtx.fillStyle = '#000000';
+            bgCtx.fillRect(0, 0, canvasWidth, canvasHeight);
+            brickPunchAnimFrameId = null;
+            resolve();
+          }
+        }
+
+        brickPunchAnimFrameId = requestAnimationFrame(renderPunchFrame);
+      });
+    }
+
+    renderStaticTokenBrickWall();
+
+    /***************************************************************************
+     * 4. CURRENCY CONVERSION & WALLET TOKEN ACRONYMS GENERATOR
+     ***************************************************************************/
+    const CURRENCY_RATES = {
+      USD: { symbol: '$', code: 'USD', rate: 1.0, decimals: 2 },
+      EUR: { symbol: '€', code: 'EUR', rate: 0.92, decimals: 2 },
+      GBP: { symbol: '£', code: 'GBP', rate: 0.79, decimals: 2 },
+      JPY: { symbol: '¥', code: 'JPY', rate: 154.5, decimals: 0 },
+      CAD: { symbol: 'C$', code: 'CAD', rate: 1.39, decimals: 2 },
+      AUD: { symbol: 'A$', code: 'AUD', rate: 1.53, decimals: 2 },
+      CHF: { symbol: 'Fr ', code: 'CHF', rate: 0.88, decimals: 2 },
+      KRW: { symbol: '₩', code: 'KRW', rate: 1385.0, decimals: 0 },
+      INR: { symbol: '₹', code: 'INR', rate: 84.1, decimals: 0 },
+      BRL: { symbol: 'R$', code: 'BRL', rate: 5.75, decimals: 2 }
+    };
+
+    const ETH_USD_PRICE = 3180.0;
+    let selectedCurrency = 'USD';
+
+    const homeCurrencySelect = document.getElementById('currency-select');
+    const graphCurrencySelect = document.getElementById('graph-currency-select');
+
+    function formatEthInSelectedCurrency(ethAmount) {
+      const numEth = parseFloat(ethAmount) || 0;
+      const usdVal = numEth * ETH_USD_PRICE;
+      const cfg = CURRENCY_RATES[selectedCurrency] || CURRENCY_RATES.USD;
+      const converted = usdVal * cfg.rate;
+      const formattedNum = converted.toLocaleString('en-US', {
+        minimumFractionDigits: cfg.decimals,
+        maximumFractionDigits: cfg.decimals
+      });
+      return `${cfg.symbol}${formattedNum} ${cfg.code}`;
+    }
+
+    homeCurrencySelect.addEventListener('change', (e) => {
+      selectedCurrency = e.target.value;
+      graphCurrencySelect.value = selectedCurrency;
+      if (currentFocalWalletData) {
+        renderWalletGraphDOM(currentFocalWalletData);
+      }
+    });
+
+    graphCurrencySelect.addEventListener('change', (e) => {
+      selectedCurrency = e.target.value;
+      homeCurrencySelect.value = selectedCurrency;
+      if (currentFocalWalletData) {
+        renderWalletGraphDOM(currentFocalWalletData);
+      }
+    });
+
+    // Generate deterministic held token acronyms for any wallet address
+    const WALLET_COIN_ACRONYMS_POOL = [
+      { ticker: 'ETH', format: (r) => (0.4 + r * 38).toFixed(2) },
+      { ticker: 'USDC', format: (r) => `${(1.2 + r * 95).toFixed(1)}K` },
+      { ticker: 'USDT', format: (r) => `${(0.8 + r * 64).toFixed(1)}K` },
+      { ticker: 'PEPE', format: (r) => `${Math.floor(15 + r * 850)}M` },
+      { ticker: 'WBTC', format: (r) => (0.05 + r * 2.4).toFixed(2) },
+      { ticker: 'LINK', format: (r) => Math.floor(45 + r * 1400) },
+      { ticker: 'UNI', format: (r) => Math.floor(30 + r * 950) },
+      { ticker: 'SHIB', format: (r) => `${Math.floor(12 + r * 420)}M` },
+      { ticker: 'DOGE', format: (r) => `${(2.5 + r * 85).toFixed(1)}K` },
+      { ticker: 'AAVE', format: (r) => Math.floor(8 + r * 180) },
+      { ticker: 'WIF', format: (r) => `${(0.5 + r * 19).toFixed(1)}K` },
+      { ticker: 'BONK', format: (r) => `${Math.floor(25 + r * 600)}M` },
+      { ticker: 'MOG', format: (r) => `${Math.floor(40 + r * 900)}M` },
+      { ticker: 'ARB', format: (r) => `${(1.1 + r * 24).toFixed(1)}K` },
+      { ticker: 'LDO', format: (r) => Math.floor(120 + r * 3200) },
+      { ticker: 'SPX', format: (r) => Math.floor(200 + r * 8500) }
+    ];
+
+    function generateHeldTokenAcronyms(address, count = 4) {
+      const rand = createHashPRNG(address + '_tokens');
+      const chosen = [
+        { ticker: 'ETH', amount: WALLET_COIN_ACRONYMS_POOL[0].format(rand()) }
+      ];
+      const usedIndices = new Set([0]);
+      while (chosen.length < count) {
+        const idx = 1 + Math.floor(rand() * (WALLET_COIN_ACRONYMS_POOL.length - 1));
+        if (!usedIndices.has(idx)) {
+          usedIndices.add(idx);
+          const item = WALLET_COIN_ACRONYMS_POOL[idx];
+          chosen.push({
+            ticker: item.ticker,
+            amount: item.format(rand())
+          });
+        }
+      }
+      return chosen;
+    }
+
+    /***************************************************************************
+     * 5. BLOCKCHAIN HASH TRANSACTION ENGINE WITH TIMELINE-STAGGERED X/Y COORDS
+     ***************************************************************************/
+    const walletGraphCache = new Map();
+    let walletHistoryTrail = [];
+    let currentFocalWalletData = null;
+    let activeHoverNodeId = null;
+    let isAnimatingNodeTransition = false;
+
+    function createHashPRNG(seedStr) {
+      let h = 2166136261 >>> 0;
+      const clean = (seedStr || '0x0').toLowerCase().trim();
+      for (let i = 0; i < clean.length; i++) {
+        h ^= clean.charCodeAt(i);
+        h = Math.imul(h, 16777619);
+      }
+      return function() {
+        h += 0x6D2B79F5;
+        let t = Math.imul(h ^ (h >>> 15), 1 | h);
+        t ^= t + Math.imul(t ^ (t >>> 7), 61 | t);
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+      };
+    }
+
+    function generateAddressFromPRNG(rand) {
+      const hex = '0123456789abcdef';
+      let addr = '0x';
+      for (let i = 0; i < 40; i++) {
+        addr += hex[Math.floor(rand() * 16)];
+      }
+      return addr;
+    }
+
+    function formatShortHash(address) {
+      if (!address) return '0x0000...0000';
+      const clean = address.trim();
+      if (clean.length <= 13) return clean;
+      return `${clean.slice(0, 6)}...${clean.slice(-4)}`;
+    }
+
+    function formatTimestampUTC(ms) {
+      const d = new Date(ms);
+      const yyyy = d.getUTCFullYear();
+      const mm = String(d.getUTCMonth() + 1).padStart(2, '0');
+      const dd = String(d.getUTCDate()).padStart(2, '0');
+      const hh = String(d.getUTCHours()).padStart(2, '0');
+      const min = String(d.getUTCMinutes()).padStart(2, '0');
+      return `${yyyy}-${mm}-${dd} ${hh}:${min}`;
+    }
+
+    const TOTAL_SIDE_NODES = 15; // 15 Inbound & 15 Outbound (30 connected nodes total across timeline; default view frames closest 6 on each side)
+    const WORLD_TIMELINE_HALF_SPAN_X = 2780; // Full world horizontal span [-2780px, +2780px] mapped across the bottom Timeline bar
+    const CLOSEST_SIX_WORLD_HALF_SPAN_X = 1140; // World horizontal span [-1140px, +1140px] framing the closest 6 inbound & 6 outbound transactions
+
+    async function getOrCreateWalletGraph(rawAddress, linkContext = null) {
+      const normalizedAddress = rawAddress.trim().startsWith('0x')
+        ? rawAddress.trim()
+        : `0x${rawAddress.trim()}`;
+      const cacheKey = normalizedAddress.toLowerCase();
+
+      if (walletGraphCache.has(cacheKey) && !linkContext) {
+        return walletGraphCache.get(cacheKey);
+      }
+
+      const rand = createHashPRNG(cacheKey);
+      const baseAnchorMs = linkContext?.referenceTimestampMs
+        ? linkContext.referenceTimestampMs
+        : Date.UTC(2026, 9, 29, 16, 30, 0) - Math.floor(rand() * 86400000 * 3);
+
+      const inboundNodes = [];
+      const outboundNodes = [];
+
+      // Symmetrical 75-hour time span on each side of the center wallet's last transaction
+      const maxSpanHours = 75.0;
+      const maxSpanMs = maxSpanHours * 3600 * 1000;
+      const minTimelineMs = baseAnchorMs - maxSpanMs;
+      const maxTimelineMs = baseAnchorMs + maxSpanMs;
+
+      // Staggered Y positions so none of the 15 inbound or 15 outbound nodes line up on the same X or Y axis
+      // Closest 6 to the center wallet sit cleanly within [-350px, +350px] Y; outer 9 fan out across [-540px, +540px] Y
+      const closest6InboundY = [-310, 195, -105, 315, 70, -215];
+      const outer9InboundY = [435, -430, 140, -370, 275, -155, 495, -490, -25];
+
+      // Generate 15 Inbound transactions ordered from oldest (index 0, furthest left) to closest to center (index 14, closest left)
+      for (let i = 0; i < TOTAL_SIDE_NODES; i++) {
+        // Distributes distance-from-center rank (0 = closest to center, 14 = furthest from center)
+        const distRank = (TOTAL_SIDE_NODES - 1) - i; // i=14 -> distRank=0 (closest); i=0 -> distRank=14 (oldest)
+        let hoursBeforeCenter;
+        let worldX;
+        let worldY;
+
+        if (distRank < 6) {
+          // Closest 6 inbound transactions: spaced cleanly between -320px and -1045px
+          const slotMinH = 1.8 + distRank * 4.2;
+          const slotMaxH = slotMinH + 3.1;
+          hoursBeforeCenter = slotMinH + rand() * (slotMaxH - slotMinH);
+          worldX = -Math.round(325 + distRank * 138 + (rand() - 0.5) * 32);
+          worldY = closest6InboundY[distRank];
+        } else {
+          // Outer 9 older inbound transactions: spaced between -1210px and -2640px
+          const outerIdx = distRank - 6; // 0..8
+          const slotMinH = 28.0 + outerIdx * 5.1;
+          const slotMaxH = slotMinH + 4.2;
+          hoursBeforeCenter = slotMinH + rand() * (slotMaxH - slotMinH);
+          worldX = -Math.round(1220 + outerIdx * 172 + (rand() - 0.5) * 38);
+          worldY = outer9InboundY[outerIdx];
+        }
+
+        const tsMs = Math.floor(baseAnchorMs - hoursBeforeCenter * 3600 * 1000);
+        const amountEth = (0.45 + rand() * 26.5).toFixed(3);
+        const isClosestInbound = (i === TOTAL_SIDE_NODES - 1);
+        const addr = (isClosestInbound && linkContext?.clickedDirection === 'outbound' && linkContext?.previousWallet)
+          ? linkContext.previousWallet.address
+          : generateAddressFromPRNG(rand);
+
+        inboundNodes.push({
+          id: `inbound-node-${i}`,
+          type: 'inbound',
+          address: addr,
+          amountEth,
+          timestampMs: tsMs,
+          dateStr: formatTimestampUTC(tsMs),
+          tokens: generateHeldTokenAcronyms(addr, 4),
+          worldX,
+          worldY,
+          distRank,
+          isClosestSix: distRank < 6,
+          isLinkedPrevious: (isClosestInbound && linkContext?.clickedDirection === 'outbound')
+        });
+      }
+
+      const closest6OutboundY = [-250, 125, 295, -90, 215, -330];
+      const outer9OutboundY = [420, -425, 45, -205, 365, -485, 165, -365, 485];
+
+      // Generate 15 Outbound transactions ordered from closest to center (index 0) to furthest right (index 14)
+      for (let i = 0; i < TOTAL_SIDE_NODES; i++) {
+        const distRank = i; // i=0 -> distRank=0 (closest to center); i=14 -> distRank=14 (furthest right)
+        let hoursAfterCenter;
+        let worldX;
+        let worldY;
+
+        if (distRank < 6) {
+          // Closest 6 outbound transactions: spaced cleanly between +325px and +1045px
+          const slotMinH = 1.8 + distRank * 4.2;
+          const slotMaxH = slotMinH + 3.1;
+          hoursAfterCenter = slotMinH + rand() * (slotMaxH - slotMinH);
+          worldX = Math.round(325 + distRank * 138 + (rand() - 0.5) * 32);
+          worldY = closest6OutboundY[distRank];
+        } else {
+          // Outer 9 later outbound transactions: spaced between +1220px and +2640px
+          const outerIdx = distRank - 6; // 0..8
+          const slotMinH = 28.0 + outerIdx * 5.1;
+          const slotMaxH = slotMinH + 4.2;
+          hoursAfterCenter = slotMinH + rand() * (slotMaxH - slotMinH);
+          worldX = Math.round(1220 + outerIdx * 172 + (rand() - 0.5) * 38);
+          worldY = outer9OutboundY[outerIdx];
+        }
+
+        const tsMs = Math.floor(baseAnchorMs + hoursAfterCenter * 3600 * 1000);
+        const amountEth = (0.75 + rand() * 31.4).toFixed(3);
+        const isClosestOutbound = (i === 0);
+        const addr = (isClosestOutbound && linkContext?.clickedDirection === 'inbound' && linkContext?.previousWallet)
+          ? linkContext.previousWallet.address
+          : generateAddressFromPRNG(rand);
+
+        outboundNodes.push({
+          id: `outbound-node-${i}`,
+          type: 'outbound',
+          address: addr,
+          amountEth,
+          timestampMs: tsMs,
+          dateStr: formatTimestampUTC(tsMs),
+          tokens: generateHeldTokenAcronyms(addr, 4),
+          worldX,
+          worldY,
+          distRank,
+          isClosestSix: distRank < 6,
+          isLinkedPrevious: (isClosestOutbound && linkContext?.clickedDirection === 'inbound')
+        });
+      }
+
+      // Sort chronologically and compute exact timeline ratio [0..1] based on worldX across [-WORLD_TIMELINE_HALF_SPAN_X, +WORLD_TIMELINE_HALF_SPAN_X]
+      inboundNodes.sort((a, b) => a.timestampMs - b.timestampMs);
+      inboundNodes.forEach((node, i) => {
+        node.id = `inbound-node-${i}`;
+        node.timelineRatio = Math.max(0.015, Math.min(0.485, 0.5 + (node.worldX / (WORLD_TIMELINE_HALF_SPAN_X * 2))));
+      });
+
+      outboundNodes.sort((a, b) => a.timestampMs - b.timestampMs);
+      outboundNodes.forEach((node, i) => {
+        node.id = `outbound-node-${i}`;
+        node.timelineRatio = Math.max(0.515, Math.min(0.985, 0.5 + (node.worldX / (WORLD_TIMELINE_HALF_SPAN_X * 2))));
+      });
+
+      const centerTimestampMs = baseAnchorMs;
+      const centerDateStr = formatTimestampUTC(centerTimestampMs);
+
+      const totalInbound = inboundNodes.reduce((acc, n) => acc + parseFloat(n.amountEth), 0);
+      const totalOutbound = outboundNodes.reduce((acc, n) => acc + parseFloat(n.amountEth), 0);
+      const walletBalanceEth = Math.max(4.25, (totalInbound * 0.85 - totalOutbound * 0.25 + rand() * 48)).toFixed(3);
+
+      // Determine whether the center wallet's last transaction was inbound or outbound
+      const lastTxDirection = linkContext?.clickedDirection
+        ? linkContext.clickedDirection
+        : (rand() > 0.45 ? 'inbound' : 'outbound');
+
+      const walletGraph = {
+        address: normalizedAddress,
+        shortAddress: formatShortHash(normalizedAddress),
+        balanceEth: walletBalanceEth,
+        lastTxTimestampMs: centerTimestampMs,
+        lastTxDateStr: centerDateStr,
+        lastTxDirection,
+        tokens: generateHeldTokenAcronyms(normalizedAddress, 5),
+        inboundNodes,
+        outboundNodes,
+        minTimelineMs,
+        maxTimelineMs
+      };
+
+      walletGraphCache.set(cacheKey, walletGraph);
+      return walletGraph;
+    }
+
+    /***************************************************************************
+     * 6. PAN & ZOOM WORLD VIEWPORT CONTROLLER + TIMELINE VIEWPORT INDICATOR BOX
+     ***************************************************************************/
+    const viewportEl = document.getElementById('flowchart-viewport');
+    const worldLayerEl = document.getElementById('world-layer');
+    const nodesContainerEl = document.getElementById('nodes-container');
+    const svgCurvesGroup = document.getElementById('svg-curves-group');
+    const svgHoverGuideline = document.getElementById('svg-hover-guideline');
+    const timelineTicksLayer = document.getElementById('timeline-ticks-layer');
+    const timelineTrackEl = document.getElementById('timeline-track');
+    const timelineViewportBoxEl = document.getElementById('timeline-viewport-box');
+    const breadcrumbsEl = document.getElementById('wallet-breadcrumbs');
+    const zoomReadoutEl = document.getElementById('zoom-level-readout');
+
+    const MIN_ZOOM_SCALE = 0.18; // Allows zooming out far enough to fit all 30+ nodes over the entire timeline
+    const MAX_ZOOM_SCALE = 2.75;
+
+    let camPanX = 0;
+    let camPanY = 0;
+    let camZoom = 1;
+    let isDraggingViewport = false;
+    let dragStartX = 0;
+    let dragStartY = 0;
+    let dragOriginPanX = 0;
+    let dragOriginPanY = 0;
+
+    function updateWorldTransform(smooth = false) {
+      if (smooth) {
+        worldLayerEl.classList.add('smooth-camera-transition');
+      } else {
+        worldLayerEl.classList.remove('smooth-camera-transition');
+      }
+      worldLayerEl.style.transform = `translate3d(${camPanX}px, ${camPanY}px, 0) scale(${camZoom})`;
+      zoomReadoutEl.textContent = `${Math.round(camZoom * 100)}%`;
+      syncTimelineViewportAndMarkers();
+      drawHoverLaserGuideline();
+    }
+
+    // Primary Default View: Start significantly more zoomed in on the Center 16:10 Focal Wallet Node (~1.28x)
+    function focusCenterNodeZoom(smooth = true) {
+      const rect = viewportEl.getBoundingClientRect();
+      if (!rect.width || !rect.height) {
+        camZoom = 1.28;
+      } else {
+        // Frame tightly around the 352x220 center node and its immediate inner orthogonal connectors
+        const targetZoom = Math.min(rect.width / 820, rect.height / 500);
+        camZoom = Math.max(1.18, Math.min(1.36, targetZoom));
+      }
+      camPanX = 0;
+      camPanY = 0;
+      updateWorldTransform(smooth);
+    }
+
+    // Secondary View: Frame the Center Wallet + Closest 6 Inbound & Closest 6 Outbound Transactions on Either Side
+    function fitClosestSixToViewport(smooth = true) {
+      const rect = viewportEl.getBoundingClientRect();
+      if (!rect.width || !rect.height) return;
+      const requiredWidth = CLOSEST_SIX_WORLD_HALF_SPAN_X * 2 + 120; // ~2400px world span for the closest 6 on each side
+      const requiredHeight = 820; // Covers [-350px, +350px] Y range + node height
+      const scaleX = (rect.width * 0.94) / requiredWidth;
+      const scaleY = (rect.height * 0.88) / requiredHeight;
+      camZoom = Math.max(0.32, Math.min(1.05, Math.min(scaleX, scaleY)));
+      camPanX = 0;
+      camPanY = 0;
+      updateWorldTransform(smooth);
+    }
+
+    // Full Timeline Zoom-Out: Fit All 30 Connected Inbound & Outbound Nodes Across the Entire Timeline to Screen
+    function fitAllNodesToViewport(smooth = true) {
+      const rect = viewportEl.getBoundingClientRect();
+      if (!rect.width || !rect.height) return;
+      const requiredWidth = WORLD_TIMELINE_HALF_SPAN_X * 2 + 160; // ~5720px world span for all 30 nodes
+      const requiredHeight = 1220; // Covers [-540px, +540px] Y range
+      const scaleX = (rect.width * 0.94) / requiredWidth;
+      const scaleY = (rect.height * 0.88) / requiredHeight;
+      camZoom = Math.max(MIN_ZOOM_SCALE, Math.min(0.85, Math.min(scaleX, scaleY)));
+      camPanX = 0;
+      camPanY = 0;
+      updateWorldTransform(smooth);
+    }
+
+    // Mouse Wheel Zoom (Centered around cursor position, down to MIN_ZOOM_SCALE = 0.18)
+    viewportEl.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      if (isAnimatingNodeTransition) return;
+
+      const rect = viewportEl.getBoundingClientRect();
+      const cursorOffsetX = e.clientX - (rect.left + rect.width / 2);
+      const cursorOffsetY = e.clientY - (rect.top + rect.height / 2);
+
+      const zoomFactor = e.deltaY < 0 ? 1.12 : 0.89;
+      const nextZoom = Math.max(MIN_ZOOM_SCALE, Math.min(MAX_ZOOM_SCALE, camZoom * zoomFactor));
+
+      // Keep world point under cursor stationary
+      const worldXUnderCursor = (cursorOffsetX - camPanX) / camZoom;
+      const worldYUnderCursor = (cursorOffsetY - camPanY) / camZoom;
+
+      camZoom = nextZoom;
+      camPanX = cursorOffsetX - worldXUnderCursor * camZoom;
+      camPanY = cursorOffsetY - worldYUnderCursor * camZoom;
+
+      updateWorldTransform(false);
+    }, { passive: false });
+
+    // Click & Drag Background to Pan
+    viewportEl.addEventListener('pointerdown', (e) => {
+      if (isAnimatingNodeTransition) return;
+      if (e.target.closest('.cyber-node') || e.target.closest('button')) return;
+
+      isDraggingViewport = true;
+      dragStartX = e.clientX;
+      dragStartY = e.clientY;
+      dragOriginPanX = camPanX;
+      dragOriginPanY = camPanY;
+      viewportEl.setPointerCapture(e.pointerId);
+    });
+
+    viewportEl.addEventListener('pointermove', (e) => {
+      if (!isDraggingViewport) return;
+      const dx = e.clientX - dragStartX;
+      const dy = e.clientY - dragStartY;
+      camPanX = dragOriginPanX + dx;
+      camPanY = dragOriginPanY + dy;
+      updateWorldTransform(false);
+    });
+
+    viewportEl.addEventListener('pointerup', (e) => {
+      if (isDraggingViewport) {
+        isDraggingViewport = false;
+        try { viewportEl.releasePointerCapture(e.pointerId); } catch (err) {}
+      }
+    });
+
+    // Interactive Scrubbing / Dragging of the Soft Yellow Timeline Viewport Box
+    let isDraggingTimelineBox = false;
+    let timelineDragStartX = 0;
+    let timelineDragOriginPanX = 0;
+
+    timelineViewportBoxEl.addEventListener('pointerdown', (e) => {
+      e.stopPropagation();
+      if (isAnimatingNodeTransition) return;
+      isDraggingTimelineBox = true;
+      timelineDragStartX = e.clientX;
+      timelineDragOriginPanX = camPanX;
+      timelineViewportBoxEl.setPointerCapture(e.pointerId);
+    });
+
+    timelineViewportBoxEl.addEventListener('pointermove', (e) => {
+      if (!isDraggingTimelineBox) return;
+      const trackRect = timelineTrackEl.getBoundingClientRect();
+      if (!trackRect.width) return;
+
+      const deltaTrackPx = e.clientX - timelineDragStartX;
+      const deltaWorldX = (deltaTrackPx / trackRect.width) * (WORLD_TIMELINE_HALF_SPAN_X * 2);
+      // Moving the timeline viewport box right shifts camera view right (which decreases camPanX)
+      camPanX = timelineDragOriginPanX - deltaWorldX * camZoom;
+      updateWorldTransform(false);
+    });
+
+    timelineViewportBoxEl.addEventListener('pointerup', (e) => {
+      if (isDraggingTimelineBox) {
+        isDraggingTimelineBox = false;
+        try { timelineViewportBoxEl.releasePointerCapture(e.pointerId); } catch (err) {}
+      }
+    });
+
+    // Clicking anywhere on the yellow timeline track centers the camera view at that point on the timeline
+    timelineTrackEl.addEventListener('pointerdown', (e) => {
+      if (e.target.closest('#timeline-viewport-box') || e.target.closest('[data-tick-for]')) return;
+      if (isAnimatingNodeTransition) return;
+      const trackRect = timelineTrackEl.getBoundingClientRect();
+      if (!trackRect.width) return;
+
+      const clickRatio = Math.max(0, Math.min(1, (e.clientX - trackRect.left) / trackRect.width));
+      const targetWorldX = (clickRatio - 0.5) * (WORLD_TIMELINE_HALF_SPAN_X * 2);
+      camPanX = -targetWorldX * camZoom;
+      updateWorldTransform(true);
+    });
+
+    // Zoom HUD Buttons
+    document.getElementById('zoom-in-btn').addEventListener('click', () => {
+      camZoom = Math.min(MAX_ZOOM_SCALE, camZoom * 1.22);
+      updateWorldTransform(true);
+    });
+
+    document.getElementById('zoom-out-btn').addEventListener('click', () => {
+      camZoom = Math.max(MIN_ZOOM_SCALE, camZoom / 1.22);
+      updateWorldTransform(true);
+    });
+
+    document.getElementById('zoom-closest-btn').addEventListener('click', () => {
+      fitClosestSixToViewport(true);
+    });
+
+    document.getElementById('zoom-fit-btn').addEventListener('click', () => {
+      fitAllNodesToViewport(true);
+    });
+
+    document.getElementById('zoom-center-btn').addEventListener('click', () => {
+      focusCenterNodeZoom(true);
+    });
+
+    window.addEventListener('resize', () => {
+      renderStaticTokenBrickWall();
+      syncTimelineViewportAndMarkers();
+      drawHoverLaserGuideline();
+    });
+
+    /***************************************************************************
+     * 7. RENDER STAGGERED NODES, TOKEN ACRONYMS, ETHERSCAN LINK & 90° CONNECTORS
+     ***************************************************************************/
+    function showToast(msg) {
+      const toast = document.getElementById('toast-notification');
+      toast.textContent = msg;
+      toast.style.opacity = '1';
+      clearTimeout(toast._timer);
+      toast._timer = setTimeout(() => {
+        toast.style.opacity = '0';
+      }, 2200);
+    }
+
+    function copyTextToClipboard(text, btnEl = null) {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).catch(() => {});
+      }
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      try {
+        document.execCommand('copy');
+      } catch (e) {}
+      document.body.removeChild(ta);
+
+      showToast(`COPIED HASH: ${formatShortHash(text)}`);
+      if (btnEl) {
+        const orig = btnEl.textContent;
+        btnEl.textContent = 'COPIED ✓';
+        btnEl.classList.add('bg-[#00ffaa]/30', 'text-[#00ffaa]', 'border-[#00ffaa]');
+        setTimeout(() => {
+          btnEl.textContent = orig;
+          btnEl.classList.remove('bg-[#00ffaa]/30', 'text-[#00ffaa]', 'border-[#00ffaa]');
+        }, 1600);
+      }
+    }
+
+    function renderBreadcrumbs() {
+      breadcrumbsEl.innerHTML = '';
+      walletHistoryTrail.forEach((item, idx) => {
+        const isCurrent = idx === walletHistoryTrail.length - 1;
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = `px-2 py-0.5 transition cursor-pointer shrink-0 ${
+          isCurrent
+            ? 'bg-[#ff9900]/20 border border-[#ff9900] text-[#ff9900] font-bold'
+            : 'bg-zinc-950 hover:bg-zinc-900 text-zinc-400 border border-zinc-800'
+        }`;
+        btn.textContent = formatShortHash(item.address);
+        btn.title = `Jump to ${item.address}`;
+        if (!isCurrent) {
+          btn.addEventListener('click', () => {
+            if (isAnimatingNodeTransition) return;
+            walletHistoryTrail = walletHistoryTrail.slice(0, idx + 1);
+            renderBreadcrumbs();
+            getOrCreateWalletGraph(item.address).then(data => {
+              renderWalletGraphDOM(data, true);
+              focusCenterNodeZoom(true);
+            });
+          });
+        }
+        breadcrumbsEl.appendChild(btn);
+
+        if (!isCurrent) {
+          const sep = document.createElement('span');
+          sep.className = 'text-zinc-600 select-none';
+          sep.textContent = '>>';
+          breadcrumbsEl.appendChild(sep);
+        }
+      });
+    }
+
+    function renderTokenAcronymBadges(tokens, accentColorHex) {
+      return `
+        <div class="mt-1 pt-1 border-t border-white/10">
+          <div class="font-display text-[7px] uppercase tracking-widest text-zinc-400 mb-0.5">
+            WALLET TOKENS / COINS:
+          </div>
+          <div class="flex flex-wrap gap-1">
+            ${tokens.map(t => `
+              <span class="px-1 py-0.2 bg-black/90 border border-[${accentColorHex}]/45 font-mono-code text-[8px] text-zinc-200 leading-tight">
+                <strong class="text-[${accentColorHex}]">${t.ticker}</strong> ${t.amount}
+              </span>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderWalletGraphDOM(graphData, fadeInNewConnections = false) {
+      currentFocalWalletData = graphData;
+      nodesContainerEl.innerHTML = '';
+
+      // 1. Render 5 Timeline-Staggered Inbound Nodes (World Coordinates)
+      graphData.inboundNodes.forEach((node) => {
+        const card = document.createElement('div');
+        card.id = node.id;
+        card.dataset.nodeId = node.id;
+        card.className = `cyber-node node-inbound px-2.5 py-2 flex flex-col justify-center ${fadeInNewConnections ? 'opacity-0' : ''}`;
+        card.style.left = `${node.worldX}px`;
+        card.style.top = `${node.worldY}px`;
+
+        const fiatAmountStr = formatEthInSelectedCurrency(node.amountEth);
+
+        card.innerHTML = `
+          <div class="flex items-center justify-between gap-1 leading-none">
+            <span class="font-display text-[8px] uppercase tracking-wider text-[#ff3377]">
+              wallet address,
+            </span>
+            <span class="font-mono-code text-[8px] text-[#ff0055]">${node.isLinkedPrevious ? '[PREV]' : '[IN]'}</span>
+          </div>
+          <div class="font-mono-code text-[11px] font-bold text-white truncate mt-0.5" title="${node.address}">
+            ${formatShortHash(node.address)}
+          </div>
+          <div class="text-[9px] font-semibold text-[#ff6699] leading-tight mt-0.5">
+            amount sent: <span class="font-mono-code text-white font-bold">${fiatAmountStr}</span>
+          </div>
+          <div class="text-[8px] font-mono-code text-[#ff3377]/85 leading-tight mt-0.5">
+            date/time tx: ${node.dateStr}
+          </div>
+          ${renderTokenAcronymBadges(node.tokens, '#ff3377')}
+        `;
+
+        card.addEventListener('mouseenter', () => setHoverNode(node.id));
+        card.addEventListener('mouseleave', () => setHoverNode(null));
+        card.addEventListener('click', (e) => {
+          e.stopPropagation();
+          if (isAnimatingNodeTransition) return;
+          selectAndSlideNodeToCenter(node, 'inbound');
+        });
+
+        nodesContainerEl.appendChild(card);
+      });
+
+      // 2. Render 1.5x Larger 16:10 Center Focal Node at World Origin (0, 0) with Direct Etherscan Link & Copy Hash Button
+      const centerCard = document.createElement('div');
+      centerCard.id = 'center-focal-node';
+      centerCard.dataset.nodeId = 'center-focal-node';
+      centerCard.className = 'cyber-node node-center px-4 py-2.5 flex flex-col justify-between';
+      centerCard.style.left = '0px';
+      centerCard.style.top = '0px';
+
+      const centerFiatStr = formatEthInSelectedCurrency(graphData.balanceEth);
+      const etherscanUrl = `https://etherscan.io/address/${encodeURIComponent(graphData.address)}`;
+      const isLastTxInbound = graphData.lastTxDirection === 'inbound';
+      const lastTxDirColor = isLastTxInbound ? 'text-[#ff0055]' : 'text-[#00ffaa]';
+      const lastTxDirDot = isLastTxInbound ? 'bg-[#ff0055] shadow-[0_0_6px_#ff0055]' : 'bg-[#00ffaa] shadow-[0_0_6px_#00ffaa]';
+
+      centerCard.innerHTML = `
+        <div class="flex items-center justify-between border-b border-[#ff9900]/40 pb-1.5 gap-2">
+          <span class="font-display text-[10px] uppercase tracking-widest text-[#ff9900] font-extrabold">
+            FOCAL WALLET // 16:10
+          </span>
+          <div class="flex items-center gap-1.5">
+            <button
+              id="copy-focal-hash-btn"
+              type="button"
+              class="px-2 py-0.5 bg-[#ff9900]/15 hover:bg-[#ff9900]/35 border border-[#ff9900]/80 text-[#ffbb33] font-mono-code text-[9px] uppercase transition cursor-pointer"
+              title="Copy full hash address"
+            >
+              COPY HASH
+            </button>
+            <a
+              href="${etherscanUrl}"
+              target="_blank"
+              rel="noopener noreferrer"
+              id="etherscan-direct-link"
+              class="px-2 py-0.5 bg-cyan-950/70 hover:bg-cyan-900/90 border border-cyan-400/80 text-cyan-300 font-mono-code text-[9px] uppercase transition cursor-pointer inline-flex items-center gap-1"
+              title="View Wallet on Etherscan"
+            >
+              <span>ETHERSCAN</span>
+              <span>↗</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="leading-tight my-0.5">
+          <div class="font-display text-[9px] uppercase tracking-wider text-[#ff9900]">
+            selected hash address
+          </div>
+          <div class="font-mono-code text-xs font-bold text-white truncate mt-0.5 select-text" title="${graphData.address}">
+            ${graphData.address}
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2 items-start border-t border-[#ff9900]/20 pt-1.5">
+          <div class="leading-tight">
+            <div class="font-display text-[9px] uppercase tracking-wider text-[#ff9900]">
+              amount (${selectedCurrency})
+            </div>
+            <div class="font-mono-code text-base font-extrabold text-[#ffbb33] truncate mt-0.5">
+              ${centerFiatStr}
+            </div>
+          </div>
+
+          <div class="leading-tight text-right flex flex-col items-end">
+            <div class="font-display text-[9px] uppercase tracking-wider text-[#ff9900]">
+              last transaction date/time
+            </div>
+            <div class="font-mono-code text-[11px] text-white mt-0.5">
+              ${graphData.lastTxDateStr} UTC
+            </div>
+            <div class="inline-flex items-center gap-1 font-display text-[9px] font-bold uppercase tracking-widest ${lastTxDirColor} mt-0.5">
+              <span class="w-1.5 h-1.5 inline-block ${lastTxDirDot}"></span>
+              <span>${graphData.lastTxDirection}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="pt-1 border-t border-white/10">
+          <div class="font-display text-[8px] uppercase tracking-widest text-zinc-400 mb-1">
+            WALLET TOKENS / COINS:
+          </div>
+          <div class="flex flex-wrap gap-1">
+            ${graphData.tokens.map(t => `
+              <span class="px-1.5 py-0.5 bg-black/90 border border-[#ff9900]/55 font-mono-code text-[9px] text-zinc-100 leading-tight">
+                <strong class="text-[#ff9900]">${t.ticker}</strong> ${t.amount}
+              </span>
+            `).join('')}
+          </div>
+        </div>
+      `;
+
+      const copyBtn = centerCard.querySelector('#copy-focal-hash-btn');
+      copyBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        copyTextToClipboard(graphData.address, copyBtn);
+      });
+
+      const esLink = centerCard.querySelector('#etherscan-direct-link');
+      esLink.addEventListener('click', (e) => {
+        e.stopPropagation();
+      });
+
+      centerCard.addEventListener('mouseenter', () => setHoverNode('center-focal-node'));
+      centerCard.addEventListener('mouseleave', () => setHoverNode(null));
+
+      nodesContainerEl.appendChild(centerCard);
+
+      // 3. Render 3 Timeline-Staggered Outbound Nodes (World Coordinates)
+      graphData.outboundNodes.forEach((node) => {
+        const card = document.createElement('div');
+        card.id = node.id;
+        card.dataset.nodeId = node.id;
+        card.className = `cyber-node node-outbound px-2.5 py-2 flex flex-col justify-center ${fadeInNewConnections ? 'opacity-0' : ''}`;
+        card.style.left = `${node.worldX}px`;
+        card.style.top = `${node.worldY}px`;
+
+        const fiatAmountStr = formatEthInSelectedCurrency(node.amountEth);
+
+        card.innerHTML = `
+          <div class="flex items-center justify-between gap-1 leading-none">
+            <span class="font-display text-[8px] uppercase tracking-wider text-[#00ffaa]">
+              wallet address
+            </span>
+            <span class="font-mono-code text-[8px] text-[#00ffaa]">${node.isLinkedPrevious ? '[PREV]' : '[OUT]'}</span>
+          </div>
+          <div class="font-mono-code text-[11px] font-bold text-white truncate mt-0.5" title="${node.address}">
+            ${formatShortHash(node.address)}
+          </div>
+          <div class="text-[9px] font-semibold text-[#55ffcc] leading-tight mt-0.5">
+            amount received: <span class="font-mono-code text-white font-bold">${fiatAmountStr}</span>
+          </div>
+          <div class="text-[8px] font-mono-code text-[#00ffaa]/85 leading-tight mt-0.5">
+            date/time tx: ${node.dateStr}
+          </div>
+          ${renderTokenAcronymBadges(node.tokens, '#00ffaa')}
+        `;
+
+        card.addEventListener('mouseenter', () => setHoverNode(node.id));
+        card.addEventListener('mouseleave', () => setHoverNode(null));
+        card.addEventListener('click', (e) => {
+          e.stopPropagation();
+          if (isAnimatingNodeTransition) return;
+          selectAndSlideNodeToCenter(node, 'outbound');
+        });
+
+        nodesContainerEl.appendChild(card);
+      });
+
+      // 4. Update Timeline Date Readouts & Interactive Markers
+      document.getElementById('timeline-min-date').textContent = `${formatTimestampUTC(graphData.minTimelineMs)} UTC`;
+      document.getElementById('timeline-center-date').textContent = `FOCAL LAST TX: ${graphData.lastTxDateStr} UTC`;
+      document.getElementById('timeline-max-date').textContent = `${formatTimestampUTC(graphData.maxTimelineMs)} UTC`;
+
+      renderTimelineMarkers(graphData);
+      drawWorldOrthogonalConnectors(fadeInNewConnections);
+
+      if (fadeInNewConnections) {
+        requestAnimationFrame(() => {
+          nodesContainerEl.querySelectorAll('.cyber-node').forEach(el => {
+            el.classList.remove('opacity-0');
+          });
+          svgCurvesGroup.querySelectorAll('.fade-in-target').forEach(el => {
+            el.style.opacity = '1';
+          });
+        });
+      }
+    }
+
+    // Draw Solid 90-Degree Orthogonal Connector Lines in World Coordinates
+    function drawWorldOrthogonalConnectors(startHidden = false) {
+      if (!currentFocalWalletData) return;
+      svgCurvesGroup.innerHTML = '';
+
+      const centerHalfW = 176; // Half of 352px (1.5x 16:10) center node width
+      const centerHalfH = 98;  // Vertical anchor range on the 220px tall 16:10 center node
+      const sideNodeHalfW = 88; // Half of 176px inbound/outbound node width
+
+      const inCount = currentFocalWalletData.inboundNodes.length;
+      // 1. Orthogonal 90-Degree Inbound Connectors
+      currentFocalWalletData.inboundNodes.forEach((node, idx) => {
+        const startX = Math.round(node.worldX + sideNodeHalfW);
+        const startY = Math.round(node.worldY);
+        const endX = -centerHalfW;
+        // Distribute anchor points evenly along the left edge of the 16:10 center node sorted by node Y
+        const normIdx = inCount > 1 ? (idx / (inCount - 1)) * 2 - 1 : 0; // [-1, +1]
+        const endY = Math.round(normIdx * centerHalfH);
+
+        // Distinct 90-degree vertical channel X between the node and the center wallet so vertical segments never collide
+        const elbowX = Math.round(-194 - ((inCount - 1 - idx) * 7.5));
+
+        const pathData = `M ${startX} ${startY} L ${elbowX} ${startY} L ${elbowX} ${endY} L ${endX} ${endY}`;
+        const isHovered = activeHoverNodeId === node.id;
+
+        const pathEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        pathEl.setAttribute('d', pathData);
+        pathEl.setAttribute('data-connector-for', node.id);
+        pathEl.setAttribute('class', `connector-path-inbound fade-in-target ${isHovered ? 'connector-active-inbound' : ''}`);
+        if (startHidden) pathEl.style.opacity = '0';
+        svgCurvesGroup.appendChild(pathEl);
+
+        if (isHovered) {
+          const animPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+          animPath.setAttribute('d', pathData);
+          animPath.setAttribute('fill', 'none');
+          animPath.setAttribute('stroke', '#fcee0a');
+          animPath.setAttribute('stroke-width', '2.8');
+          animPath.setAttribute('class', 'flow-Overlay-anim');
+          svgCurvesGroup.appendChild(animPath);
+        }
+
+        // Directional Arrowhead (>) on the horizontal segment
+        const arrowX = Math.round((startX + elbowX) / 2);
+        const arrowY = startY;
+        const chevron = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        chevron.setAttribute('d', 'M -6 -5 L 3 0 L -6 5');
+        chevron.setAttribute('transform', `translate(${arrowX}, ${arrowY})`);
+        chevron.setAttribute('class', `connector-chevron-inbound fade-in-target ${isHovered ? 'connector-active-inbound' : ''}`);
+        if (startHidden) chevron.style.opacity = '0';
+        svgCurvesGroup.appendChild(chevron);
+      });
+
+      const outCount = currentFocalWalletData.outboundNodes.length;
+      // 2. Orthogonal 90-Degree Outbound Connectors
+      currentFocalWalletData.outboundNodes.forEach((node, idx) => {
+        const startX = centerHalfW;
+        const normIdx = outCount > 1 ? (idx / (outCount - 1)) * 2 - 1 : 0; // [-1, +1]
+        const startY = Math.round(normIdx * centerHalfH);
+        const endX = Math.round(node.worldX - sideNodeHalfW);
+        const endY = Math.round(node.worldY);
+
+        const elbowX = Math.round(194 + idx * 7.5);
+
+        const pathData = `M ${startX} ${startY} L ${elbowX} ${startY} L ${elbowX} ${endY} L ${endX} ${endY}`;
+        const isHovered = activeHoverNodeId === node.id;
+
+        const pathEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        pathEl.setAttribute('d', pathData);
+        pathEl.setAttribute('data-connector-for', node.id);
+        pathEl.setAttribute('class', `connector-path-outbound fade-in-target ${isHovered ? 'connector-active-outbound' : ''}`);
+        if (startHidden) pathEl.style.opacity = '0';
+        svgCurvesGroup.appendChild(pathEl);
+
+        if (isHovered) {
+          const animPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+          animPath.setAttribute('d', pathData);
+          animPath.setAttribute('fill', 'none');
+          animPath.setAttribute('stroke', '#ffffff');
+          animPath.setAttribute('stroke-width', '2.8');
+          animPath.setAttribute('class', 'flow-Overlay-anim');
+          svgCurvesGroup.appendChild(animPath);
+        }
+
+        const arrowX = Math.round((elbowX + endX) / 2);
+        const arrowY = endY;
+        const chevron = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        chevron.setAttribute('d', 'M -6 -5 L 3 0 L -6 5');
+        chevron.setAttribute('transform', `translate(${arrowX}, ${arrowY})`);
+        chevron.setAttribute('class', `connector-chevron-outbound fade-in-target ${isHovered ? 'connector-active-outbound' : ''}`);
+        if (startHidden) chevron.style.opacity = '0';
+        svgCurvesGroup.appendChild(chevron);
+      });
+    }
+
+    /***************************************************************************
+     * 8. INTERACTIVE BOTTOM TIMELINE MARKERS & SOFT YELLOW VIEWPORT BOX
+     ***************************************************************************/
+    function renderTimelineMarkers(graphData) {
+      timelineTicksLayer.innerHTML = '';
+
+      const allNodes = [
+        ...graphData.inboundNodes,
+        {
+          id: 'center-focal-node',
+          type: 'center',
+          address: graphData.address,
+          amountEth: graphData.balanceEth,
+          dateStr: graphData.lastTxDateStr,
+          worldX: 0,
+          worldY: 0,
+          timelineRatio: 0.5
+        },
+        ...graphData.outboundNodes
+      ];
+
+      allNodes.forEach((node) => {
+        const tick = document.createElement('div');
+        tick.dataset.tickFor = node.id;
+        tick.dataset.worldX = node.worldX;
+        tick.dataset.timelineRatio = node.timelineRatio;
+        tick.className = 'absolute top-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center cursor-pointer group z-20 pointer-events-auto';
+        // Position each marker permanently at its chronological position along the full timeline track
+        tick.style.left = `${(node.timelineRatio * 100).toFixed(2)}%`;
+
+        let colorClass = 'bg-[#ff9900] shadow-[0_0_10px_rgba(255,153,0,0.95)] w-3.5 h-6';
+        let borderAccent = 'border-[#ff9900] text-[#ff9900]';
+        let roleTag = 'FOCAL WALLET';
+        if (node.type === 'inbound') {
+          colorClass = 'bg-[#ff0055] shadow-[0_0_8px_rgba(255,0,85,0.95)] w-2 h-4';
+          borderAccent = 'border-[#ff0055] text-[#ff3377]';
+          roleTag = 'INBOUND // CLICK TO CENTER';
+        } else if (node.type === 'outbound') {
+          colorClass = 'bg-[#00ffaa] shadow-[0_0_8px_rgba(0,255,170,0.95)] w-2 h-4';
+          borderAccent = 'border-[#00ffaa] text-[#00ffaa]';
+          roleTag = 'OUTBOUND // CLICK TO CENTER';
+        }
+
+        const fiatStr = formatEthInSelectedCurrency(node.amountEth);
+
+        tick.innerHTML = `
+          <!-- Floating Cyber Tooltip on Timeline Marker Hover -->
+          <div class="timeline-tooltip hidden group-hover:flex flex-col items-center absolute bottom-7 px-2.5 py-1.5 bg-black/95 border ${borderAccent} shadow-2xl whitespace-nowrap pointer-events-none z-50">
+            <span class="font-display text-[8px] uppercase tracking-wider font-bold">${roleTag}</span>
+            <span class="font-mono-code text-[10px] text-white font-bold">${formatShortHash(node.address)} • ${fiatStr}</span>
+            <span class="font-mono-code text-[8px] text-zinc-400">${node.dateStr} UTC</span>
+          </div>
+          <!-- Marker Block -->
+          <div class="tick-pill ${colorClass} border border-black transition-transform duration-150"></div>
+        `;
+
+        tick.addEventListener('mouseenter', () => setHoverNode(node.id));
+        tick.addEventListener('mouseleave', () => setHoverNode(null));
+
+        tick.addEventListener('click', (e) => {
+          e.stopPropagation();
+          if (isAnimatingNodeTransition) return;
+          if (node.type === 'center') {
+            focusCenterNodeZoom(true);
+          } else {
+            selectAndSlideNodeToCenter(node, node.type);
+          }
+        });
+
+        timelineTicksLayer.appendChild(tick);
+      });
+
+      syncTimelineViewportAndMarkers();
+    }
+
+    // Update the soft yellow see-through square/box on the Timeline bar so it represents the exact horizontal world window visible on screen
+    function syncTimelineViewportAndMarkers() {
+      if (!currentFocalWalletData) return;
+      const viewRect = viewportEl.getBoundingClientRect();
+      if (!viewRect.width) return;
+
+      // Calculate left and right edges of the user's current screen in World X coordinates
+      // Since screenX = viewWidth/2 + camPanX + worldX * camZoom:
+      // Left edge (screenX = 0)  => worldLeft  = (-viewWidth/2 - camPanX) / camZoom
+      // Right edge (screenX = W) => worldRight = (+viewWidth/2 - camPanX) / camZoom
+      const worldLeft = (-viewRect.width / 2 - camPanX) / camZoom;
+      const worldRight = (viewRect.width / 2 - camPanX) / camZoom;
+
+      const totalWorldSpan = WORLD_TIMELINE_HALF_SPAN_X * 2;
+      const rawLeftPct = (0.5 + (worldLeft / totalWorldSpan)) * 100;
+      const rawRightPct = (0.5 + (worldRight / totalWorldSpan)) * 100;
+
+      const clampedLeftPct = Math.max(0, Math.min(98, rawLeftPct));
+      const clampedRightPct = Math.max(clampedLeftPct + 2, Math.min(100, rawRightPct));
+      const widthPct = clampedRightPct - clampedLeftPct;
+
+      timelineViewportBoxEl.style.left = `${clampedLeftPct.toFixed(2)}%`;
+      timelineViewportBoxEl.style.width = `${widthPct.toFixed(2)}%`;
+
+      // Highlight markers that are currently inside the user's visible viewport window
+      timelineTicksLayer.querySelectorAll('[data-tick-for]').forEach(tick => {
+        const ratioPct = parseFloat(tick.dataset.timelineRatio || '0.5') * 100;
+        const isInsideScreen = ratioPct >= clampedLeftPct && ratioPct <= clampedRightPct;
+        tick.style.opacity = isInsideScreen ? '1' : '0.42';
+      });
+    }
+
+    function setHoverNode(nodeId) {
+      activeHoverNodeId = nodeId;
+
+      // 1. Highlight matching node on the page
+      nodesContainerEl.querySelectorAll('.cyber-node').forEach(nodeEl => {
+        if (nodeEl.dataset.nodeId === nodeId) {
+          nodeEl.classList.add('timeline-highlighted');
+        } else {
+          nodeEl.classList.remove('timeline-highlighted');
+        }
+      });
+
+      // 2. Highlight matching marker on the timeline
+      timelineTicksLayer.querySelectorAll('[data-tick-for]').forEach(tickEl => {
+        const pill = tickEl.querySelector('.tick-pill');
+        const tooltip = tickEl.querySelector('.timeline-tooltip');
+        if (!pill) return;
+        if (tickEl.dataset.tickFor === nodeId) {
+          pill.classList.add('scale-150', 'ring-2', 'ring-[#fcee0a]');
+          if (tooltip) tooltip.classList.remove('hidden');
+          if (tooltip) tooltip.classList.add('flex');
+        } else {
+          pill.classList.remove('scale-150', 'ring-2', 'ring-[#fcee0a]');
+          if (tooltip) tooltip.classList.add('hidden');
+          if (tooltip) tooltip.classList.remove('flex');
+        }
+      });
+
+      drawWorldOrthogonalConnectors(false);
+      drawHoverLaserGuideline();
+    }
+
+    // Draw orthogonal screen-space laser line linking hovered node and its bottom timeline marker
+    function drawHoverLaserGuideline() {
+      svgHoverGuideline.innerHTML = '';
+      if (!activeHoverNodeId || isAnimatingNodeTransition) return;
+
+      const nodeEl = document.getElementById(activeHoverNodeId);
+      const tickEl = timelineTicksLayer.querySelector(`[data-tick-for="${activeHoverNodeId}"]`);
+      const viewRect = viewportEl.getBoundingClientRect();
+      if (!nodeEl || !tickEl || !viewRect.width) return;
+
+      const nRect = nodeEl.getBoundingClientRect();
+      const tRect = tickEl.getBoundingClientRect();
+
+      const x1 = Math.round(nRect.left - viewRect.left + nRect.width / 2);
+      const y1 = Math.round(nRect.bottom - viewRect.top);
+      const x2 = Math.round(tRect.left - viewRect.left + tRect.width / 2);
+      const y2 = Math.round(viewRect.height);
+
+      let strokeColor = '#ff9900';
+      if (activeHoverNodeId.startsWith('inbound')) strokeColor = '#ff0055';
+      if (activeHoverNodeId.startsWith('outbound')) strokeColor = '#00ffaa';
+
+      const midY = Math.round(y2 - 14);
+      const guidePath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      guidePath.setAttribute('d', `M ${x1} ${y1} L ${x1} ${midY} L ${x2} ${midY} L ${x2} ${y2}`);
+      guidePath.setAttribute('fill', 'none');
+      guidePath.setAttribute('stroke', strokeColor);
+      guidePath.setAttribute('stroke-width', '1.8');
+      guidePath.setAttribute('stroke-dasharray', '4 4');
+      svgHoverGuideline.appendChild(guidePath);
+    }
+
+    /***************************************************************************
+     * 9. SMOOTH NODE SELECTION TRANSITION:
+     *    - DO NOT sink away or transition to black!
+     *    - Fade out all other nodes & old connectors
+     *    - Slide the selected node directly into the center view
+     *    - Fade in the new node's connections
+     ***************************************************************************/
+    async function selectAndSlideNodeToCenter(clickedNode, direction) {
+      if (isAnimatingNodeTransition) return;
+      isAnimatingNodeTransition = true;
+      activeHoverNodeId = null;
+      svgHoverGuideline.innerHTML = '';
+
+      const linkContext = {
+        previousWallet: currentFocalWalletData,
+        clickedDirection: direction,
+        referenceTimestampMs: clickedNode.timestampMs
+      };
+
+      walletHistoryTrail.push({ address: clickedNode.address });
+      renderBreadcrumbs();
+
+      // 1. Fade out all unselected nodes and all existing orthogonal connector lines
+      nodesContainerEl.querySelectorAll('.cyber-node').forEach(el => {
+        if (el.dataset.nodeId === clickedNode.id) {
+          el.classList.add('node-sliding-to-center');
+        } else {
+          el.classList.add('fade-out-element');
+        }
+      });
+
+      svgCurvesGroup.querySelectorAll('path').forEach(pathEl => {
+        pathEl.classList.add('fade-out-element');
+      });
+
+      // 2. Simultaneously slide the selected node smoothly into the exact center of the viewport (0, 0)
+      camPanX = -clickedNode.worldX * camZoom;
+      camPanY = -clickedNode.worldY * camZoom;
+      updateWorldTransform(true);
+
+      // 3. Wait for the smooth camera slide-to-center animation (580ms) while computing new wallet graph
+      const [newGraphData] = await Promise.all([
+        getOrCreateWalletGraph(clickedNode.address, linkContext),
+        new Promise(resolve => setTimeout(resolve, 590))
+      ]);
+
+      // 4. Seamlessly reset world origin (0,0) at the center of the screen and fade in the new connections
+      camPanX = 0;
+      camPanY = 0;
+      updateWorldTransform(false);
+
+      renderWalletGraphDOM(newGraphData, true);
+      focusCenterNodeZoom(true);
+
+      setTimeout(() => {
+        isAnimatingNodeTransition = false;
+        syncTimelineViewportAndMarkers();
+      }, 460);
+    }
+
+    /***************************************************************************
+     * 10. INITIAL HOMEPAGE SEARCH EXECUTION (3S RANDOM BRICK PUNCH-OUT & GRAPH ZOOM-IN)
+     ***************************************************************************/
+    const searchForm = document.getElementById('search-form');
+    const hashInput = document.getElementById('hash-input');
+    const landingView = document.getElementById('landing-view');
+    const graphView = document.getElementById('graph-view');
+    const backToSearchBtn = document.getElementById('back-to-search-btn');
+    let isSearchTransitionRunning = false;
+
+    searchForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (isSearchTransitionRunning) return;
+      isSearchTransitionRunning = true;
+
+      unlockAudioOnFirstGesture();
+
+      const queryHash = hashInput.value.trim() || '0x742d35Cc6634C0532925a3b844Bc454e4438f44e';
+
+      // 1. Sink & fade away the foreground title and search bar while each brick in the background wall is punched out individually over 3 seconds
+      landingView.classList.add('sink-away');
+
+      // 2. Prepare initial graph data in parallel with the 3-second brick punch-out animation
+      walletHistoryTrail = [{ address: queryHash.startsWith('0x') ? queryHash : `0x${queryHash}` }];
+      renderBreadcrumbs();
+
+      const [initialGraphData] = await Promise.all([
+        getOrCreateWalletGraph(queryHash),
+        animateBricksPunchOut(3000)
+      ]);
+
+      bgCanvas.classList.add('sink-away');
+      renderWalletGraphDOM(initialGraphData, false);
+
+      // 3. Zoom flowchart nodes and timeline into view after the bricks have punched out, starting zoomed in on the Center Selected Node
+      graphView.classList.add('zoom-in-active');
+      focusCenterNodeZoom(false);
+
+      setTimeout(() => {
+        syncTimelineViewportAndMarkers();
+        isSearchTransitionRunning = false;
+      }, 350);
+    });
+
+    // Return to Homepage Search Screen (Audio continues playing persistently)
+    backToSearchBtn.addEventListener('click', () => {
+      isSearchTransitionRunning = false;
+      graphView.classList.remove('zoom-in-active');
+      renderStaticTokenBrickWall();
+
+      setTimeout(() => {
+        landingView.classList.remove('sink-away');
+      }, 250);
+    });
+  </script>
+</body>
+</html>
