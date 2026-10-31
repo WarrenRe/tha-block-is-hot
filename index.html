@@ -739,6 +739,11 @@
 
         <!-- Right HUD Controls: Live Currency Switcher & Legend -->
         <div class="flex items-center gap-3 text-[10px] font-mono-code uppercase tracking-wider">
+          <div id="live-network-badge" class="flex items-center gap-1.5 bg-zinc-950 border border-[#00ffaa]/60 px-2 py-0.5 text-[#00ffaa]">
+            <span id="live-network-dot" class="w-1.5 h-1.5 bg-[#00ffaa] inline-block shadow-[0_0_6px_#00ffaa]"></span>
+            <span id="live-network-text">ETH MAINNET // LIVE</span>
+          </div>
+
           <div class="flex items-center gap-1.5 bg-zinc-950 border border-zinc-800 px-2 py-0.5">
             <span class="text-zinc-400">CURRENCY:</span>
             <select
@@ -851,7 +856,7 @@
             class="px-2.5 py-1 bg-zinc-950 hover:bg-zinc-900 text-zinc-300 border border-zinc-800 hover:border-[#ff9900] font-display text-[9px] uppercase tracking-wider cursor-pointer"
             title="Fit All Connected Timeline Nodes to Screen"
           >
-            FIT ALL (30)
+            FIT ALL
           </button>
           <button
             id="zoom-center-btn"
@@ -920,6 +925,13 @@
 
   <!-- APPLICATION LOGIC -->
   <script>
+    /***************************************************************************
+     * 0. LIVE BLOCKCHAIN CONFIGURATION (VERCEL ALCHEMY BRIDGE + PUBLIC MAINNET)
+     ***************************************************************************/
+    // Optional: Paste your Vercel Serverless URL here once deployed (e.g., "https://your-project.vercel.app/api/api-lookup")
+    // Even if left blank (""), the app automatically queries live Ethereum Mainnet data via Blockscout v2 & PublicNode RPC.
+    const VERCEL_BACKEND_URL = "";
+
     /***************************************************************************
      * 1. PERSISTENT UNFILTERED HTML5 BACKGROUND AUDIO ENGINE (ARCHIVE.ORG WAV)
      ***************************************************************************/
@@ -1444,22 +1456,39 @@
       BRL: { symbol: 'R$', code: 'BRL', rate: 5.75, decimals: 2 }
     };
 
-    const ETH_USD_PRICE = 3180.0;
+    let liveEthUsdPrice = 2650.0;
     let selectedCurrency = 'USD';
 
     const homeCurrencySelect = document.getElementById('currency-select');
     const graphCurrencySelect = document.getElementById('graph-currency-select');
 
-    function formatEthInSelectedCurrency(ethAmount) {
-      const numEth = parseFloat(ethAmount) || 0;
-      const usdVal = numEth * ETH_USD_PRICE;
+    // Format a USD value into the user's selected fiat currency
+    function formatUsdInSelectedCurrency(usdAmount) {
+      const numUsd = Math.max(0, parseFloat(usdAmount) || 0);
       const cfg = CURRENCY_RATES[selectedCurrency] || CURRENCY_RATES.USD;
-      const converted = usdVal * cfg.rate;
+      const converted = numUsd * cfg.rate;
       const formattedNum = converted.toLocaleString('en-US', {
         minimumFractionDigits: cfg.decimals,
         maximumFractionDigits: cfg.decimals
       });
       return `${cfg.symbol}${formattedNum} ${cfg.code}`;
+    }
+
+    // Legacy helper for ETH-denominated fallback values
+    function formatEthInSelectedCurrency(ethAmount) {
+      const numEth = parseFloat(ethAmount) || 0;
+      return formatUsdInSelectedCurrency(numEth * liveEthUsdPrice);
+    }
+
+    function formatCompactTokenUnits(rawUnits) {
+      const val = parseFloat(rawUnits) || 0;
+      if (val <= 0) return '0';
+      if (val >= 1e9) return `${(val / 1e9).toFixed(2)}B`;
+      if (val >= 1e6) return `${(val / 1e6).toFixed(2)}M`;
+      if (val >= 1e3) return `${(val / 1e3).toFixed(1)}K`;
+      if (val >= 1) return val.toFixed(2);
+      if (val >= 0.0001) return val.toFixed(4);
+      return '<0.0001';
     }
 
     homeCurrencySelect.addEventListener('change', (e) => {
@@ -1478,48 +1507,8 @@
       }
     });
 
-    // Generate deterministic held token acronyms for any wallet address
-    const WALLET_COIN_ACRONYMS_POOL = [
-      { ticker: 'ETH', format: (r) => (0.4 + r * 38).toFixed(2) },
-      { ticker: 'USDC', format: (r) => `${(1.2 + r * 95).toFixed(1)}K` },
-      { ticker: 'USDT', format: (r) => `${(0.8 + r * 64).toFixed(1)}K` },
-      { ticker: 'PEPE', format: (r) => `${Math.floor(15 + r * 850)}M` },
-      { ticker: 'WBTC', format: (r) => (0.05 + r * 2.4).toFixed(2) },
-      { ticker: 'LINK', format: (r) => Math.floor(45 + r * 1400) },
-      { ticker: 'UNI', format: (r) => Math.floor(30 + r * 950) },
-      { ticker: 'SHIB', format: (r) => `${Math.floor(12 + r * 420)}M` },
-      { ticker: 'DOGE', format: (r) => `${(2.5 + r * 85).toFixed(1)}K` },
-      { ticker: 'AAVE', format: (r) => Math.floor(8 + r * 180) },
-      { ticker: 'WIF', format: (r) => `${(0.5 + r * 19).toFixed(1)}K` },
-      { ticker: 'BONK', format: (r) => `${Math.floor(25 + r * 600)}M` },
-      { ticker: 'MOG', format: (r) => `${Math.floor(40 + r * 900)}M` },
-      { ticker: 'ARB', format: (r) => `${(1.1 + r * 24).toFixed(1)}K` },
-      { ticker: 'LDO', format: (r) => Math.floor(120 + r * 3200) },
-      { ticker: 'SPX', format: (r) => Math.floor(200 + r * 8500) }
-    ];
-
-    function generateHeldTokenAcronyms(address, count = 4) {
-      const rand = createHashPRNG(address + '_tokens');
-      const chosen = [
-        { ticker: 'ETH', amount: WALLET_COIN_ACRONYMS_POOL[0].format(rand()) }
-      ];
-      const usedIndices = new Set([0]);
-      while (chosen.length < count) {
-        const idx = 1 + Math.floor(rand() * (WALLET_COIN_ACRONYMS_POOL.length - 1));
-        if (!usedIndices.has(idx)) {
-          usedIndices.add(idx);
-          const item = WALLET_COIN_ACRONYMS_POOL[idx];
-          chosen.push({
-            ticker: item.ticker,
-            amount: item.format(rand())
-          });
-        }
-      }
-      return chosen;
-    }
-
     /***************************************************************************
-     * 5. BLOCKCHAIN HASH TRANSACTION ENGINE WITH TIMELINE-STAGGERED X/Y COORDS
+     * 5. LIVE ETHEREUM MAINNET ENGINE (BLOCKSCOUT V2 + RPC + OPTIONAL VERCEL BRIDGE)
      ***************************************************************************/
     const walletGraphCache = new Map();
     let walletHistoryTrail = [];
@@ -1527,28 +1516,42 @@
     let activeHoverNodeId = null;
     let isAnimatingNodeTransition = false;
 
-    function createHashPRNG(seedStr) {
-      let h = 2166136261 >>> 0;
-      const clean = (seedStr || '0x0').toLowerCase().trim();
-      for (let i = 0; i < clean.length; i++) {
-        h ^= clean.charCodeAt(i);
-        h = Math.imul(h, 16777619);
-      }
-      return function() {
-        h += 0x6D2B79F5;
-        let t = Math.imul(h ^ (h >>> 15), 1 | h);
-        t ^= t + Math.imul(t ^ (t >>> 7), 61 | t);
-        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-      };
-    }
+    const STABLECOIN_SYMBOLS = new Set([
+      'USDC', 'USDT', 'DAI', 'FDUSD', 'USDE', 'PYUSD', 'USDP', 'TUSD', 'FRAX', 'LUSD', 'GUSD', 'USDD'
+    ]);
 
-    function generateAddressFromPRNG(rand) {
-      const hex = '0123456789abcdef';
-      let addr = '0x';
-      for (let i = 0; i < 40; i++) {
-        addr += hex[Math.floor(rand() * 16)];
+    const KNOWN_TOKEN_FALLBACK_USD = {
+      WETH: () => liveEthUsdPrice,
+      STETH: () => liveEthUsdPrice,
+      WSTETH: () => liveEthUsdPrice * 1.18,
+      RETH: () => liveEthUsdPrice * 1.11,
+      CBETH: () => liveEthUsdPrice * 1.07,
+      WBTC: () => 88500.0,
+      CBBTC: () => 88500.0,
+      TBTC: () => 88500.0,
+      LINK: () => 16.5,
+      UNI: () => 9.8,
+      AAVE: () => 185.0,
+      LDO: () => 1.45,
+      MKR: () => 1650.0,
+      PEPE: () => 0.000012,
+      SHIB: () => 0.000018
+    };
+
+    function setNetworkStatusBadge(statusText, isLive = true) {
+      const badgeEl = document.getElementById('live-network-badge');
+      const dotEl = document.getElementById('live-network-dot');
+      const textEl = document.getElementById('live-network-text');
+      if (!badgeEl || !dotEl || !textEl) return;
+
+      textEl.textContent = statusText;
+      if (isLive) {
+        badgeEl.className = 'flex items-center gap-1.5 bg-zinc-950 border border-[#00ffaa]/60 px-2 py-0.5 text-[#00ffaa]';
+        dotEl.className = 'w-1.5 h-1.5 bg-[#00ffaa] inline-block shadow-[0_0_6px_#00ffaa]';
+      } else {
+        badgeEl.className = 'flex items-center gap-1.5 bg-zinc-950 border border-[#ff9900]/60 px-2 py-0.5 text-[#ff9900]';
+        dotEl.className = 'w-1.5 h-1.5 bg-[#ff9900] inline-block shadow-[0_0_6px_#ff9900]';
       }
-      return addr;
     }
 
     function formatShortHash(address) {
@@ -1559,6 +1562,7 @@
     }
 
     function formatTimestampUTC(ms) {
+      if (!ms || ms <= 0) return 'NO TX RECORDED';
       const d = new Date(ms);
       const yyyy = d.getUTCFullYear();
       const mm = String(d.getUTCMonth() + 1).padStart(2, '0');
@@ -1568,191 +1572,465 @@
       return `${yyyy}-${mm}-${dd} ${hh}:${min}`;
     }
 
-    const TOTAL_SIDE_NODES = 15; // 15 Inbound & 15 Outbound (30 connected nodes total across timeline; default view frames closest 6 on each side)
-    const WORLD_TIMELINE_HALF_SPAN_X = 1680; // Compressed world horizontal span [-1680px, +1680px] so all connected nodes fit cleanly on the timeline
-    const CLOSEST_SIX_WORLD_HALF_SPAN_X = 820; // World horizontal span [-820px, +820px] framing the closest 6 inbound & 6 outbound transactions
+    function weiToEthFloat(weiValue) {
+      if (!weiValue) return 0;
+      try {
+        const str = String(weiValue).trim();
+        if (str.startsWith('0x') || str.startsWith('0X')) {
+          const big = BigInt(str);
+          return Number(big) / 1e18;
+        }
+        const cleanDigits = str.split('.')[0].replace(/[^0-9]/g, '');
+        if (!cleanDigits) return 0;
+        const big = BigInt(cleanDigits);
+        return Number(big) / 1e18;
+      } catch (e) {
+        return (parseFloat(weiValue) || 0) / 1e18;
+      }
+    }
 
-    async function getOrCreateWalletGraph(rawAddress, linkContext = null) {
-      const normalizedAddress = rawAddress.trim().startsWith('0x')
-        ? rawAddress.trim()
-        : `0x${rawAddress.trim()}`;
+    function tokenUnitsToFloat(rawValue, decimals = 18) {
+      if (!rawValue) return 0;
+      const dec = Math.max(0, Math.min(36, parseInt(decimals, 10) || 18));
+      try {
+        const str = String(rawValue).trim().split('.')[0].replace(/[^0-9]/g, '');
+        if (!str) return 0;
+        return parseFloat(str) / Math.pow(10, dec);
+      } catch (e) {
+        return (parseFloat(rawValue) || 0) / Math.pow(10, dec);
+      }
+    }
+
+    async function fetchWithTimeout(url, options = {}, timeoutMs = 8500) {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), timeoutMs);
+      try {
+        const res = await fetch(url, { ...options, signal: controller.signal });
+        clearTimeout(timer);
+        return res;
+      } catch (err) {
+        clearTimeout(timer);
+        throw err;
+      }
+    }
+
+    // Resolve a 66-character Ethereum Transaction Hash (0x...) into its primary Wallet Address
+    async function resolveTxHashToWalletAddress(txHash) {
+      try {
+        const res = await fetchWithTimeout(`https://eth.blockscout.com/api/v2/transactions/${encodeURIComponent(txHash)}`);
+        if (res.ok) {
+          const txData = await res.json();
+          const fromAddr = txData?.from?.hash;
+          const toAddr = txData?.to?.hash;
+          const tsMs = txData?.timestamp ? new Date(txData.timestamp).getTime() : null;
+          if (fromAddr) {
+            return {
+              resolvedAddress: fromAddr,
+              referenceTimestampMs: tsMs,
+              clickedDirection: 'outbound',
+              counterpartyAddress: toAddr
+            };
+          }
+        }
+      } catch (e) {}
+
+      // Fallback: Public Ethereum JSON-RPC eth_getTransactionByHash
+      try {
+        const rpcRes = await fetchWithTimeout('https://ethereum-rpc.publicnode.com', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            jsonrpc: '2.0',
+            method: 'eth_getTransactionByHash',
+            params: [txHash],
+            id: 1
+          })
+        });
+        if (rpcRes.ok) {
+          const rpcData = await rpcRes.json();
+          const fromAddr = rpcData?.result?.from;
+          if (fromAddr) {
+            return {
+              resolvedAddress: fromAddr,
+              referenceTimestampMs: null,
+              clickedDirection: 'outbound'
+            };
+          }
+        }
+      } catch (e) {}
+
+      return null;
+    }
+
+    const MAX_SIDE_NODES = 15; // Up to 15 Inbound & 15 Outbound real transactions
+    const WORLD_TIMELINE_HALF_SPAN_X = 1680;
+    const CLOSEST_SIX_WORLD_HALF_SPAN_X = 820;
+
+    async function getOrCreateWalletGraph(rawInput, linkContext = null) {
+      let cleanInput = (rawInput || '').trim();
+      if (!cleanInput.startsWith('0x') && /^[a-fA-F0-9]{40,64}$/.test(cleanInput)) {
+        cleanInput = `0x${cleanInput}`;
+      }
+
+      setNetworkStatusBadge('QUERYING ETH MAINNET...', true);
+
+      // 1. If the user pasted a 66-character Transaction Hash, resolve it to the sender/focal wallet first
+      if (/^0x[a-fA-F0-9]{64}$/.test(cleanInput)) {
+        const txResolved = await resolveTxHashToWalletAddress(cleanInput);
+        if (txResolved && txResolved.resolvedAddress) {
+          cleanInput = txResolved.resolvedAddress;
+          if (!linkContext && txResolved.referenceTimestampMs) {
+            linkContext = {
+              clickedDirection: txResolved.clickedDirection || 'outbound',
+              referenceTimestampMs: txResolved.referenceTimestampMs
+            };
+          }
+          showToast(`TX RESOLVED TO WALLET ${formatShortHash(cleanInput)}`);
+        }
+      }
+
+      const normalizedAddress = cleanInput;
       const cacheKey = normalizedAddress.toLowerCase();
 
       if (walletGraphCache.has(cacheKey) && !linkContext) {
+        setNetworkStatusBadge('ETH MAINNET // LIVE', true);
         return walletGraphCache.get(cacheKey);
       }
 
-      const rand = createHashPRNG(cacheKey);
       const nowMs = Date.now();
-      const maxAllowedTxMs = nowMs - 60 * 1000; // Strictly historical: never allow any transaction in the future
+      const maxAllowedTxMs = nowMs - 1000;
 
-      // Use the exact date/time the selected transaction was initiated (capped in the past),
-      // or a realistic recent historical timestamp on initial wallet search.
-      let initiatedAnchorMs = linkContext?.referenceTimestampMs
-        ? Math.min(linkContext.referenceTimestampMs, maxAllowedTxMs)
-        : (nowMs - Math.floor((18 + rand() * 72) * 3600 * 1000));
+      // 2. Fetch live Ethereum Mainnet data in parallel:
+      //    - Optional Vercel Alchemy Backend Bridge (if VERCEL_BACKEND_URL is configured)
+      //    - Blockscout v2 Address Summary (Native ETH balance + Live ETH USD exchange_rate)
+      //    - Blockscout v2 ERC-20 Token Holdings (All ERC-20 balances + live USD exchange_rates)
+      //    - Blockscout Normal ETH Transactions (txlist)
+      //    - Blockscout ERC-20 Token Transfers (tokentx)
+      const vercelPromise = (VERCEL_BACKEND_URL && VERCEL_BACKEND_URL.trim().length > 0)
+        ? fetchWithTimeout(`${VERCEL_BACKEND_URL.trim()}?wallet=${encodeURIComponent(normalizedAddress)}&address=${encodeURIComponent(normalizedAddress)}`)
+            .then(r => r.ok ? r.json() : null)
+            .catch(() => null)
+        : Promise.resolve(null);
 
-      const inboundNodes = [];
-      const outboundNodes = [];
+      const addressInfoPromise = fetchWithTimeout(`https://eth.blockscout.com/api/v2/addresses/${encodeURIComponent(normalizedAddress)}`)
+        .then(r => r.ok ? r.json() : null)
+        .catch(() => null);
 
-      // Historical window calculation:
-      // Outbound transactions from this wallet must ALSO have been initiated in the past (<= maxAllowedTxMs).
-      // If initiatedAnchorMs is within 36 hours of Date.now(), we compress or shift the outbound historical window
-      // so every single outbound transaction timestamp is strictly <= maxAllowedTxMs (never advancing into the future).
-      const inboundSpanHours = 48.0;
-      const inboundSpanMs = inboundSpanHours * 3600 * 1000;
+      const tokenHoldingsPromise = fetchWithTimeout(`https://eth.blockscout.com/api/v2/addresses/${encodeURIComponent(normalizedAddress)}/tokens?type=ERC-20`)
+        .then(r => r.ok ? r.json() : null)
+        .catch(() => null);
 
-      // Ensure there is a valid historical window after the anchor for outbound transactions while staying <= maxAllowedTxMs
-      const availableFutureMs = Math.max(0, maxAllowedTxMs - initiatedAnchorMs);
-      const outboundWindowEndMs = availableFutureMs >= 6 * 3600 * 1000
-        ? Math.min(maxAllowedTxMs, initiatedAnchorMs + 48.0 * 3600 * 1000)
-        : maxAllowedTxMs;
-      // Pivot point separating earlier inbound history from subsequent outbound history (always <= maxAllowedTxMs)
-      const timelinePivotMs = Math.min(
-        initiatedAnchorMs,
-        outboundWindowEndMs - Math.floor((6.0 + rand() * 10.0) * 3600 * 1000)
-      );
+      const normalTxPromise = fetchWithTimeout(`https://eth.blockscout.com/api?module=account&action=txlist&address=${encodeURIComponent(normalizedAddress)}&sort=desc&page=1&offset=50`)
+        .then(r => r.ok ? r.json() : null)
+        .catch(() => null);
 
-      const minTimelineMs = timelinePivotMs - inboundSpanMs;
-      const maxTimelineMs = outboundWindowEndMs;
-      const outboundSpanMs = Math.max(3600 * 1000, maxTimelineMs - timelinePivotMs);
+      const tokenTxPromise = fetchWithTimeout(`https://eth.blockscout.com/api?module=account&action=tokentx&address=${encodeURIComponent(normalizedAddress)}&sort=desc&page=1&offset=50`)
+        .then(r => r.ok ? r.json() : null)
+        .catch(() => null);
 
-      // Staggered Y positions so none of the 15 inbound or 15 outbound nodes line up on the same X or Y axis
-      const closest6InboundY = [-310, 195, -105, 315, 70, -215];
-      const outer9InboundY = [435, -430, 140, -370, 275, -155, 495, -490, -25];
+      const [vercelData, addressInfo, tokenHoldingsData, normalTxData, tokenTxData] = await Promise.all([
+        vercelPromise,
+        addressInfoPromise,
+        tokenHoldingsPromise,
+        normalTxPromise,
+        tokenTxPromise
+      ]);
 
-      // Generate 15 Inbound transactions ordered from oldest (index 0, furthest left) to closest to center (index 14, closest left)
-      for (let i = 0; i < TOTAL_SIDE_NODES; i++) {
-        const distRank = (TOTAL_SIDE_NODES - 1) - i; // 0 = closest to center, 14 = oldest
-        let worldX;
-        let worldY;
-
-        if (distRank < 6) {
-          worldX = -Math.round(285 + distRank * 86 + (rand() - 0.5) * 18);
-          worldY = closest6InboundY[distRank];
-        } else {
-          const outerIdx = distRank - 6; // 0..8
-          worldX = -Math.round(815 + outerIdx * 96 + (rand() - 0.5) * 20);
-          worldY = outer9InboundY[outerIdx];
+      // 3. Determine Live ETH Price in USD
+      if (addressInfo && addressInfo.exchange_rate) {
+        const parsedRate = parseFloat(addressInfo.exchange_rate);
+        if (parsedRate > 100) {
+          liveEthUsdPrice = parsedRate;
         }
+      }
 
-        const timeFraction = (distRank + 0.35 + rand() * 0.5) / TOTAL_SIDE_NODES; // (0..1]
-        const isClosestInbound = (i === TOTAL_SIDE_NODES - 1);
+      // 4. Determine Native ETH Balance (from Vercel Alchemy bridge, Blockscout v2, or PublicNode RPC fallback)
+      let nativeEthBalance = 0;
+      if (vercelData && vercelData.balance !== undefined && vercelData.balance !== null) {
+        nativeEthBalance = weiToEthFloat(vercelData.balance);
+      } else if (addressInfo && addressInfo.coin_balance !== undefined && addressInfo.coin_balance !== null) {
+        nativeEthBalance = weiToEthFloat(addressInfo.coin_balance);
+      } else {
+        // Fallback to direct Ethereum Mainnet JSON-RPC eth_getBalance
+        try {
+          const rpcRes = await fetchWithTimeout('https://ethereum-rpc.publicnode.com', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              jsonrpc: '2.0',
+              method: 'eth_getBalance',
+              params: [normalizedAddress, 'latest'],
+              id: 1
+            })
+          });
+          if (rpcRes.ok) {
+            const rpcJson = await rpcRes.json();
+            if (rpcJson?.result) {
+              nativeEthBalance = weiToEthFloat(rpcJson.result);
+            }
+          }
+        } catch (e) {}
+      }
 
-        // If we arrived here by clicking an outbound transaction from a previous wallet, preserve that exact initiated timestamp
-        let tsMs = Math.floor(timelinePivotMs - timeFraction * inboundSpanMs);
-        if (isClosestInbound && linkContext?.clickedDirection === 'outbound' && linkContext?.referenceTimestampMs) {
-          tsMs = Math.min(maxAllowedTxMs, linkContext.referenceTimestampMs);
-        }
+      const nativeEthUsd = nativeEthBalance * liveEthUsdPrice;
 
-        const amountEth = (0.45 + rand() * 26.5).toFixed(3);
-        const addr = (isClosestInbound && linkContext?.clickedDirection === 'outbound' && linkContext?.previousWallet)
-          ? linkContext.previousWallet.address
-          : generateAddressFromPRNG(rand);
+      // 5. Parse Real ERC-20 Token Holdings & Sum Accurate Portfolio USD Value
+      const tokenPriceLookup = new Map();
+      tokenPriceLookup.set('ETH', liveEthUsdPrice);
 
-        inboundNodes.push({
-          id: `inbound-node-${i}`,
-          type: 'inbound',
-          address: addr,
-          amountEth,
-          timestampMs: tsMs,
-          dateStr: formatTimestampUTC(tsMs),
-          tokens: generateHeldTokenAcronyms(addr, 4),
-          worldX,
-          worldY,
-          distRank,
-          isClosestSix: distRank < 6,
-          isLinkedPrevious: (isClosestInbound && linkContext?.clickedDirection === 'outbound')
+      let totalErc20Usd = 0;
+      const parsedHoldings = [];
+
+      if (nativeEthBalance > 0) {
+        parsedHoldings.push({
+          ticker: 'ETH',
+          amount: formatCompactTokenUnits(nativeEthBalance),
+          usdValue: nativeEthUsd
         });
       }
 
+      const rawTokenItems = Array.isArray(tokenHoldingsData?.items) ? tokenHoldingsData.items : [];
+      for (const item of rawTokenItems) {
+        const tokenMeta = item.token || {};
+        const rawSymbol = String(tokenMeta.symbol || '').trim().toUpperCase();
+        if (!rawSymbol || rawSymbol.length > 12) continue;
+
+        const decimals = parseInt(tokenMeta.decimals ?? '18', 10);
+        const units = tokenUnitsToFloat(item.value, decimals);
+        if (units <= 0) continue;
+
+        let unitPriceUsd = parseFloat(tokenMeta.exchange_rate || '0');
+        if ((!unitPriceUsd || unitPriceUsd <= 0) && STABLECOIN_SYMBOLS.has(rawSymbol)) {
+          unitPriceUsd = 1.0;
+        } else if ((!unitPriceUsd || unitPriceUsd <= 0) && KNOWN_TOKEN_FALLBACK_USD[rawSymbol]) {
+          unitPriceUsd = KNOWN_TOKEN_FALLBACK_USD[rawSymbol]();
+        }
+
+        if (unitPriceUsd > 0) {
+          tokenPriceLookup.set(rawSymbol, unitPriceUsd);
+        }
+
+        // Only add to portfolio USD if the token has a verified exchange rate or is a known major asset
+        const holdingUsd = unitPriceUsd > 0 ? (units * unitPriceUsd) : 0;
+        totalErc20Usd += holdingUsd;
+
+        parsedHoldings.push({
+          ticker: rawSymbol,
+          amount: formatCompactTokenUnits(units),
+          usdValue: holdingUsd
+        });
+      }
+
+      // Sort wallet tokens by USD value descending so the most valuable holdings (e.g. USDC $2B, ETH, WBTC) appear first
+      parsedHoldings.sort((a, b) => b.usdValue - a.usdValue);
+      const topWalletTokens = parsedHoldings.slice(0, 6);
+      if (topWalletTokens.length === 0) {
+        topWalletTokens.push({ ticker: 'ETH', amount: '0.00', usdValue: 0 });
+      }
+
+      const totalPortfolioUsd = nativeEthUsd + totalErc20Usd;
+
+      // 6. Parse Real Historical Inbound & Outbound Transactions (Merging Native ETH + ERC-20 Transfers)
+      const normalTxList = Array.isArray(normalTxData?.result) ? normalTxData.result : [];
+      const tokenTxList = Array.isArray(tokenTxData?.result) ? tokenTxData.result : [];
+
+      const combinedEvents = [];
+      const seenEventKeys = new Set();
+
+      // A) Process ERC-20 Token Transfers first (captures high-value stablecoin/token transfers)
+      for (const tx of tokenTxList) {
+        if (!tx || !tx.hash) continue;
+        const fromAddr = String(tx.from || '').trim();
+        const toAddr = String(tx.to || '').trim();
+        if (!fromAddr || !toAddr) continue;
+
+        const symbol = String(tx.tokenSymbol || 'ERC20').trim().toUpperCase().slice(0, 10);
+        const decimals = parseInt(tx.tokenDecimal ?? '18', 10);
+        const units = tokenUnitsToFloat(tx.value, decimals);
+        if (units <= 0) continue;
+
+        let unitPrice = tokenPriceLookup.get(symbol) || 0;
+        if (unitPrice <= 0 && STABLECOIN_SYMBOLS.has(symbol)) {
+          unitPrice = 1.0;
+        } else if (unitPrice <= 0 && KNOWN_TOKEN_FALLBACK_USD[symbol]) {
+          unitPrice = KNOWN_TOKEN_FALLBACK_USD[symbol]();
+        }
+
+        const amountUsd = unitPrice > 0 ? (units * unitPrice) : 0;
+        const rawTs = parseInt(tx.timeStamp || '0', 10) * 1000;
+        const tsMs = rawTs > 0 ? Math.min(maxAllowedTxMs, rawTs) : maxAllowedTxMs;
+
+        const isInbound = toAddr.toLowerCase() === cacheKey && fromAddr.toLowerCase() !== cacheKey;
+        const isOutbound = fromAddr.toLowerCase() === cacheKey;
+        if (!isInbound && !isOutbound) continue;
+
+        const eventKey = `${tx.hash.toLowerCase()}_${isInbound ? 'in' : 'out'}_${symbol}`;
+        if (seenEventKeys.has(eventKey)) continue;
+        seenEventKeys.add(eventKey);
+
+        combinedEvents.push({
+          txHash: tx.hash,
+          type: isInbound ? 'inbound' : 'outbound',
+          counterparty: isInbound ? fromAddr : toAddr,
+          amountUsd,
+          amountEth: liveEthUsdPrice > 0 ? (amountUsd / liveEthUsdPrice) : 0,
+          timestampMs: tsMs,
+          dateStr: formatTimestampUTC(tsMs),
+          tokens: [{ ticker: symbol, amount: formatCompactTokenUnits(units) }]
+        });
+      }
+
+      // B) Process Native ETH Transactions
+      for (const tx of normalTxList) {
+        if (!tx || !tx.hash || tx.isError === '1') continue;
+        const fromAddr = String(tx.from || '').trim();
+        const toAddr = String(tx.to || tx.contractAddress || '').trim();
+        if (!fromAddr || !toAddr) continue;
+
+        const ethVal = weiToEthFloat(tx.value);
+        const amountUsd = ethVal * liveEthUsdPrice;
+        const rawTs = parseInt(tx.timeStamp || '0', 10) * 1000;
+        const tsMs = rawTs > 0 ? Math.min(maxAllowedTxMs, rawTs) : maxAllowedTxMs;
+
+        const isInbound = toAddr.toLowerCase() === cacheKey && fromAddr.toLowerCase() !== cacheKey;
+        const isOutbound = fromAddr.toLowerCase() === cacheKey;
+        if (!isInbound && !isOutbound) continue;
+
+        // Skip 0-ETH contract calls if we already captured an ERC-20 transfer for the same transaction hash
+        const hasTokenTransferForHash = Array.from(seenEventKeys).some(k => k.startsWith(tx.hash.toLowerCase()));
+        if (ethVal <= 0 && hasTokenTransferForHash) continue;
+
+        const eventKey = `${tx.hash.toLowerCase()}_${isInbound ? 'in' : 'out'}_ETH`;
+        if (seenEventKeys.has(eventKey)) continue;
+        seenEventKeys.add(eventKey);
+
+        combinedEvents.push({
+          txHash: tx.hash,
+          type: isInbound ? 'inbound' : 'outbound',
+          counterparty: isInbound ? fromAddr : toAddr,
+          amountUsd,
+          amountEth: ethVal,
+          timestampMs: tsMs,
+          dateStr: formatTimestampUTC(tsMs),
+          tokens: [{ ticker: 'ETH', amount: formatCompactTokenUnits(ethVal) }]
+        });
+      }
+
+      // Sort newest first to select up to MAX_SIDE_NODES (15) recent inbound and outbound transactions
+      combinedEvents.sort((a, b) => b.timestampMs - a.timestampMs);
+
+      const rawInbound = combinedEvents.filter(e => e.type === 'inbound').slice(0, MAX_SIDE_NODES);
+      const rawOutbound = combinedEvents.filter(e => e.type === 'outbound').slice(0, MAX_SIDE_NODES);
+
+      // Sort chronologically (oldest -> newest) for timeline placement
+      rawInbound.sort((a, b) => a.timestampMs - b.timestampMs);
+      rawOutbound.sort((a, b) => a.timestampMs - b.timestampMs);
+
+      const closest6InboundY = [-310, 195, -105, 315, 70, -215];
+      const outer9InboundY = [435, -430, 140, -370, 275, -155, 495, -490, -25];
       const closest6OutboundY = [-250, 125, 295, -90, 215, -330];
       const outer9OutboundY = [420, -425, 45, -205, 365, -485, 165, -365, 485];
 
-      // Generate 15 Outbound transactions ordered from closest to center (index 0) to furthest right (index 14)
-      // All outbound timestamps are strictly clamped <= maxAllowedTxMs (never in the future!)
-      for (let i = 0; i < TOTAL_SIDE_NODES; i++) {
-        const distRank = i; // 0 = closest to center, 14 = furthest right
-        let worldX;
-        let worldY;
+      const inboundNodes = rawInbound.map((ev, i) => {
+        const totalIn = rawInbound.length;
+        const distRank = (totalIn - 1) - i; // 0 = closest to center (most recent inbound), higher = older
+        const worldX = distRank < 6
+          ? -Math.round(285 + distRank * 86)
+          : -Math.round(815 + (distRank - 6) * 96);
+        const worldY = distRank < 6
+          ? closest6InboundY[distRank % closest6InboundY.length]
+          : outer9InboundY[(distRank - 6) % outer9InboundY.length];
 
-        if (distRank < 6) {
-          worldX = Math.round(285 + distRank * 86 + (rand() - 0.5) * 18);
-          worldY = closest6OutboundY[distRank];
-        } else {
-          const outerIdx = distRank - 6; // 0..8
-          worldX = Math.round(815 + outerIdx * 96 + (rand() - 0.5) * 20);
-          worldY = outer9OutboundY[outerIdx];
-        }
-
-        const timeFraction = (distRank + 0.35 + rand() * 0.5) / TOTAL_SIDE_NODES; // (0..1]
-        const isClosestOutbound = (i === 0);
-
-        let tsMs = Math.min(maxAllowedTxMs, Math.floor(timelinePivotMs + timeFraction * outboundSpanMs));
-        if (isClosestOutbound && linkContext?.clickedDirection === 'inbound' && linkContext?.referenceTimestampMs) {
-          tsMs = Math.min(maxAllowedTxMs, linkContext.referenceTimestampMs);
-        }
-
-        const amountEth = (0.75 + rand() * 31.4).toFixed(3);
-        const addr = (isClosestOutbound && linkContext?.clickedDirection === 'inbound' && linkContext?.previousWallet)
-          ? linkContext.previousWallet.address
-          : generateAddressFromPRNG(rand);
-
-        outboundNodes.push({
-          id: `outbound-node-${i}`,
-          type: 'outbound',
-          address: addr,
-          amountEth,
-          timestampMs: tsMs,
-          dateStr: formatTimestampUTC(tsMs),
-          tokens: generateHeldTokenAcronyms(addr, 4),
+        return {
+          id: `inbound-node-${i}`,
+          type: 'inbound',
+          txHash: ev.txHash,
+          address: ev.counterparty,
+          amountUsd: ev.amountUsd,
+          amountEth: ev.amountEth,
+          timestampMs: ev.timestampMs,
+          dateStr: ev.dateStr,
+          tokens: ev.tokens,
           worldX,
           worldY,
           distRank,
           isClosestSix: distRank < 6,
-          isLinkedPrevious: (isClosestOutbound && linkContext?.clickedDirection === 'inbound')
-        });
-      }
-
-      // Sort chronologically and map every connected transaction into the timeline [0.02 .. 0.98]
-      inboundNodes.sort((a, b) => a.timestampMs - b.timestampMs);
-      inboundNodes.forEach((node, i) => {
-        node.id = `inbound-node-${i}`;
-        node.timelineRatio = Math.max(0.02, Math.min(0.48, 0.5 + (node.worldX / (WORLD_TIMELINE_HALF_SPAN_X * 2))));
+          isLinkedPrevious: Boolean(
+            linkContext?.previousWallet &&
+            ev.counterparty.toLowerCase() === linkContext.previousWallet.address.toLowerCase()
+          ),
+          timelineRatio: Math.max(0.02, Math.min(0.48, 0.5 + (worldX / (WORLD_TIMELINE_HALF_SPAN_X * 2))))
+        };
       });
 
-      outboundNodes.sort((a, b) => a.timestampMs - b.timestampMs);
-      outboundNodes.forEach((node, i) => {
-        node.id = `outbound-node-${i}`;
-        node.timelineRatio = Math.max(0.52, Math.min(0.98, 0.5 + (node.worldX / (WORLD_TIMELINE_HALF_SPAN_X * 2))));
+      const outboundNodes = rawOutbound.map((ev, i) => {
+        const distRank = i; // 0 = closest to center, higher = further right
+        const worldX = distRank < 6
+          ? Math.round(285 + distRank * 86)
+          : Math.round(815 + (distRank - 6) * 96);
+        const worldY = distRank < 6
+          ? closest6OutboundY[distRank % closest6OutboundY.length]
+          : outer9OutboundY[(distRank - 6) % outer9OutboundY.length];
+
+        return {
+          id: `outbound-node-${i}`,
+          type: 'outbound',
+          txHash: ev.txHash,
+          address: ev.counterparty,
+          amountUsd: ev.amountUsd,
+          amountEth: ev.amountEth,
+          timestampMs: ev.timestampMs,
+          dateStr: ev.dateStr,
+          tokens: ev.tokens,
+          worldX,
+          worldY,
+          distRank,
+          isClosestSix: distRank < 6,
+          isLinkedPrevious: Boolean(
+            linkContext?.previousWallet &&
+            ev.counterparty.toLowerCase() === linkContext.previousWallet.address.toLowerCase()
+          ),
+          timelineRatio: Math.max(0.52, Math.min(0.98, 0.5 + (worldX / (WORLD_TIMELINE_HALF_SPAN_X * 2))))
+        };
       });
 
-      // Center wallet displays the exact date/time the selected transaction was initiated (strictly <= maxAllowedTxMs)
-      const centerTimestampMs = Math.min(maxAllowedTxMs, initiatedAnchorMs);
-      const centerDateStr = formatTimestampUTC(centerTimestampMs);
+      // 7. Determine Center Wallet's Last Transaction Date/Time & Direction
+      const mostRecentEvent = combinedEvents.length > 0 ? combinedEvents[0] : null;
+      const centerTimestampMs = linkContext?.referenceTimestampMs
+        ? Math.min(maxAllowedTxMs, linkContext.referenceTimestampMs)
+        : (mostRecentEvent ? mostRecentEvent.timestampMs : 0);
 
-      const totalInbound = inboundNodes.reduce((acc, n) => acc + parseFloat(n.amountEth), 0);
-      const totalOutbound = outboundNodes.reduce((acc, n) => acc + parseFloat(n.amountEth), 0);
-      const walletBalanceEth = Math.max(4.25, (totalInbound * 0.85 - totalOutbound * 0.25 + rand() * 48)).toFixed(3);
+      const centerDateStr = centerTimestampMs > 0
+        ? formatTimestampUTC(centerTimestampMs)
+        : 'NO TX HISTORY';
 
-      // Determine whether the center wallet's last transaction was inbound or outbound
       const lastTxDirection = linkContext?.clickedDirection
         ? linkContext.clickedDirection
-        : (rand() > 0.45 ? 'inbound' : 'outbound');
+        : (mostRecentEvent ? mostRecentEvent.type : 'none');
+
+      const allTimestamps = combinedEvents.map(e => e.timestampMs).filter(t => t > 0);
+      const minTimelineMs = allTimestamps.length > 0 ? Math.min(...allTimestamps) : 0;
+      const maxTimelineMs = allTimestamps.length > 0 ? Math.max(...allTimestamps) : 0;
 
       const walletGraph = {
         address: normalizedAddress,
         shortAddress: formatShortHash(normalizedAddress),
-        balanceEth: walletBalanceEth,
+        totalPortfolioUsd,
+        balanceEth: nativeEthBalance.toFixed(4),
         lastTxTimestampMs: centerTimestampMs,
         lastTxDateStr: centerDateStr,
         lastTxDirection,
-        tokens: generateHeldTokenAcronyms(normalizedAddress, 5),
+        tokens: topWalletTokens,
         inboundNodes,
         outboundNodes,
-        minTimelineMs: inboundNodes[0]?.timestampMs || minTimelineMs,
-        maxTimelineMs: outboundNodes[outboundNodes.length - 1]?.timestampMs || maxTimelineMs
+        minTimelineMs,
+        maxTimelineMs
       };
+
+      setNetworkStatusBadge(
+        VERCEL_BACKEND_URL ? 'VERCEL + ETH MAINNET // LIVE' : 'ETH MAINNET // LIVE',
+        true
+      );
 
       walletGraphCache.set(cacheKey, walletGraph);
       return walletGraph;
@@ -2068,7 +2346,13 @@
       currentFocalWalletData = graphData;
       nodesContainerEl.innerHTML = '';
 
-      // 1. Render 5 Timeline-Staggered Inbound Nodes (World Coordinates)
+      const totalConnectedCount = (graphData.inboundNodes?.length || 0) + (graphData.outboundNodes?.length || 0);
+      const fitBtnEl = document.getElementById('zoom-fit-btn');
+      if (fitBtnEl) {
+        fitBtnEl.textContent = `FIT ALL (${totalConnectedCount})`;
+      }
+
+      // 1. Render Real Timeline-Staggered Inbound Nodes (World Coordinates)
       graphData.inboundNodes.forEach((node) => {
         const card = document.createElement('div');
         card.id = node.id;
@@ -2077,7 +2361,9 @@
         card.style.left = `${node.worldX}px`;
         card.style.top = `${node.worldY}px`;
 
-        const fiatAmountStr = formatEthInSelectedCurrency(node.amountEth);
+        const fiatAmountStr = formatUsdInSelectedCurrency(
+          node.amountUsd !== undefined ? node.amountUsd : (node.amountEth * liveEthUsdPrice)
+        );
 
         card.innerHTML = `
           <div class="flex items-center justify-between gap-1 leading-none">
@@ -2117,11 +2403,21 @@
       centerCard.style.left = '0px';
       centerCard.style.top = '0px';
 
-      const centerFiatStr = formatEthInSelectedCurrency(graphData.balanceEth);
+      const centerFiatStr = formatUsdInSelectedCurrency(
+        graphData.totalPortfolioUsd !== undefined
+          ? graphData.totalPortfolioUsd
+          : (parseFloat(graphData.balanceEth || 0) * liveEthUsdPrice)
+      );
       const etherscanUrl = `https://etherscan.io/address/${encodeURIComponent(graphData.address)}`;
       const isLastTxInbound = graphData.lastTxDirection === 'inbound';
-      const lastTxDirColor = isLastTxInbound ? 'text-[#ff0055]' : 'text-[#00ffaa]';
-      const lastTxDirDot = isLastTxInbound ? 'bg-[#ff0055] shadow-[0_0_6px_#ff0055]' : 'bg-[#00ffaa] shadow-[0_0_6px_#00ffaa]';
+      const isLastTxNone = graphData.lastTxDirection === 'none';
+      const lastTxDirColor = isLastTxNone
+        ? 'text-zinc-500'
+        : (isLastTxInbound ? 'text-[#ff0055]' : 'text-[#00ffaa]');
+      const lastTxDirDot = isLastTxNone
+        ? 'bg-zinc-600'
+        : (isLastTxInbound ? 'bg-[#ff0055] shadow-[0_0_6px_#ff0055]' : 'bg-[#00ffaa] shadow-[0_0_6px_#00ffaa]');
+      const lastTxDirLabel = isLastTxNone ? 'none (0 tx)' : graphData.lastTxDirection;
 
       centerCard.innerHTML = `
         <div class="flex items-center justify-between border-b border-[#ff9900]/40 pb-1.5 gap-2">
@@ -2165,7 +2461,7 @@
             <div class="font-display text-[9px] uppercase tracking-wider text-[#ff9900]">
               amount (${selectedCurrency})
             </div>
-            <div class="font-mono-code text-base font-extrabold text-[#ffbb33] truncate mt-0.5">
+            <div class="font-mono-code text-base font-extrabold text-[#ffbb33] truncate mt-0.5" title="${centerFiatStr}">
               ${centerFiatStr}
             </div>
           </div>
@@ -2175,11 +2471,11 @@
               last transaction date/time
             </div>
             <div class="font-mono-code text-[11px] text-white mt-0.5">
-              ${graphData.lastTxDateStr} UTC
+              ${graphData.lastTxTimestampMs > 0 ? `${graphData.lastTxDateStr} UTC` : 'NO TX RECORDED'}
             </div>
             <div class="inline-flex items-center gap-1 font-display text-[9px] font-bold uppercase tracking-widest ${lastTxDirColor} mt-0.5">
               <span class="w-1.5 h-1.5 inline-block ${lastTxDirDot}"></span>
-              <span>${graphData.lastTxDirection}</span>
+              <span>${lastTxDirLabel}</span>
             </div>
           </div>
         </div>
@@ -2214,7 +2510,7 @@
 
       nodesContainerEl.appendChild(centerCard);
 
-      // 3. Render 3 Timeline-Staggered Outbound Nodes (World Coordinates)
+      // 3. Render Real Timeline-Staggered Outbound Nodes (World Coordinates)
       graphData.outboundNodes.forEach((node) => {
         const card = document.createElement('div');
         card.id = node.id;
@@ -2223,7 +2519,9 @@
         card.style.left = `${node.worldX}px`;
         card.style.top = `${node.worldY}px`;
 
-        const fiatAmountStr = formatEthInSelectedCurrency(node.amountEth);
+        const fiatAmountStr = formatUsdInSelectedCurrency(
+          node.amountUsd !== undefined ? node.amountUsd : (node.amountEth * liveEthUsdPrice)
+        );
 
         card.innerHTML = `
           <div class="flex items-center justify-between gap-1 leading-none">
@@ -2256,9 +2554,15 @@
       });
 
       // 4. Update Timeline Date Readouts & Interactive Markers
-      document.getElementById('timeline-min-date').textContent = `${formatTimestampUTC(graphData.minTimelineMs)} UTC`;
-      document.getElementById('timeline-center-date').textContent = `FOCAL LAST TX: ${graphData.lastTxDateStr} UTC`;
-      document.getElementById('timeline-max-date').textContent = `${formatTimestampUTC(graphData.maxTimelineMs)} UTC`;
+      document.getElementById('timeline-min-date').textContent = graphData.minTimelineMs > 0
+        ? `${formatTimestampUTC(graphData.minTimelineMs)} UTC`
+        : 'NO PRIOR TX';
+      document.getElementById('timeline-center-date').textContent = graphData.lastTxTimestampMs > 0
+        ? `FOCAL LAST TX: ${graphData.lastTxDateStr} UTC`
+        : 'FOCAL LAST TX: NONE (0 TX)';
+      document.getElementById('timeline-max-date').textContent = graphData.maxTimelineMs > 0
+        ? `${formatTimestampUTC(graphData.maxTimelineMs)} UTC`
+        : 'NO SUBSEQUENT TX';
 
       renderTimelineMarkers(graphData);
       drawWorldOrthogonalConnectors(fadeInNewConnections);
@@ -2382,6 +2686,7 @@
           id: 'center-focal-node',
           type: 'center',
           address: graphData.address,
+          amountUsd: graphData.totalPortfolioUsd,
           amountEth: graphData.balanceEth,
           dateStr: graphData.lastTxDateStr,
           worldX: 0,
@@ -2413,7 +2718,9 @@
           roleTag = 'OUTBOUND // CLICK TO CENTER';
         }
 
-        const fiatStr = formatEthInSelectedCurrency(node.amountEth);
+        const fiatStr = formatUsdInSelectedCurrency(
+          node.amountUsd !== undefined ? node.amountUsd : (parseFloat(node.amountEth || 0) * liveEthUsdPrice)
+        );
 
         tick.innerHTML = `
           <!-- Floating Cyber Tooltip on Timeline Marker Hover -->
@@ -2510,7 +2817,9 @@
       } else {
         leftOverflowPanelEl.classList.remove('panel-hidden');
         leftOverflowListEl.innerHTML = offscreenInbound.map(node => {
-          const fiatStr = formatEthInSelectedCurrency(node.amountEth);
+          const fiatStr = formatUsdInSelectedCurrency(
+            node.amountUsd !== undefined ? node.amountUsd : (node.amountEth * liveEthUsdPrice)
+          );
           const isHovered = activeHoverNodeId === node.id;
           return `
             <div
@@ -2556,7 +2865,9 @@
       } else {
         rightOverflowPanelEl.classList.remove('panel-hidden');
         rightOverflowListEl.innerHTML = offscreenOutbound.map(node => {
-          const fiatStr = formatEthInSelectedCurrency(node.amountEth);
+          const fiatStr = formatUsdInSelectedCurrency(
+            node.amountUsd !== undefined ? node.amountUsd : (node.amountEth * liveEthUsdPrice)
+          );
           const isHovered = activeHoverNodeId === node.id;
           return `
             <div
