@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>THA BLOCK IS HOT</title>
   <!-- Site Favicon: Pixel-Art Flaming Earth Globe (Supports uploaded image_b3f92a.png + immediate self-contained pixel canvas fallback) -->
   <link id="site-favicon" rel="icon" type="image/png" href="image_b3f92a.png" />
@@ -126,11 +126,13 @@
       padding: 0;
       width: 100%;
       height: 100%;
+      height: 100dvh;
       background-color: #000000;
       color: #f8fafc;
       font-family: 'Rajdhani', sans-serif;
       overflow: hidden;
       letter-spacing: 0.03em;
+      touch-action: none;
     }
 
     .font-mono-code {
@@ -199,6 +201,7 @@
       position: relative;
       width: 100vw;
       height: 100vh;
+      height: 100dvh;
       perspective: 1400px;
       perspective-origin: 50% 50%;
       overflow: hidden;
@@ -281,6 +284,7 @@
       height: 100%;
       overflow: hidden;
       cursor: grab;
+      touch-action: none;
       background:
         radial-gradient(circle at 50% 50%, rgba(255, 110, 0, 0.04) 0%, rgba(0, 0, 0, 0) 65%),
         linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
@@ -630,6 +634,93 @@
     ::-webkit-scrollbar-thumb {
       background: #27272a;
     }
+
+    /* ==========================================================================
+       MOBILE-ONLY EXPERIENCE OPTIMIZATIONS (< 768px) — DESKTOP REMAINS UNTOUCHED
+       ========================================================================== */
+    @media (max-width: 767px) {
+      /* 1. Compact Top-Left Audio Pill so it never collides with Graph Header */
+      #audio-hud {
+        top: 6px !important;
+        left: 6px !important;
+        padding: 4px 8px !important;
+        gap: 4px !important;
+      }
+      #audio-hud .audio-slider-group,
+      #audio-hud .audio-divider,
+      #audio-status-label {
+        display: none !important;
+      }
+
+      /* 2. Fit "THA BLOCK IS HOT" cleanly on a single line inside Mobile Screens */
+      .cyber-flame-title {
+        font-size: clamp(1.35rem, 6.6vw, 2.05rem) !important;
+        letter-spacing: 0.06em !important;
+      }
+      #landing-view {
+        padding: 0.85rem !important;
+      }
+      #flame-title-canvas {
+        width: 104% !important;
+        height: 135px !important;
+      }
+
+      /* 3. Clean Single-Row Mobile Graph Top Bar (No overlap with Audio Pill) */
+      #graph-top-header {
+        padding-left: 52px !important;
+        padding-right: 8px !important;
+        padding-top: 6px !important;
+        padding-bottom: 6px !important;
+        flex-wrap: nowrap !important;
+        justify-content: space-between !important;
+        gap: 6px !important;
+      }
+      #live-network-badge,
+      #lod-mode-toggle {
+        display: none !important;
+      }
+      #wallet-breadcrumbs {
+        max-width: 42vw !important;
+      }
+
+      /* 4. Hide Side Overflow Lists on Mobile so they don't cover the Graph */
+      #left-overflow-panel,
+      #right-overflow-panel {
+        display: none !important;
+      }
+
+      /* 5. Compact Mobile Zoom Controls Bar centered at Bottom of Viewport */
+      #zoom-controls-hud {
+        left: 8px !important;
+        right: 8px !important;
+        bottom: 8px !important;
+        justify-content: space-between !important;
+        padding: 3px 6px !important;
+      }
+
+      /* 6. Streamlined Mobile Bottom Timeline Stage */
+      #timeline-stage {
+        padding-left: 10px !important;
+        padding-right: 10px !important;
+        padding-top: 4px !important;
+        padding-bottom: max(8px, env(safe-area-inset-bottom)) !important;
+      }
+      #timeline-bar-container {
+        height: 28px !important;
+      }
+      #timeline-viewport-box {
+        height: 22px !important;
+      }
+      #timeline-min-date,
+      #timeline-max-date {
+        display: none !important;
+      }
+      #timeline-center-date {
+        width: 100% !important;
+        text-align: center !important;
+        font-size: 9px !important;
+      }
+    }
   </style>
 </head>
 <body>
@@ -654,9 +745,9 @@
       <span id="audio-status-label">AUDIO ON</span>
     </button>
 
-    <div class="h-3 w-[1px] bg-zinc-800"></div>
+    <div class="audio-divider h-3 w-[1px] bg-zinc-800"></div>
 
-    <div class="flex items-center gap-2">
+    <div class="audio-slider-group flex items-center gap-2">
       <input
         id="audio-volume-slider"
         type="range"
@@ -678,10 +769,10 @@
 
     <!-- 2. HOMEPAGE LANDING VIEW (NO BLACK RECTANGLE BEHIND TITLE, FLAMING NEON HEADER + SEARCH + CURRENCY SELECTOR) -->
     <main id="landing-view">
-      <div class="w-full max-w-5xl mx-auto flex flex-col items-center text-center px-3">
+      <div class="w-full max-w-5xl mx-auto flex flex-col items-center text-center px-2 sm:px-3 overflow-hidden">
         
         <!-- Flaming Neon Emissive Cyberpunk Orange Title (Single Line, No Black Box Behind It) -->
-        <div class="relative inline-flex items-center justify-center mb-7 px-6 py-2 max-w-full">
+        <div class="relative inline-flex items-center justify-center mb-5 sm:mb-7 px-2 sm:px-6 py-2 max-w-full">
           <!-- Dedicated Transparent Flame Particle Canvas Spanning the Single-Line Title -->
           <canvas
             id="flame-title-canvas"
@@ -714,18 +805,18 @@
               spellcheck="false"
               placeholder="ENTER WALLET OR TX HASH ADDRESS..."
               value="0x742d35Cc6634C0532925a3b844Bc454e4438f44e"
-              class="w-full bg-transparent text-zinc-100 placeholder-zinc-500 font-mono-code text-xs sm:text-sm px-2.5 py-3 focus:outline-none select-text"
+              class="w-full bg-transparent text-zinc-100 placeholder-zinc-500 font-mono-code text-xs sm:text-sm px-2.5 py-2.5 sm:py-3 focus:outline-none select-text"
               required
             />
 
             <!-- Currency Selector Dropdown (Replaces Presets, Default USD) -->
-            <div class="flex items-center border-t sm:border-t-0 sm:border-l border-zinc-800 bg-zinc-950 px-2">
+            <div class="flex items-center justify-between sm:justify-start border-t sm:border-t-0 sm:border-l border-zinc-800 bg-zinc-950 px-2.5 sm:px-2">
               <label for="currency-select" class="text-[9px] font-display uppercase tracking-wider text-zinc-400 mr-1.5 select-none">
                 FIAT:
               </label>
               <select
                 id="currency-select"
-                class="bg-zinc-950 text-[#ff9900] font-mono-code text-xs font-bold py-2.5 pr-2 focus:outline-none cursor-pointer"
+                class="bg-zinc-950 text-[#ff9900] font-mono-code text-xs font-bold py-2 sm:py-2.5 pr-2 focus:outline-none cursor-pointer"
                 title="Select Display Currency for Wallet Balances"
               >
                 <option value="USD" selected>USD ($)</option>
@@ -745,11 +836,39 @@
             <button
               type="submit"
               id="execute-search-btn"
-              class="shrink-0 bg-[#ff7700] hover:bg-[#ff9900] active:bg-[#e65c00] text-black font-display font-extrabold text-xs uppercase tracking-[0.16em] px-5 py-3 transition-all duration-150 flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(255,119,0,0.65)] cursor-pointer"
+              class="shrink-0 bg-[#ff7700] hover:bg-[#ff9900] active:bg-[#e65c00] text-black font-display font-extrabold text-xs uppercase tracking-[0.16em] px-5 py-2.5 sm:py-3 transition-all duration-150 flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(255,119,0,0.65)] cursor-pointer"
             >
-              <span>Pocket Watch (ETH)</span>
+              <span>Pocket Watch</span>
               <span class="font-mono-code text-sm">&gt;&gt;</span>
             </button>
+          </div>
+
+          <!-- Optional Etherscan API v2 Key Drawer (Stored locally in browser only) -->
+          <div class="mt-2.5 flex flex-col items-center">
+            <button
+              type="button"
+              id="toggle-api-drawer-btn"
+              class="font-mono-code text-[9px] sm:text-[10px] text-zinc-400 hover:text-[#ff9900] uppercase tracking-wider flex items-center gap-1.5 transition cursor-pointer"
+            >
+              <span>[OPTIONAL: ETHERSCAN API V2 KEY // LOCAL BROWSER ONLY]</span>
+              <span id="api-drawer-chevron">▼</span>
+            </button>
+            <div id="api-key-drawer" class="hidden w-full max-w-md mt-1.5 bg-black/95 border border-zinc-800 p-2 flex items-center gap-2">
+              <input
+                id="etherscan-api-key-input"
+                type="password"
+                placeholder="Paste optional Etherscan API key (saved locally)..."
+                class="w-full bg-zinc-950 text-zinc-200 placeholder-zinc-600 font-mono-code text-[11px] px-2 py-1 border border-zinc-800 focus:border-[#ff9900] focus:outline-none select-text"
+              />
+              <a
+                href="https://etherscan.io/apis"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="shrink-0 px-2 py-1 bg-zinc-900 hover:bg-zinc-800 text-[#ff9900] border border-zinc-700 font-mono-code text-[9px] uppercase"
+              >
+                GET KEY ↗
+              </a>
+            </div>
           </div>
         </form>
 
@@ -760,12 +879,12 @@
     <section id="graph-view">
       
       <!-- Minimal Top Control Bar (Leaves Left Space for Persistent Audio HUD) -->
-      <header class="w-full pl-64 sm:pl-72 pr-4 sm:pr-6 py-2 flex flex-wrap items-center justify-between gap-2 z-30 border-b border-zinc-900 bg-black/95">
-        <div class="flex items-center gap-3">
+      <header id="graph-top-header" class="w-full pl-64 sm:pl-72 pr-4 sm:pr-6 py-2 flex flex-wrap items-center justify-between gap-2 z-30 border-b border-zinc-900 bg-black/95">
+        <div class="flex items-center gap-2 sm:gap-3 min-w-0">
           <button
             id="back-to-search-btn"
             type="button"
-            class="px-2.5 py-1 bg-zinc-950 hover:bg-zinc-900 text-zinc-300 hover:text-white border border-zinc-800 font-display text-[10px] uppercase tracking-wider flex items-center gap-1.5 transition cursor-pointer"
+            class="px-2 sm:px-2.5 py-1 bg-zinc-950 hover:bg-zinc-900 text-zinc-300 hover:text-white border border-zinc-800 font-display text-[9px] sm:text-[10px] uppercase tracking-wider flex items-center gap-1 sm:gap-1.5 transition cursor-pointer shrink-0"
             title="Return to Homepage Search"
           >
             <span>&lt;&lt;</span>
@@ -778,13 +897,13 @@
           </div>
 
           <!-- Breadcrumb History Trail -->
-          <div id="wallet-breadcrumbs" class="flex items-center gap-1 overflow-x-auto max-w-[36vw] sm:max-w-[42vw] py-0.5 text-[11px] font-mono-code">
+          <div id="wallet-breadcrumbs" class="flex items-center gap-1 overflow-x-auto max-w-[36vw] sm:max-w-[42vw] py-0.5 text-[10px] sm:text-[11px] font-mono-code">
             <!-- Dynamically populated breadcrumbs -->
           </div>
         </div>
 
         <!-- Right HUD Controls: Live Currency Switcher & Legend -->
-        <div class="flex items-center gap-3 text-[10px] font-mono-code uppercase tracking-wider">
+        <div class="flex items-center gap-2 sm:gap-3 text-[10px] font-mono-code uppercase tracking-wider shrink-0">
           <div id="live-network-badge" class="flex items-center gap-1.5 bg-zinc-950 border border-[#00ffaa]/60 px-2 py-0.5 text-[#00ffaa]">
             <span id="live-network-dot" class="w-1.5 h-1.5 bg-[#00ffaa] inline-block shadow-[0_0_6px_#00ffaa]"></span>
             <span id="live-network-text">ETH MAINNET // LIVE</span>
@@ -801,11 +920,11 @@
             <span id="lod-mode-label">VIEW: INDIVIDUAL (AUTO)</span>
           </button>
 
-          <div class="flex items-center gap-1.5 bg-zinc-950 border border-zinc-800 px-2 py-0.5">
-            <span class="text-zinc-400">CURRENCY:</span>
+          <div class="flex items-center gap-1 sm:gap-1.5 bg-zinc-950 border border-zinc-800 px-1.5 sm:px-2 py-0.5">
+            <span class="text-zinc-400 hidden sm:inline">CURRENCY:</span>
             <select
               id="graph-currency-select"
-              class="bg-transparent text-[#ff9900] font-mono-code text-[11px] font-bold focus:outline-none cursor-pointer"
+              class="bg-transparent text-[#ff9900] font-mono-code text-[10px] sm:text-[11px] font-bold focus:outline-none cursor-pointer"
             >
               <option value="USD">USD ($)</option>
               <option value="EUR">EUR (€)</option>
@@ -877,24 +996,24 @@
           <div id="right-overflow-list" class="side-overflow-list flex flex-col gap-1.5"></div>
         </aside>
 
-        <!-- ZOOM & PAN CONTROLS HUD (Bottom-Right of Viewport) -->
-        <div class="absolute bottom-3 right-4 z-40 flex items-center gap-1.5 bg-black/90 border border-zinc-800 p-1 shadow-2xl">
+        <!-- ZOOM & PAN CONTROLS HUD (Bottom-Right of Viewport on Desktop, Compact Full-Width Bar on Mobile) -->
+        <div id="zoom-controls-hud" class="absolute bottom-3 right-4 z-40 flex items-center gap-1 sm:gap-1.5 bg-black/90 border border-zinc-800 p-1 shadow-2xl">
           <span class="px-2 text-[10px] font-mono-code text-zinc-400 hidden sm:inline">SCROLL TO ZOOM / DRAG TO PAN</span>
           <button
             id="zoom-out-btn"
             type="button"
-            class="px-2.5 py-1 bg-zinc-950 hover:bg-zinc-900 text-zinc-200 border border-zinc-800 hover:border-[#ff9900] font-mono-code text-xs cursor-pointer"
+            class="px-2 sm:px-2.5 py-1 bg-zinc-950 hover:bg-zinc-900 text-zinc-200 border border-zinc-800 hover:border-[#ff9900] font-mono-code text-xs cursor-pointer"
             title="Zoom Out"
           >
             -
           </button>
-          <span id="zoom-level-readout" class="px-2 font-mono-code text-[11px] text-[#ff9900] min-w-[48px] text-center">
+          <span id="zoom-level-readout" class="px-1.5 sm:px-2 font-mono-code text-[10px] sm:text-[11px] text-[#ff9900] min-w-[42px] sm:min-w-[48px] text-center">
             100%
           </span>
           <button
             id="zoom-in-btn"
             type="button"
-            class="px-2.5 py-1 bg-zinc-950 hover:bg-zinc-900 text-zinc-200 border border-zinc-800 hover:border-[#ff9900] font-mono-code text-xs cursor-pointer"
+            class="px-2 sm:px-2.5 py-1 bg-zinc-950 hover:bg-zinc-900 text-zinc-200 border border-zinc-800 hover:border-[#ff9900] font-mono-code text-xs cursor-pointer"
             title="Zoom In"
           >
             +
@@ -902,15 +1021,15 @@
           <button
             id="zoom-closest-btn"
             type="button"
-            class="px-2.5 py-1 bg-[#fcee0a]/15 hover:bg-[#fcee0a]/30 text-[#fcee0a] border border-[#fcee0a]/60 font-display text-[9px] uppercase tracking-wider cursor-pointer"
-            title="Default View: Closest 6 Inbound & Outbound Transactions"
+            class="px-2 sm:px-2.5 py-1 bg-[#fcee0a]/15 hover:bg-[#fcee0a]/30 text-[#fcee0a] border border-[#fcee0a]/60 font-display text-[8px] sm:text-[9px] uppercase tracking-wider cursor-pointer"
+            title="Default View: Closest Transactions"
           >
-            CLOSEST 6
+            CLOSEST
           </button>
           <button
             id="zoom-fit-btn"
             type="button"
-            class="px-2.5 py-1 bg-zinc-950 hover:bg-zinc-900 text-zinc-300 border border-zinc-800 hover:border-[#ff9900] font-display text-[9px] uppercase tracking-wider cursor-pointer"
+            class="px-2 sm:px-2.5 py-1 bg-zinc-950 hover:bg-zinc-900 text-zinc-300 border border-zinc-800 hover:border-[#ff9900] font-display text-[8px] sm:text-[9px] uppercase tracking-wider cursor-pointer"
             title="Fit All Connected Timeline Nodes to Screen"
           >
             FIT ALL
@@ -918,7 +1037,7 @@
           <button
             id="zoom-center-btn"
             type="button"
-            class="px-2.5 py-1 bg-[#ff9900]/15 hover:bg-[#ff9900]/30 text-[#ff9900] border border-[#ff9900]/60 font-display text-[9px] uppercase tracking-wider cursor-pointer"
+            class="px-2 sm:px-2.5 py-1 bg-[#ff9900]/15 hover:bg-[#ff9900]/30 text-[#ff9900] border border-[#ff9900]/60 font-display text-[8px] sm:text-[9px] uppercase tracking-wider cursor-pointer"
             title="Center Focal Wallet"
           >
             CENTER
@@ -932,7 +1051,7 @@
         <div class="w-full mx-auto flex flex-col items-center">
           
           <!-- Simplified Label: Just "Timeline" in Yellow -->
-          <p class="font-display text-xs sm:text-sm font-bold tracking-[0.28em] uppercase text-[#fcee0a] text-center mb-1.5">
+          <p class="font-display text-[10px] sm:text-sm font-bold tracking-[0.28em] uppercase text-[#fcee0a] text-center mb-1 sm:mb-1.5">
             Timeline
           </p>
 
@@ -940,7 +1059,7 @@
           <div id="timeline-bar-container" class="relative w-full h-10 flex items-center">
             
             <!-- Left Vertical End Tick -->
-            <div class="w-1.5 h-7 bg-[#fcee0a] shrink-0 shadow-[0_0_10px_rgba(252,238,10,0.6)]"></div>
+            <div class="w-1.5 h-6 sm:h-7 bg-[#fcee0a] shrink-0 shadow-[0_0_10px_rgba(252,238,10,0.6)]"></div>
 
             <!-- Horizontal Yellow Bar -->
             <div id="timeline-track" class="relative flex-1 h-1 bg-[#fcee0a] shadow-[0_0_12px_rgba(252,238,10,0.5)] cursor-pointer" title="Click or Drag Soft Yellow Box to Pan Across Timeline">
@@ -958,7 +1077,7 @@
             </div>
 
             <!-- Right Vertical End Tick -->
-            <div class="w-1.5 h-7 bg-[#fcee0a] shrink-0 shadow-[0_0_10px_rgba(252,238,10,0.6)]"></div>
+            <div class="w-1.5 h-6 sm:h-7 bg-[#fcee0a] shrink-0 shadow-[0_0_10px_rgba(252,238,10,0.6)]"></div>
           </div>
 
           <!-- Timeline Axis Date Range Readout -->
@@ -983,9 +1102,13 @@
   <!-- APPLICATION LOGIC -->
   <script>
     /***************************************************************************
-     * 0. LIVE BLOCKCHAIN CONFIGURATION (VERCEL ALCHEMY BRIDGE + PUBLIC MAINNET)
+     * 0. LIVE BLOCKCHAIN CONFIGURATION & MOBILE VIEWPORT DETECTOR
      ***************************************************************************/
     const VERCEL_BACKEND_URL = "";
+
+    function isMobileViewport() {
+      return window.innerWidth < 768;
+    }
 
     /***************************************************************************
      * 1. PERSISTENT UNFILTERED HTML5 BACKGROUND AUDIO ENGINE (ARCHIVE.ORG WAV)
@@ -1111,7 +1234,7 @@
 
     function initFlameParticles() {
       flameParticles.length = 0;
-      const count = 135;
+      const count = isMobileViewport() ? 75 : 135;
       for (let i = 0; i < count; i++) {
         flameParticles.push(createFlameParticle(true));
       }
@@ -1337,7 +1460,7 @@
       bgCanvas.width = canvasWidth;
       bgCanvas.height = canvasHeight;
 
-      const brickSize = 96;
+      const brickSize = isMobileViewport() ? 76 : 96;
       const mortarGap = 4;
       const step = brickSize + mortarGap;
       const rows = Math.ceil(canvasHeight / step) + 2;
@@ -1412,16 +1535,16 @@
       ctx.fillRect(-half + 2, -half + 2, 5, 5);
       ctx.globalAlpha = alpha;
 
-      drawTokenVectorEmblem(ctx, 0, -half + s * 0.42, 20, brick.token);
+      drawTokenVectorEmblem(ctx, 0, -half + s * 0.42, s < 85 ? 16 : 20, brick.token);
 
-      ctx.font = '700 10px "Orbitron", sans-serif';
+      ctx.font = `700 ${s < 85 ? 9 : 10}px "Orbitron", sans-serif`;
       ctx.fillStyle = '#d4d4d8';
       ctx.textAlign = 'center';
-      ctx.fillText(`$${brick.token.symbol}`, 0, half - 19);
+      ctx.fillText(`$${brick.token.symbol}`, 0, half - (s < 85 ? 16 : 19));
 
-      ctx.font = '400 9px "Share Tech Mono", monospace';
+      ctx.font = '400 8.5px "Share Tech Mono", monospace';
       ctx.fillStyle = '#52525b';
-      ctx.fillText(brick.shortHash, 0, half - 7);
+      ctx.fillText(brick.shortHash, 0, half - 6);
 
       ctx.restore();
     }
@@ -1741,6 +1864,7 @@
     }
 
     const MAX_SIDE_NODES = 60;
+    const MOBILE_MAX_SIDE_NODES = 5;
     let WORLD_TIMELINE_HALF_SPAN_X = 2400;
     const CLOSEST_SIX_WORLD_HALF_SPAN_X = 820;
     const DAY_GROUP_ZOOM_THRESHOLD = 0.58;
@@ -1750,6 +1874,7 @@
 
     function shouldUseDayGrouping() {
       if (!currentFocalWalletData) return false;
+      if (isMobileViewport()) return false; // Mobile caps nodes to a clean, readable set directly
       const totalConnected = (currentFocalWalletData.inboundNodes?.length || 0) +
                              (currentFocalWalletData.outboundNodes?.length || 0);
       if (lodGroupingMode === 'day') return totalConnected > 0;
@@ -1931,7 +2056,7 @@
       }
 
       const normalizedAddress = cleanInput;
-      const cacheKey = normalizedAddress.toLowerCase();
+      const cacheKey = `${normalizedAddress.toLowerCase()}_${isMobileViewport() ? 'm' : 'd'}`;
 
       if (walletGraphCache.has(cacheKey) && !linkContext) {
         setNetworkStatusBadge('ETH MAINNET // LIVE', true);
@@ -1957,7 +2082,7 @@
         .then(r => r.ok ? r.json() : null)
         .catch(() => null);
 
-      const v2MultiPageTxPromise = fetchMultiPageBlockscoutV2Txs(normalizedAddress, 3);
+      const v2MultiPageTxPromise = fetchMultiPageBlockscoutV2Txs(normalizedAddress, isMobileViewport() ? 1 : 3);
 
       const normalTxUrl = userEtherscanApiKey
         ? `https://api.etherscan.io/v2/api?chainid=1&module=account&action=txlist&address=${encodeURIComponent(normalizedAddress)}&startblock=0&endblock=99999999&page=1&offset=200&sort=desc&apikey=${encodeURIComponent(userEtherscanApiKey)}`
@@ -2079,6 +2204,7 @@
 
       const combinedEvents = [];
       const seenEventKeys = new Set();
+      const addrLower = normalizedAddress.toLowerCase();
 
       for (const tx of tokenTxList) {
         if (!tx || !tx.hash) continue;
@@ -2102,8 +2228,8 @@
         const rawTs = parseInt(tx.timeStamp || '0', 10) * 1000;
         const tsMs = rawTs > 0 ? Math.min(maxAllowedTxMs, rawTs) : maxAllowedTxMs;
 
-        const isInbound = toAddr.toLowerCase() === cacheKey && fromAddr.toLowerCase() !== cacheKey;
-        const isOutbound = fromAddr.toLowerCase() === cacheKey;
+        const isInbound = toAddr.toLowerCase() === addrLower && fromAddr.toLowerCase() !== addrLower;
+        const isOutbound = fromAddr.toLowerCase() === addrLower;
         if (!isInbound && !isOutbound) continue;
 
         const eventKey = `${tx.hash.toLowerCase()}_${isInbound ? 'in' : 'out'}_${symbol}`;
@@ -2133,8 +2259,8 @@
         const rawTs = parseInt(tx.timeStamp || '0', 10) * 1000;
         const tsMs = rawTs > 0 ? Math.min(maxAllowedTxMs, rawTs) : maxAllowedTxMs;
 
-        const isInbound = toAddr.toLowerCase() === cacheKey && fromAddr.toLowerCase() !== cacheKey;
-        const isOutbound = fromAddr.toLowerCase() === cacheKey;
+        const isInbound = toAddr.toLowerCase() === addrLower && fromAddr.toLowerCase() !== addrLower;
+        const isOutbound = fromAddr.toLowerCase() === addrLower;
         if (!isInbound && !isOutbound) continue;
 
         const hasTokenTransferForHash = Array.from(seenEventKeys).some(k => k.startsWith(tx.hash.toLowerCase()));
@@ -2163,8 +2289,8 @@
           const toAddr = String(item.to?.hash || item.created_contract?.hash || '').trim();
           if (!fromAddr || !toAddr) continue;
 
-          const isInbound = toAddr.toLowerCase() === cacheKey && fromAddr.toLowerCase() !== cacheKey;
-          const isOutbound = fromAddr.toLowerCase() === cacheKey;
+          const isInbound = toAddr.toLowerCase() === addrLower && fromAddr.toLowerCase() !== addrLower;
+          const isOutbound = fromAddr.toLowerCase() === addrLower;
           if (!isInbound && !isOutbound) continue;
 
           const eventKey = `${item.hash.toLowerCase()}_${isInbound ? 'in' : 'out'}_ETH`;
@@ -2192,26 +2318,36 @@
 
       combinedEvents.sort((a, b) => b.timestampMs - a.timestampMs);
 
-      const rawInbound = combinedEvents.filter(e => e.type === 'inbound').slice(0, MAX_SIDE_NODES);
-      const rawOutbound = combinedEvents.filter(e => e.type === 'outbound').slice(0, MAX_SIDE_NODES);
+      const sideLimit = isMobileViewport() ? MOBILE_MAX_SIDE_NODES : MAX_SIDE_NODES;
+      const rawInbound = combinedEvents.filter(e => e.type === 'inbound').slice(0, sideLimit);
+      const rawOutbound = combinedEvents.filter(e => e.type === 'outbound').slice(0, sideLimit);
 
       rawInbound.sort((a, b) => a.timestampMs - b.timestampMs);
       rawOutbound.sort((a, b) => a.timestampMs - b.timestampMs);
 
       const maxSideCount = Math.max(rawInbound.length, rawOutbound.length, 6);
-      const dynamicHalfSpanX = Math.max(1680, 820 + Math.max(0, maxSideCount - 6) * 105);
+      const dynamicHalfSpanX = isMobileViewport()
+        ? 680
+        : Math.max(1680, 820 + Math.max(0, maxSideCount - 6) * 105);
       WORLD_TIMELINE_HALF_SPAN_X = dynamicHalfSpanX;
 
-      const closest6InboundY = [-310, 195, -105, 315, 70, -215];
+      const closest6InboundY = isMobileViewport()
+        ? [-255, 195, -95, 295, 75]
+        : [-310, 195, -105, 315, 70, -215];
       const outerInboundYLanes = [-660, 560, -490, 420, -350, 275, -175, 130, -35, 680, -580, 495];
-      const closest6OutboundY = [-250, 125, 295, -90, 215, -330];
+      const closest6OutboundY = isMobileViewport()
+        ? [-225, 135, 275, -80, 215]
+        : [-250, 125, 295, -90, 215, -330];
       const outerOutboundYLanes = [550, -640, 415, -485, 355, -210, 165, -380, 45, 670, -560, 485];
+
+      const inboundStepX = isMobileViewport() ? 68 : 88;
+      const baseNodeX = isMobileViewport() ? 270 : 285;
 
       const inboundNodes = rawInbound.map((ev, i) => {
         const totalIn = rawInbound.length;
         const distRank = (totalIn - 1) - i;
         const worldX = distRank < 6
-          ? -Math.round(285 + distRank * 88)
+          ? -Math.round(baseNodeX + distRank * inboundStepX)
           : -Math.round(825 + (distRank - 6) * 102);
         const worldY = distRank < 6
           ? closest6InboundY[distRank % closest6InboundY.length]
@@ -2242,7 +2378,7 @@
       const outboundNodes = rawOutbound.map((ev, i) => {
         const distRank = i;
         const worldX = distRank < 6
-          ? Math.round(285 + distRank * 88)
+          ? Math.round(baseNodeX + distRank * inboundStepX)
           : Math.round(825 + (distRank - 6) * 102);
         const worldY = distRank < 6
           ? closest6OutboundY[distRank % closest6OutboundY.length]
@@ -2318,7 +2454,7 @@
     }
 
     /***************************************************************************
-     * 6. PAN & ZOOM WORLD VIEWPORT CONTROLLER + TIMELINE VIEWPORT INDICATOR BOX
+     * 6. PAN & ZOOM WORLD VIEWPORT CONTROLLER + TOUCH PINCH-TO-ZOOM FOR MOBILE
      ***************************************************************************/
     const viewportEl = document.getElementById('flowchart-viewport');
     const worldLayerEl = document.getElementById('world-layer');
@@ -2374,7 +2510,10 @@
     function focusCenterNodeZoom(smooth = true) {
       const rect = viewportEl.getBoundingClientRect();
       if (!rect.width || !rect.height) {
-        camZoom = 1.25;
+        camZoom = isMobileViewport() ? 0.86 : 1.25;
+      } else if (isMobileViewport()) {
+        const targetZoom = Math.min((rect.width * 0.92) / 365, (rect.height * 0.78) / 260);
+        camZoom = Math.max(0.72, Math.min(1.05, targetZoom));
       } else {
         const targetZoom = Math.min(rect.width / 820, rect.height / 500);
         camZoom = Math.max(1.15, Math.min(1.34, targetZoom));
@@ -2387,7 +2526,13 @@
     function fitClosestSixToViewport(smooth = true) {
       const rect = viewportEl.getBoundingClientRect();
       if (!rect.width || !rect.height) {
-        camZoom = 0.72;
+        camZoom = isMobileViewport() ? 0.46 : 0.72;
+      } else if (isMobileViewport()) {
+        const requiredWidth = 960;
+        const requiredHeight = 680;
+        const scaleX = (rect.width * 0.95) / requiredWidth;
+        const scaleY = (rect.height * 0.85) / requiredHeight;
+        camZoom = Math.max(0.36, Math.min(0.68, Math.min(scaleX, scaleY)));
       } else {
         const requiredWidth = CLOSEST_SIX_WORLD_HALF_SPAN_X * 2 + 220;
         const requiredHeight = 780;
@@ -2407,19 +2552,19 @@
       const totalNodes = (currentFocalWalletData?.inboundNodes?.length || 0) +
                          (currentFocalWalletData?.outboundNodes?.length || 0);
 
-      const activeIn = (totalNodes > 12 && lodGroupingMode !== 'individual')
+      const activeIn = (!isMobileViewport() && totalNodes > 12 && lodGroupingMode !== 'individual')
         ? (currentFocalWalletData?.inboundDayClusters || [])
         : (currentFocalWalletData?.inboundNodes || []);
-      const activeOut = (totalNodes > 12 && lodGroupingMode !== 'individual')
+      const activeOut = (!isMobileViewport() && totalNodes > 12 && lodGroupingMode !== 'individual')
         ? (currentFocalWalletData?.outboundDayClusters || [])
         : (currentFocalWalletData?.outboundNodes || []);
 
-      const allX = [...activeIn.map(n => Math.abs(n.worldX)), ...activeOut.map(n => Math.abs(n.worldX)), 600];
+      const allX = [...activeIn.map(n => Math.abs(n.worldX)), ...activeOut.map(n => Math.abs(n.worldX)), 460];
       const maxAbsX = Math.max(...allX);
-      const requiredWidth = maxAbsX * 2 + 340;
-      const requiredHeight = 1360;
-      const scaleX = (rect.width * 0.92) / requiredWidth;
-      const scaleY = (rect.height * 0.86) / requiredHeight;
+      const requiredWidth = maxAbsX * 2 + 280;
+      const requiredHeight = isMobileViewport() ? 760 : 1360;
+      const scaleX = (rect.width * 0.94) / requiredWidth;
+      const scaleY = (rect.height * 0.84) / requiredHeight;
       const targetCap = totalNodes > 12 ? 0.52 : 0.85;
       camZoom = Math.max(MIN_ZOOM_SCALE, Math.min(targetCap, Math.min(scaleX, scaleY)));
       camPanX = 0;
@@ -2448,8 +2593,42 @@
       updateWorldTransform(false);
     }, { passive: false });
 
+    // Mobile Two-Finger Pinch-to-Zoom Support
+    let isPinching = false;
+    let initialPinchDist = 0;
+    let initialPinchZoom = 1;
+
+    viewportEl.addEventListener('touchstart', (e) => {
+      if (e.touches.length === 2) {
+        isPinching = true;
+        isDraggingViewport = false;
+        const dx = e.touches[0].clientX - e.touches[1].clientX;
+        const dy = e.touches[0].clientY - e.touches[1].clientY;
+        initialPinchDist = Math.hypot(dx, dy);
+        initialPinchZoom = camZoom;
+      }
+    }, { passive: true });
+
+    viewportEl.addEventListener('touchmove', (e) => {
+      if (isPinching && e.touches.length === 2 && initialPinchDist > 0) {
+        e.preventDefault();
+        const dx = e.touches[0].clientX - e.touches[1].clientX;
+        const dy = e.touches[0].clientY - e.touches[1].clientY;
+        const dist = Math.hypot(dx, dy);
+        const scaleRatio = dist / initialPinchDist;
+        camZoom = Math.max(MIN_ZOOM_SCALE, Math.min(MAX_ZOOM_SCALE, initialPinchZoom * scaleRatio));
+        updateWorldTransform(false);
+      }
+    }, { passive: false });
+
+    viewportEl.addEventListener('touchend', (e) => {
+      if (e.touches.length < 2) {
+        isPinching = false;
+      }
+    }, { passive: true });
+
     viewportEl.addEventListener('pointerdown', (e) => {
-      if (isAnimatingNodeTransition) return;
+      if (isAnimatingNodeTransition || isPinching) return;
       if (e.target.closest('.cyber-node') || e.target.closest('button') || e.target.closest('a')) return;
 
       isDraggingViewport = true;
@@ -2457,11 +2636,11 @@
       dragStartY = e.clientY;
       dragOriginPanX = camPanX;
       dragOriginPanY = camPanY;
-      viewportEl.setPointerCapture(e.pointerId);
+      try { viewportEl.setPointerCapture(e.pointerId); } catch (err) {}
     });
 
     viewportEl.addEventListener('pointermove', (e) => {
-      if (!isDraggingViewport) return;
+      if (!isDraggingViewport || isPinching) return;
       const dx = e.clientX - dragStartX;
       const dy = e.clientY - dragStartY;
       camPanX = dragOriginPanX + dx;
@@ -2486,7 +2665,7 @@
       isDraggingTimelineBox = true;
       timelineDragStartX = e.clientX;
       timelineDragOriginPanX = camPanX;
-      timelineViewportBoxEl.setPointerCapture(e.pointerId);
+      try { timelineViewportBoxEl.setPointerCapture(e.pointerId); } catch (err) {}
     });
 
     timelineViewportBoxEl.addEventListener('pointermove', (e) => {
@@ -2576,20 +2755,27 @@
       if (!breadcrumbsEl) return;
       breadcrumbsEl.innerHTML = '';
 
-      walletHistoryTrail.forEach((item, idx) => {
-        const isLast = idx === walletHistoryTrail.length - 1;
+      const trailToShow = isMobileViewport()
+        ? walletHistoryTrail.slice(-2)
+        : walletHistoryTrail;
+
+      trailToShow.forEach((item, idx) => {
+        const isLast = idx === trailToShow.length - 1;
         const btn = document.createElement('button');
         btn.type = 'button';
         btn.className = isLast
-          ? 'px-2 py-0.5 bg-[#ff9900]/20 text-[#ff9900] border border-[#ff9900]/70 font-mono-code text-[10px] font-bold shrink-0 cursor-default'
-          : 'px-2 py-0.5 bg-zinc-950 hover:bg-zinc-900 text-zinc-400 hover:text-white border border-zinc-800 font-mono-code text-[10px] shrink-0 cursor-pointer transition';
+          ? 'px-1.5 sm:px-2 py-0.5 bg-[#ff9900]/20 text-[#ff9900] border border-[#ff9900]/70 font-mono-code text-[9px] sm:text-[10px] font-bold shrink-0 cursor-default'
+          : 'px-1.5 sm:px-2 py-0.5 bg-zinc-950 hover:bg-zinc-900 text-zinc-400 hover:text-white border border-zinc-800 font-mono-code text-[9px] sm:text-[10px] shrink-0 cursor-pointer transition';
         btn.textContent = formatShortHash(item.address);
         btn.title = item.address;
 
         if (!isLast) {
           btn.addEventListener('click', async () => {
             if (isAnimatingNodeTransition) return;
-            walletHistoryTrail = walletHistoryTrail.slice(0, idx + 1);
+            const fullIdx = walletHistoryTrail.findIndex(w => w.address.toLowerCase() === item.address.toLowerCase());
+            if (fullIdx >= 0) {
+              walletHistoryTrail = walletHistoryTrail.slice(0, fullIdx + 1);
+            }
             renderBreadcrumbs();
             const graphData = await getOrCreateWalletGraph(item.address);
             renderWalletGraphDOM(graphData, true);
@@ -2688,10 +2874,9 @@
       const vpRect = viewportEl.getBoundingClientRect();
       if (!vpRect.width || !vpRect.height) return;
 
-      const halfSpan = Math.max(800, WORLD_TIMELINE_HALF_SPAN_X);
+      const halfSpan = Math.max(600, WORLD_TIMELINE_HALF_SPAN_X);
       const totalWorldSpan = halfSpan * 2;
 
-      // World X coordinates visible at the left and right edges of #flowchart-viewport
       const leftWorldX = (-vpRect.width / 2 - camPanX) / camZoom;
       const rightWorldX = (vpRect.width / 2 - camPanX) / camZoom;
 
@@ -2704,12 +2889,11 @@
       timelineViewportBoxEl.style.left = `${(leftRatio * 100).toFixed(2)}%`;
       timelineViewportBoxEl.style.width = `${((rightRatio - leftRatio) * 100).toFixed(2)}%`;
 
-      // Update Left & Right Side Overflow Panels for transactions currently outside the viewport FOV
       updateSideOverflowPanels(vpRect);
     }
 
     function updateSideOverflowPanels(vpRect) {
-      if (!currentFocalWalletData || isAnimatingNodeTransition) {
+      if (!currentFocalWalletData || isAnimatingNodeTransition || isMobileViewport()) {
         leftOverflowPanelEl.classList.add('panel-hidden');
         rightOverflowPanelEl.classList.add('panel-hidden');
         return;
@@ -2737,7 +2921,6 @@
         }
       });
 
-      // Render Left Inbound Overflow List (#ff0055)
       if (outOfFovInbound.length > 0) {
         leftOverflowPanelEl.classList.remove('panel-hidden');
         leftOverflowCountEl.textContent = String(outOfFovInbound.length);
@@ -2769,7 +2952,6 @@
         leftOverflowPanelEl.classList.add('panel-hidden');
       }
 
-      // Render Right Outbound Overflow List (#00ffaa)
       if (outOfFovOutbound.length > 0) {
         rightOverflowPanelEl.classList.remove('panel-hidden');
         rightOverflowCountEl.textContent = String(outOfFovOutbound.length);
@@ -2807,7 +2989,6 @@
      ***************************************************************************/
     function buildOrthogonalPathData(x1, y1, x2, y2, midX) {
       const dPath = `M ${x1.toFixed(1)} ${y1.toFixed(1)} L ${midX.toFixed(1)} ${y1.toFixed(1)} L ${midX.toFixed(1)} ${y2.toFixed(1)} L ${x2.toFixed(1)} ${y2.toFixed(1)}`;
-      // Place directional arrowhead '>' pointing right (+X direction) along the horizontal segment
       const arrowX = (x1 + midX) / 2;
       const arrowY = y1;
       const sz = 5.5;
@@ -2818,10 +2999,9 @@
     function renderOrthogonalConnectors(activeInbound, activeOutbound, fadeInNew = false) {
       svgCurvesGroup.innerHTML = '';
 
-      const centerHalfW = 176; // 352px / 2
+      const centerHalfW = 176;
       const centerHalfH = 92;
 
-      // 1. Inbound Orthogonal Connectors (Left Node Right Edge -> Center Node Left Edge)
       activeInbound.forEach((node, i) => {
         const nodeHalfW = node.isDayCluster ? 102 : 88;
         const startX = node.worldX + nodeHalfW;
@@ -2859,7 +3039,6 @@
         svgCurvesGroup.appendChild(chevEl);
       });
 
-      // 2. Outbound Orthogonal Connectors (Center Node Right Edge -> Right Node Left Edge)
       activeOutbound.forEach((node, i) => {
         const nodeHalfW = node.isDayCluster ? 102 : 88;
         const startX = centerHalfW;
@@ -2903,7 +3082,7 @@
       if (!timelineTicksLayer) return;
       timelineTicksLayer.innerHTML = '';
 
-      const halfSpan = Math.max(800, WORLD_TIMELINE_HALF_SPAN_X);
+      const halfSpan = Math.max(600, WORLD_TIMELINE_HALF_SPAN_X);
       const totalSpan = halfSpan * 2;
 
       const createTick = (nodeId, worldX, colorHex, tooltipText, onClickFn, isCenter = false) => {
@@ -3014,7 +3193,12 @@
       const totalCount = (walletData.inboundNodes?.length || 0) + (walletData.outboundNodes?.length || 0);
       const fitBtn = document.getElementById('zoom-fit-btn');
       if (fitBtn) {
-        fitBtn.textContent = `FIT ALL (${totalCount})`;
+        fitBtn.textContent = isMobileViewport() ? `FIT (${totalCount})` : `FIT ALL (${totalCount})`;
+      }
+
+      const closestBtn = document.getElementById('zoom-closest-btn');
+      if (closestBtn) {
+        closestBtn.textContent = isMobileViewport() ? 'CLOSEST' : 'CLOSEST 6';
       }
 
       nodesContainerEl.innerHTML = '';
@@ -3322,11 +3506,15 @@
         const initialZoom = camZoom;
 
         const rect = viewportEl.getBoundingClientRect();
-        let targetZoom = 0.78;
+        let targetZoom = isMobileViewport() ? 0.50 : 0.78;
         if (rect.width && rect.height) {
-          const reqW = CLOSEST_SIX_WORLD_HALF_SPAN_X * 2 + 220;
-          const reqH = 780;
-          targetZoom = Math.max(0.62, Math.min(1.02, Math.min((rect.width * 0.92) / reqW, (rect.height * 0.88) / reqH)));
+          if (isMobileViewport()) {
+            targetZoom = Math.max(0.40, Math.min(0.68, Math.min((rect.width * 0.94) / 960, (rect.height * 0.85) / 680)));
+          } else {
+            const reqW = CLOSEST_SIX_WORLD_HALF_SPAN_X * 2 + 220;
+            const reqH = 780;
+            targetZoom = Math.max(0.62, Math.min(1.02, Math.min((rect.width * 0.92) / reqW, (rect.height * 0.88) / reqH)));
+          }
         }
 
         const progressFillEl = selectedEl ? selectedEl.querySelector('.paced-sync-bar-fill') : null;
